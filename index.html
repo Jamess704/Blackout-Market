@@ -53,7 +53,20 @@
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: fixed;
+           animation: backgroundPan 25s ease-in-out infinite alternate; 
         }
+
+    @keyframes backgroundPan {
+    0% {
+        background-position: center 0%;
+    }
+    50% {
+        background-position: center 50%;
+    }
+    100% {
+        background-position: center 100%;
+    }
+}
 
         /* Hero Text Metallic Glow */
         .metallic-text {
