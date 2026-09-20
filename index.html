@@ -45,38 +45,16 @@ body {
         background-color: #050203;
         color: #f3f4f6;
         overflow-x: hidden;
-    }
-
-    body::before {
-        content: '';
-        position: fixed;
-        top: -10%;
-        left: -10%;
-        width: 120%;
-        height: 120%;
+        /* Full Red Space Nebula background image */
         background-image: 
             linear-gradient(to bottom, rgba(5, 2, 3, 0.65), rgba(5, 2, 3, 0.85)),
             url('https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=2000&auto=format&fit=crop');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
-        animation: backgroundPan 25s ease-in-out infinite alternate;
-        z-index: -1;
+        background-attachment: fixed;
     }
 
-    @keyframes backgroundPan {
-        0% {
-            transform: scale(1) translate(0px, 0px);
-        }
-        50% {
-            transform: scale(1.05) translate(-15px, -10px);
-        }
-        100% {
-            transform: scale(1.1) translate(15px, 10px);
-        }
-    }
-        /* Hero Text Metallic Glow */
-        .metallic-text {
             background: linear-gradient(180deg, #ffffff 0%, #e5e7eb 30%, #ef4444 75%, #7f1d1d 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
