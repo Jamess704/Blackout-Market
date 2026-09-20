@@ -40,34 +40,32 @@
 
     <!-- Red Space Nebula Background & Shader Overlay Styles -->
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #050203;
-            color: #f3f4f6;
-            overflow-x: hidden;
-            /* Full Red Space Nebula background image */
-            background-image: 
-                linear-gradient(to bottom, rgba(5, 2, 3, 0.65), rgba(5, 2, 3, 0.85)),
-                url('https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=2000&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            
-           animation: backgroundPan 25s ease-in-out infinite alternate; 
-        }
+body {
+        font-family: 'Inter', sans-serif;
+        background-color: #050203;
+        color: #f3f4f6;
+        overflow-x: hidden;
+        /* Full Red Space Nebula background image */
+        background-image: 
+            linear-gradient(to bottom, rgba(5, 2, 3, 0.65), rgba(5, 2, 3, 0.85)),
+            url('https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=2000&auto=format&fit=crop');
+        background-size: 125% 125%;
+        background-position: center;
+        background-repeat: no-repeat;
+        animation: backgroundPan 20s ease-in-out infinite alternate;
+    }
 
     @keyframes backgroundPan {
-    0% {
-        background-position: center 0%;
+        0% {
+            background-position: 0% 0%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 50% 100%;
+        }
     }
-    50% {
-        background-position: center 50%;
-    }
-    100% {
-        background-position: center 100%;
-    }
-}
-
         /* Hero Text Metallic Glow */
         .metallic-text {
             background: linear-gradient(180deg, #ffffff 0%, #e5e7eb 30%, #ef4444 75%, #7f1d1d 100%);
