@@ -3,162 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blackout Market - Premium Cheats & Enhancements</title>
-
+    <title>Blackout Market</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            red: '#ff1a1a',
-                            darkred: '#990000',
-                            deepred: '#4a0000',
-                            glow: 'rgba(255, 26, 26, 0.4)',
-                            darkbg: '#050203',
-                            cardbg: 'rgba(17, 8, 11, 0.85)',
-                            cardborder: '#2a1017'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        display: ['Oswald', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Oswald:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #050203;
+            background: #050203;
             color: #f3f4f6;
             overflow-x: hidden;
         }
-
-        #zero-g {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-            background:
-                radial-gradient(ellipse 80% 50% at 20% 15%, rgba(120, 0, 20, 0.35), transparent 55%),
-                radial-gradient(ellipse 70% 45% at 85% 80%, rgba(80, 0, 30, 0.28), transparent 50%),
-                radial-gradient(ellipse 50% 40% at 50% 50%, rgba(40, 0, 10, 0.4), transparent 60%),
-                #050203;
-        }
-
-        #zero-g-canvas {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        .nebula-drift {
-            position: absolute;
-            border-radius: 9999px;
-            filter: blur(70px);
-            opacity: 0.45;
-            animation: none;
-            will-change: transform;
-        }
-
-        .nebula-a {
-            width: 420px;
-            height: 420px;
-            background: #7f1d1d;
-            top: 8%;
-            left: 12%;
-        }
-
-        .nebula-b {
-            width: 340px;
-            height: 340px;
-            background: #450a0a;
-            bottom: 12%;
-            right: 10%;
-            animation-duration: 36s;
-            animation-direction: reverse;
-        }
-
-        .nebula-c {
-            width: 260px;
-            height: 260px;
-            background: #991b1b;
-            top: 45%;
-            left: 55%;
-            animation-duration: 22s;
-        }
-
+        #zero-g { position: fixed; inset: 0; z-index: 0; pointer-events: none; background: #050203; }
+        #zero-g canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+        .nebula-drift { position: absolute; border-radius: 9999px; filter: blur(70px); opacity: 0.45; will-change: transform; }
+        .nebula-a { width: 420px; height: 420px; background: #7f1d1d; top: 8%; left: 12%; }
+        .nebula-b { width: 340px; height: 340px; background: #450a0a; bottom: 12%; right: 10%; }
+        .nebula-c { width: 260px; height: 260px; background: #991b1b; top: 45%; left: 55%; }
         #zero-g::after {
             content: '';
             position: absolute;
             inset: 0;
             background: radial-gradient(520px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 26, 26, 0.22), transparent 42%);
-            pointer-events: none;
         }
-
-        .feature-tile {
-            background: rgba(8, 4, 8, 0.72);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            backdrop-filter: blur(10px);
-        }
-
-        .feature-tile:hover {
-            border-color: rgba(255, 26, 26, 0.55);
-            box-shadow: 0 12px 40px rgba(255, 26, 26, 0.12);
-            transform: translateY(-4px);
-        }
-
-        .metallic-text {
-            background: linear-gradient(180deg, #ffffff 0%, #e5e7eb 30%, #ef4444 75%, #7f1d1d 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 35px rgba(255, 26, 26, 0.7);
-            letter-spacing: 2px;
-        }
-
-        .red-glow-box {
-            box-shadow: 0 0 25px rgba(255, 26, 26, 0.35);
-        }
-
-        .red-glow-box:hover {
-            box-shadow: 0 0 35px rgba(255, 26, 26, 0.65);
-            border-color: rgba(255, 26, 26, 0.8);
-        }
-
-        .category-btn.active {
-            border-color: #ff1a1a;
-            box-shadow: 0 0 20px rgba(255, 26, 26, 0.35);
-            background: rgba(127, 29, 29, 0.25);
-        }
-
+        .feature-tile { background: rgba(8, 4, 8, 0.72); border: 1px solid rgba(255,255,255,0.06); backdrop-filter: blur(10px); }
+        .feature-tile:hover { border-color: rgba(255, 26, 26, 0.55); box-shadow: 0 12px 40px rgba(255,26,26,0.12); transform: translateY(-4px); }
         .shop-card {
             background: rgba(8, 6, 12, 0.88);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255,255,255,0.06);
             border-radius: 1.15rem;
             overflow: hidden;
             text-align: left;
             cursor: pointer;
-            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.2s ease, border-color 0.2s ease;
         }
-
-        .shop-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(255, 26, 26, 0.45);
-            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
-        }
-
+        .shop-card:hover { transform: translateY(-4px); border-color: rgba(255, 26, 26, 0.45); }
         .shop-art {
             --neon: #5dfff6;
             --glow: rgba(34, 211, 238, 0.85);
@@ -168,88 +49,19 @@
             justify-content: center;
             position: relative;
             overflow: hidden;
-            isolation: isolate;
             background:
                 radial-gradient(1.2px 1.2px at 18% 28%, rgba(255,255,255,0.85), transparent),
                 radial-gradient(1px 1px at 72% 22%, rgba(255,255,255,0.7), transparent),
                 radial-gradient(1.4px 1.4px at 84% 68%, rgba(255,255,255,0.8), transparent),
-                radial-gradient(1px 1px at 30% 78%, rgba(255,255,255,0.65), transparent),
-                radial-gradient(1px 1px at 55% 40%, rgba(255,255,255,0.5), transparent),
                 #021018;
         }
-
-        .shop-art::before,
-        .shop-art::after {
-            content: '';
-            position: absolute;
-            pointer-events: none;
-            border-radius: 999px;
-            filter: blur(10px);
-        }
-
-        .shop-art::before {
-            width: 240px;
-            height: 240px;
-            left: -18%;
-            top: -40%;
-            background: radial-gradient(circle, var(--glow), transparent 68%);
-            opacity: 0.75;
-            animation: nebula-a 8s ease-in-out infinite;
-            z-index: 0;
-        }
-
-        .shop-art::after {
-            width: 260px;
-            height: 200px;
-            right: -24%;
-            bottom: -46%;
-            background: radial-gradient(circle, var(--glow), transparent 70%);
-            opacity: 0.55;
-            animation: nebula-b 11s ease-in-out infinite;
-            z-index: 0;
-        }
-
-        .shop-art i,
-        .shop-art .neon-mark {
-            position: relative;
-            z-index: 1;
-            animation: neon-breathe 2.6s ease-in-out infinite, icon-float 4.6s ease-in-out infinite;
-        }
-
-        .shop-art i {
-            font-size: 5rem;
-            color: transparent;
-            -webkit-text-stroke: 2px var(--neon);
-        }
-
-        .shop-art .neon-mark {
-            width: 5.4rem;
-            height: 5.4rem;
-            fill: none;
-            stroke: var(--neon);
-            stroke-width: 2.4;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .shop-art span {
-            position: absolute;
-            z-index: 1;
-            left: 12px;
-            bottom: 12px;
-            letter-spacing: 0.16em;
-            font-size: 10px;
-            font-weight: 800;
-            color: var(--neon);
-            text-transform: uppercase;
-            padding: 5px 10px;
-            border-radius: 999px;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid color-mix(in srgb, var(--neon) 55%, transparent);
-            box-shadow: 0 0 12px color-mix(in srgb, var(--neon) 35%, transparent);
-            backdrop-filter: blur(8px);
-        }
-
+        .shop-art::before, .shop-art::after { content: ''; position: absolute; border-radius: 999px; filter: blur(10px); pointer-events: none; }
+        .shop-art::before { width: 240px; height: 240px; left: -18%; top: -40%; background: radial-gradient(circle, var(--glow), transparent 68%); opacity: 0.75; animation: nebula-a 8s ease-in-out infinite; }
+        .shop-art::after { width: 260px; height: 200px; right: -24%; bottom: -46%; background: radial-gradient(circle, var(--glow), transparent 70%); opacity: 0.55; animation: nebula-b 11s ease-in-out infinite; }
+        .shop-art i, .shop-art .neon-mark { position: relative; z-index: 1; animation: neon-breathe 2.6s ease-in-out infinite, icon-float 4.6s ease-in-out infinite; }
+        .shop-art i { font-size: 5rem; color: transparent; -webkit-text-stroke: 2px var(--neon); }
+        .shop-art .neon-mark { width: 5.4rem; height: 5.4rem; fill: none; stroke: var(--neon); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+        .shop-art span { position: absolute; z-index: 1; left: 12px; bottom: 12px; letter-spacing: 0.16em; font-size: 10px; font-weight: 800; color: var(--neon); text-transform: uppercase; padding: 5px 10px; border-radius: 999px; background: rgba(0,0,0,0.4); border: 1px solid color-mix(in srgb, var(--neon) 55%, transparent); }
         .art-discord { --neon: #5dfff6; --glow: rgba(45, 226, 255, 0.95); }
         .art-nitro { --neon: #d8b4fe; --glow: rgba(168, 85, 247, 0.9); }
         .art-steam { --neon: #7dd3fc; --glow: rgba(14, 165, 233, 0.9); }
@@ -259,833 +71,235 @@
         .art-macho { --neon: #fdba74; --glow: rgba(249, 115, 22, 0.9); }
         .art-engine { --neon: #fb923c; --glow: rgba(234, 88, 12, 0.85); }
         .art-ham { --neon: #f9a8d4; --glow: rgba(219, 39, 119, 0.85); }
-
-        @keyframes nebula-a {
-            0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-            50% { transform: translate3d(28px, 22px, 0) scale(1.18); }
-        }
-
-        @keyframes nebula-b {
-            0%, 100% { transform: translate3d(0, 0, 0) scale(1.05); }
-            50% { transform: translate3d(-26px, -18px, 0) scale(0.92); }
-        }
-
+        .category-btn.active { border-color: #ff1a1a; box-shadow: 0 0 20px rgba(255,26,26,0.35); }
+        @keyframes nebula-a { 0%,100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(28px,22px,0) scale(1.18); } }
+        @keyframes nebula-b { 0%,100% { transform: translate3d(0,0,0) scale(1.05); } 50% { transform: translate3d(-26px,-18px,0) scale(0.92); } }
         @keyframes neon-breathe {
-            0%, 100% {
-                filter: drop-shadow(0 0 4px var(--neon)) drop-shadow(0 0 12px var(--glow));
-                opacity: 0.88;
-            }
-            50% {
-                filter: drop-shadow(0 0 8px var(--neon)) drop-shadow(0 0 22px var(--glow)) drop-shadow(0 0 40px var(--glow));
-                opacity: 1;
-            }
+            0%,100% { filter: drop-shadow(0 0 4px var(--neon)) drop-shadow(0 0 12px var(--glow)); opacity: 0.88; }
+            50% { filter: drop-shadow(0 0 8px var(--neon)) drop-shadow(0 0 22px var(--glow)); opacity: 1; }
         }
-
-        @keyframes icon-float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-7px); }
-        }
-
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #050203; }
-        ::-webkit-scrollbar-thumb { background: #3a080d; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #ff1a1a; }
+        @keyframes icon-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
     </style>
 </head>
-<body class="min-h-screen relative flex flex-col">
-
+<body class="min-h-screen flex flex-col">
     <div id="zero-g" aria-hidden="true">
         <div class="nebula-drift nebula-a"></div>
         <div class="nebula-drift nebula-b"></div>
         <div class="nebula-drift nebula-c"></div>
         <canvas id="zero-g-canvas"></canvas>
     </div>
-
     <div class="relative z-10 flex-grow">
         <header class="sticky top-0 z-50 backdrop-blur-md bg-black/70 border-b border-red-950/50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-20">
-                    <a href="#home" onclick="showHome();" class="flex items-center gap-3 group">
-                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-red-600 to-black p-0.5 red-glow-box group-hover:scale-105 transition-transform">
-                            <div class="w-full h-full bg-black rounded-[7px] flex items-center justify-center">
-                                <i class="fa-solid fa-skull text-red-500 text-xl"></i>
-                            </div>
+                    <a href="#home" onclick="showHome();" class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-black border border-red-700 flex items-center justify-center">
+                            <i class="fa-solid fa-skull text-red-500 text-xl"></i>
                         </div>
                         <div>
-                            <span class="font-display text-2xl font-bold tracking-wider text-white block leading-none">BLACKOUT</span>
-                            <span class="text-xs tracking-widest text-red-500 font-semibold block uppercase">MARKET</span>
+                            <span class="text-2xl font-bold tracking-wider text-white block leading-none">BLACKOUT</span>
+                            <span class="text-xs tracking-widest text-red-500 font-semibold uppercase">MARKET</span>
                         </div>
                     </a>
-
                     <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-gray-300">
-                        <a href="#home" onclick="showHome();" class="hover:text-red-500 transition flex items-center gap-2"><i class="fa-solid fa-house text-red-500"></i> Home</a>
-                        <a href="#cheats" onclick="showStore();" class="hover:text-red-500 transition flex items-center gap-2"><i class="fa-solid fa-cart-shopping text-red-500"></i> Store</a>
-                        <a href="https://status.blackoutmarket.com" target="_blank" class="hover:text-red-500 transition flex items-center gap-2"><i class="fa-solid fa-signal text-emerald-400"></i> Status</a>
-                        <a href="#loader" onclick="showLoader();" class="hover:text-red-500 transition flex items-center gap-2"><i class="fa-solid fa-download text-red-500"></i> Download Loader</a>
-                        <a href="https://discord.gg/jGHQj4Ygqf" target="_blank" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition shadow-md flex items-center gap-2">
-                            <i class="fa-brands fa-discord text-lg"></i> Join Discord
-                        </a>
+                        <a href="#home" onclick="showHome();" class="hover:text-red-500">Home</a>
+                        <a href="#cheats" onclick="showStore();" class="hover:text-red-500">Store</a>
+                        <a href="https://status.blackoutmarket.com" target="_blank" class="hover:text-red-500">Status</a>
+                        <a href="#loader" onclick="showLoader();" class="hover:text-red-500">Download Loader</a>
+                        <a href="https://discord.gg/jGHQj4Ygqf" target="_blank" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg">Join Discord</a>
                     </nav>
-
-                    <div class="md:hidden">
-                        <button id="mobile-menu-btn" class="text-gray-300 hover:text-white p-2" type="button" aria-label="Open menu">
-                            <i class="fa-solid fa-bars text-xl"></i>
-                        </button>
-                    </div>
+                    <button id="mobile-menu-btn" class="md:hidden text-gray-300" type="button"><i class="fa-solid fa-bars text-xl"></i></button>
                 </div>
             </div>
-
-            <div id="mobile-menu" class="hidden md:hidden bg-black/95 border-b border-red-900/50 px-4 pt-2 pb-6 space-y-3">
-                <a href="#home" onclick="showHome();" class="block text-gray-200 hover:text-red-500 py-2 font-medium">Home</a>
-                <a href="#cheats" onclick="showStore();" class="block text-gray-200 hover:text-red-500 py-2 font-medium">Store</a>
-                <a href="https://status.blackoutmarket.com" target="_blank" class="block text-gray-200 hover:text-red-500 py-2 font-medium">Status</a>
-                <a href="#loader" onclick="showLoader();" class="block text-gray-200 hover:text-red-500 py-2 font-medium">Download Loader</a>
-                <a href="https://discord.gg/jGHQj4Ygqf" target="_blank" class="block text-red-500 hover:text-red-400 py-2 font-bold flex items-center gap-2">
-                    <i class="fa-brands fa-discord"></i> Join Discord
-                </a>
+            <div id="mobile-menu" class="hidden md:hidden bg-black/95 border-b border-red-900/50 px-4 py-4 space-y-2">
+                <a href="#home" onclick="showHome();" class="block py-2">Home</a>
+                <a href="#cheats" onclick="showStore();" class="block py-2">Store</a>
+                <a href="#loader" onclick="showLoader();" class="block py-2">Download Loader</a>
+                <a href="https://discord.gg/jGHQj4Ygqf" target="_blank" class="block py-2 text-red-400 font-bold">Join Discord</a>
             </div>
         </header>
 
         <section id="home" class="relative pt-10 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-            <div class="grid lg:grid-cols-2 gap-10 items-center min-h-[520px]">
-                <div class="text-left">
-                    <h1 class="text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-tight text-white leading-[1.05]">
-                        Everything you need
-                    </h1>
-                    <h2 class="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-white mt-3 mb-5">
-                        in one place.
-                    </h2>
-                    <p class="text-gray-300 text-base sm:text-lg max-w-xl mb-8 leading-relaxed">
-                        Shop FiveM executors, Rainbow Six tools, spoofers, and in-store accounts. Checkout is instant, and the Discord is there if you need a hand.
-                    </p>
-                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                        <a href="https://discord.gg/jGHQj4Ygqf" target="_blank" class="px-6 py-3 rounded-full bg-red-600 hover:bg-red-500 text-white font-semibold transition flex items-center justify-center gap-2">
-                            <i class="fa-brands fa-discord"></i> Join our Discord
-                        </a>
-                        <a href="#cheats" onclick="showStore();" class="px-6 py-3 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 text-white font-semibold transition flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-bag-shopping"></i> Check our Products
-                        </a>
-                    </div>
-                </div>
-
-                <div class="relative hidden lg:block h-[420px]">
-                    <div class="absolute left-8 top-10 w-40 h-52 rounded-3xl bg-black/50 border border-white/10 backdrop-blur-md flex flex-col items-center justify-center gap-3 rotate-[-8deg]">
-                        <i class="fa-solid fa-gamepad text-5xl text-white"></i>
-                        <span class="text-xs uppercase tracking-widest text-gray-400">FiveM</span>
-                    </div>
-                    <div class="absolute right-10 top-0 w-48 h-64 rounded-3xl bg-black/55 border border-red-900/40 backdrop-blur-md flex flex-col items-center justify-center gap-3 rotate-[6deg] red-glow-box">
-                        <i class="fa-solid fa-crosshairs text-6xl text-red-500"></i>
-                        <span class="text-xs uppercase tracking-widest text-gray-300">R6 Siege</span>
-                    </div>
-                    <div class="absolute left-24 bottom-4 w-44 h-48 rounded-3xl bg-black/50 border border-white/10 backdrop-blur-md flex flex-col items-center justify-center gap-3 rotate-[4deg]">
-                        <i class="fa-solid fa-shield-halved text-5xl text-white"></i>
-                        <span class="text-xs uppercase tracking-widest text-gray-400">Spoofers</span>
-                    </div>
-                    <div class="absolute right-4 bottom-8 w-36 h-40 rounded-3xl bg-black/45 border border-white/10 backdrop-blur-md flex flex-col items-center justify-center gap-3 rotate-[-5deg]">
-                        <i class="fa-solid fa-user text-4xl text-white"></i>
-                        <span class="text-xs uppercase tracking-widest text-gray-400">Accounts</span>
-                    </div>
+            <div class="max-w-3xl text-left py-10">
+                <h1 class="text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-tight text-white leading-[1.05]">Everything you need</h1>
+                <h2 class="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-white mt-3 mb-5">in one place.</h2>
+                <p class="text-gray-300 text-base sm:text-lg max-w-xl mb-8">Shop FiveM executors, Rainbow Six tools, spoofers, and in-store accounts. Checkout is instant, and the Discord is there if you need a hand.</p>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <a href="https://discord.gg/jGHQj4Ygqf" target="_blank" class="px-6 py-3 rounded-full bg-red-600 hover:bg-red-500 text-white font-semibold flex items-center justify-center gap-2"><i class="fa-brands fa-discord"></i> Join our Discord</a>
+                    <a href="#cheats" onclick="showStore();" class="px-6 py-3 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 text-white font-semibold flex items-center justify-center gap-2"><i class="fa-solid fa-bag-shopping"></i> Check our Products</a>
                 </div>
             </div>
-
-            <div class="grid sm:grid-cols-3 gap-8 mt-6 mb-20 px-2">
-                <div class="flex gap-4">
-                    <div class="w-12 h-12 rounded-full bg-red-600/20 border border-red-500/30 flex items-center justify-center shrink-0">
-                        <i class="fa-solid fa-shield-halved text-red-400"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-white mb-1">Guaranteed Quality</h3>
-                        <p class="text-sm text-gray-400 leading-relaxed">Products are checked before they go out, so you get what you paid for.</p>
-                    </div>
-                </div>
-                <div class="flex gap-4">
-                    <div class="w-12 h-12 rounded-full bg-red-600/20 border border-red-500/30 flex items-center justify-center shrink-0">
-                        <i class="fa-solid fa-bolt text-red-400"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-white mb-1">Instant Delivery</h3>
-                        <p class="text-sm text-gray-400 leading-relaxed">Keys and access land through Discord or SellAuth right after checkout.</p>
-                    </div>
-                </div>
-                <div class="flex gap-4">
-                    <div class="w-12 h-12 rounded-full bg-red-600/20 border border-red-500/30 flex items-center justify-center shrink-0">
-                        <i class="fa-solid fa-headset text-red-400"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-white mb-1">Live Support</h3>
-                        <p class="text-sm text-gray-400 leading-relaxed">Open a ticket anytime — the Discord team is there to help.</p>
-                    </div>
-                </div>
+            <div class="grid sm:grid-cols-3 gap-8 mt-8 mb-16">
+                <div><h3 class="font-semibold text-white mb-1">Guaranteed Quality</h3><p class="text-sm text-gray-400">Products are checked before they go out.</p></div>
+                <div><h3 class="font-semibold text-white mb-1">Instant Delivery</h3><p class="text-sm text-gray-400">Keys land through Discord or SellAuth after checkout.</p></div>
+                <div><h3 class="font-semibold text-white mb-1">Live Support</h3><p class="text-sm text-gray-400">Open a ticket anytime on Discord.</p></div>
             </div>
-
             <div class="text-center mb-8">
-                <p class="text-red-400 text-xs font-semibold tracking-wide mb-2">Featured Categories</p>
-                <h3 class="text-3xl sm:text-4xl font-semibold text-white">Explore our products</h3>
-                <p class="text-gray-400 text-sm mt-2">Pick a category to open the store on that section.</p>
+                <p class="text-red-400 text-xs font-semibold mb-2">Featured Categories</p>
+                <h3 class="text-3xl font-semibold text-white">Explore our products</h3>
             </div>
-
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-                <button type="button" onclick="openStoreCategory('accounts')" class="feature-tile rounded-3xl py-10 px-4 flex flex-col items-center gap-3 transition duration-300">
-                    <i class="fa-regular fa-id-card text-4xl text-white"></i>
-                    <span class="text-white font-medium">Accounts</span>
-                </button>
-                <button type="button" onclick="openStoreCategory('fivem')" class="feature-tile rounded-3xl py-10 px-4 flex flex-col items-center gap-3 transition duration-300">
-                    <i class="fa-solid fa-campground text-4xl text-white"></i>
-                    <span class="text-white font-medium">FiveM</span>
-                </button>
-                <button type="button" onclick="openStoreCategory('r6')" class="feature-tile rounded-3xl py-10 px-4 flex flex-col items-center gap-3 transition duration-300">
-                    <i class="fa-solid fa-crosshairs text-4xl text-white"></i>
-                    <span class="text-white font-medium">Rainbow Six Siege</span>
-                </button>
-                <button type="button" onclick="openStoreCategory('spoofers')" class="feature-tile rounded-3xl py-10 px-4 flex flex-col items-center gap-3 transition duration-300">
-                    <i class="fa-solid fa-user-secret text-4xl text-white"></i>
-                    <span class="text-white font-medium">Spoofers</span>
-                </button>
+                <button type="button" onclick="openStoreCategory('accounts')" class="feature-tile rounded-3xl py-10 flex flex-col items-center gap-3 transition"><i class="fa-regular fa-id-card text-4xl"></i><span>Accounts</span></button>
+                <button type="button" onclick="openStoreCategory('fivem')" class="feature-tile rounded-3xl py-10 flex flex-col items-center gap-3 transition"><i class="fa-solid fa-campground text-4xl"></i><span>FiveM</span></button>
+                <button type="button" onclick="openStoreCategory('r6')" class="feature-tile rounded-3xl py-10 flex flex-col items-center gap-3 transition"><i class="fa-solid fa-crosshairs text-4xl"></i><span>Rainbow Six Siege</span></button>
+                <button type="button" onclick="openStoreCategory('spoofers')" class="feature-tile rounded-3xl py-10 flex flex-col items-center gap-3 transition"><i class="fa-solid fa-user-secret text-4xl"></i><span>Spoofers</span></button>
             </div>
         </section>
 
-        <section id="cheats" class="hidden py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <section id="cheats" class="hidden py-12 px-4 max-w-7xl mx-auto">
             <div class="text-center mb-8">
-                <p class="text-red-500 text-xs font-bold uppercase tracking-widest mb-2">Catalog</p>
-                <h2 class="font-display text-3xl sm:text-4xl font-bold text-white">Select a Category</h2>
-                <p class="text-gray-400 text-sm mt-2">Filter the grid, or leave it open to browse everything in the store.</p>
+                <h2 class="text-4xl font-bold text-white">Select a Category</h2>
             </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-                <button type="button" data-category="fivem" onclick="filterCategory('fivem')" class="category-btn bg-black/80 border border-red-950 hover:border-red-600 rounded-2xl p-5 text-center transition duration-300 hover:-translate-y-1">
-                    <h3 class="text-xl font-bold text-white mb-1">FiveM Products</h3>
-                    <p class="text-xs text-gray-400">Executors, Spoofers &amp; Menus</p>
-                </button>
-                <button type="button" data-category="accounts" onclick="filterCategory('accounts')" class="category-btn bg-black/80 border border-red-950 hover:border-red-600 rounded-2xl p-5 text-center transition duration-300 hover:-translate-y-1">
-                    <h3 class="text-xl font-bold text-white mb-1">Accounts</h3>
-                    <p class="text-xs text-gray-400">Listings already in the store</p>
-                </button>
-                <button type="button" data-category="r6" onclick="filterCategory('r6')" class="category-btn bg-black/80 border border-red-950 hover:border-red-600 rounded-2xl p-5 text-left transition duration-300 hover:-translate-y-1">
-                    <h3 class="text-xl font-bold text-white mb-1"><i class="fa-solid fa-crosshairs text-red-500"></i> R6 Siege</h3>
-                    <p class="text-xs text-gray-400">Cheats, Recoil &amp; Tools</p>
-                </button>
-                <button type="button" data-category="spoofers" onclick="filterCategory('spoofers')" class="category-btn bg-black/80 border border-red-950 hover:border-red-600 rounded-2xl p-5 text-left transition duration-300 hover:-translate-y-1">
-                    <h3 class="text-xl font-bold text-white mb-1"><i class="fa-solid fa-shield-halved text-red-500"></i> Spoofers</h3>
-                    <p class="text-xs text-gray-400">HWID &amp; Anti-Cheat Bypasses</p>
-                </button>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+                <button type="button" data-category="fivem" onclick="filterCategory('fivem')" class="category-btn bg-black/80 border border-red-950 rounded-2xl p-5">FiveM</button>
+                <button type="button" data-category="accounts" onclick="filterCategory('accounts')" class="category-btn bg-black/80 border border-red-950 rounded-2xl p-5">Accounts</button>
+                <button type="button" data-category="r6" onclick="filterCategory('r6')" class="category-btn bg-black/80 border border-red-950 rounded-2xl p-5">R6 Siege</button>
+                <button type="button" data-category="spoofers" onclick="filterCategory('spoofers')" class="category-btn bg-black/80 border border-red-950 rounded-2xl p-5">Spoofers</button>
             </div>
-
-            <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 items-stretch">
-
+            <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                 <button type="button" onclick="openProduct('r6')" class="product-card shop-card r6 flex flex-col">
                     <div class="shop-art art-r6"><i class="fa-solid fa-crosshairs"></i><span>Rainbow Six</span></div>
-                    <div class="p-4">
-                        <h3 class="text-white font-semibold mb-3">R6 Siege Chair</h3>
-                        <div class="flex items-center justify-between text-sm text-gray-400">
-                            <span>$20.99 – $44.99</span>
-                            <span>Undetected</span>
-                        </div>
-                    </div>
+                    <div class="p-4"><h3 class="text-white font-semibold mb-3">R6 Siege Chair</h3><div class="flex justify-between text-sm text-gray-400"><span>$20.99 – $44.99</span><span>Undetected</span></div></div>
                 </button>
-
                 <button type="button" onclick="openProduct('macho')" class="product-card shop-card fivem flex flex-col">
                     <div class="shop-art art-macho"><i class="fa-solid fa-bolt"></i><span>Macho</span></div>
-                    <div class="p-4">
-                        <h3 class="text-white font-semibold mb-3">Macho Executor</h3>
-                        <div class="flex items-center justify-between text-sm text-gray-400">
-                            <span>$7.99 – $65.99</span>
-                            <span>Undetected</span>
-                        </div>
-                    </div>
+                    <div class="p-4"><h3 class="text-white font-semibold mb-3">Macho Executor</h3><div class="flex justify-between text-sm text-gray-400"><span>$7.99 – $65.99</span><span>Undetected</span></div></div>
                 </button>
-
                 <button type="button" onclick="openProduct('engine')" class="product-card shop-card fivem flex flex-col">
                     <div class="shop-art art-engine"><i class="fa-solid fa-fire"></i><span>RedEngine</span></div>
-                    <div class="p-4">
-                        <h3 class="text-white font-semibold mb-3">RedEngine</h3>
-                        <div class="flex items-center justify-between text-sm text-gray-400">
-                            <span>$14.99 – $41.99</span>
-                            <span>Undetected</span>
-                        </div>
-                    </div>
+                    <div class="p-4"><h3 class="text-white font-semibold mb-3">RedEngine</h3><div class="flex justify-between text-sm text-gray-400"><span>$14.99 – $41.99</span><span>Undetected</span></div></div>
                 </button>
-
                 <button type="button" onclick="openProduct('ham')" class="product-card shop-card fivem flex flex-col">
                     <div class="shop-art art-ham"><i class="fa-solid fa-code"></i><span>Ham</span></div>
-                    <div class="p-4">
-                        <h3 class="text-white font-semibold mb-3">Ham FiveM Executor</h3>
-                        <div class="flex items-center justify-between text-sm text-gray-400">
-                            <span>$15.99 – $51.99</span>
-                            <span>Undetected</span>
-                        </div>
-                    </div>
+                    <div class="p-4"><h3 class="text-white font-semibold mb-3">Ham FiveM Executor</h3><div class="flex justify-between text-sm text-gray-400"><span>$15.99 – $51.99</span><span>Undetected</span></div></div>
                 </button>
-
                 <button type="button" onclick="openProduct('steam')" class="product-card shop-card accounts flex flex-col">
                     <div class="shop-art art-steam"><i class="fa-brands fa-steam"></i><span>Steam</span></div>
-                    <div class="p-4">
-                        <h3 class="text-white font-semibold mb-3">Fresh Steam Accounts</h3>
-                        <div class="flex items-center justify-between text-sm text-gray-400">
-                            <span>$0.48</span>
-                            <span>In stock</span>
-                        </div>
-                    </div>
+                    <div class="p-4"><h3 class="text-white font-semibold mb-3">Fresh Steam Accounts</h3><div class="flex justify-between text-sm text-gray-400"><span>$0.48</span><span>In stock</span></div></div>
                 </button>
-
                 <button type="button" onclick="openProduct('rockstar')" class="product-card shop-card accounts flex flex-col">
                     <div class="shop-art art-rockstar"><svg class="neon-mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 52 L32 8 L56 52"/><path d="M18 52 L32 26 L46 52"/><path d="M25 52 L32 38 L39 52"/></svg><span>FiveM</span></div>
-                    <div class="p-4">
-                        <h3 class="text-white font-semibold mb-3">FiveM Rockstar Accounts</h3>
-                        <div class="flex items-center justify-between text-sm text-gray-400">
-                            <span>$0.48</span>
-                            <span>In stock</span>
-                        </div>
-                    </div>
+                    <div class="p-4"><h3 class="text-white font-semibold mb-3">FiveM Rockstar Accounts</h3><div class="flex justify-between text-sm text-gray-400"><span>$0.48</span><span>In stock</span></div></div>
                 </button>
-
                 <button type="button" onclick="openProduct('discord')" class="product-card shop-card accounts flex flex-col">
                     <div class="shop-art art-discord"><i class="fa-brands fa-discord"></i><span>Discord</span></div>
-                    <div class="p-4">
-                        <h3 class="text-white font-semibold mb-3">Discord Accounts</h3>
-                        <div class="flex items-center justify-between text-sm text-gray-400">
-                            <span>$2.00 – $11.99</span>
-                            <span>In stock</span>
-                        </div>
-                    </div>
+                    <div class="p-4"><h3 class="text-white font-semibold mb-3">Discord Accounts</h3><div class="flex justify-between text-sm text-gray-400"><span>$2.00 – $11.99</span><span>In stock</span></div></div>
                 </button>
-
                 <button type="button" onclick="openProduct('nitro')" class="product-card shop-card accounts flex flex-col">
                     <div class="shop-art art-nitro"><i class="fa-solid fa-gem"></i><span>Nitro</span></div>
-                    <div class="p-4">
-                        <h3 class="text-white font-semibold mb-3">Discord Nitro</h3>
-                        <div class="flex items-center justify-between text-sm text-gray-400">
-                            <span>$7.99</span>
-                            <span>In stock</span>
-                        </div>
-                    </div>
+                    <div class="p-4"><h3 class="text-white font-semibold mb-3">Discord Nitro</h3><div class="flex justify-between text-sm text-gray-400"><span>$7.99</span><span>In stock</span></div></div>
                 </button>
-
                 <button type="button" onclick="openProduct('netflix')" class="product-card shop-card accounts flex flex-col">
                     <div class="shop-art art-netflix"><i class="fa-solid fa-film"></i><span>Netflix</span></div>
-                    <div class="p-4">
-                        <h3 class="text-white font-semibold mb-3">Netflix Premium 4K</h3>
-                        <div class="flex items-center justify-between text-sm text-gray-400">
-                            <span>$10.00</span>
-                            <span>In stock</span>
-                        </div>
-                    </div>
+                    <div class="p-4"><h3 class="text-white font-semibold mb-3">Netflix Premium 4K</h3><div class="flex justify-between text-sm text-gray-400"><span>$10.00</span><span>In stock</span></div></div>
                 </button>
-
-                <!-- legacy-cards
-                <article class="product-card fivem bg-black/80 border border-red-950/80 rounded-2xl p-6 flex flex-col justify-between hover:border-red-600/80 transition duration-300 shadow-xl">
-                    <div>
-                        <div class="flex justify-between items-start gap-3 mb-4">
-                            <h3 class="text-2xl font-bold text-white tracking-wide">DELETE-ME</h3>
-                            <span class="shrink-0 px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs font-semibold rounded-full border border-emerald-500/20">UNDETECTED</span>
-                        </div>
-                        <div class="mb-5">
-                            <h4 class="text-xs font-bold text-red-500 uppercase tracking-wider mb-2">Key Features</h4>
-                            <ul class="space-y-1 text-xs text-gray-300">
-                                <li>Advanced Lua execution</li>
-                                <li>Built-in HWID spoofer</li>
-                                <li>Dumper and resource stopper</li>
-                                <li>Event logger and blocker</li>
-                                <li>ESP, aimbot, and streamproof stealth</li>
-                            </ul>
-                        </div>
-                        <div class="mb-5">
-                            <h4 class="text-xs font-bold text-red-500 uppercase tracking-wider mb-2">Plans</h4>
-                            <ul class="space-y-1 text-xs font-semibold text-white">
-                                <li>1 Day — <span class="text-emerald-400">$7.99</span></li>
-                                <li>7 Days — <span class="text-emerald-400">$14.99</span></li>
-                                <li>31 Days — <span class="text-emerald-400">$24.99</span></li>
-                                <li>Lifetime — <span class="text-emerald-400">$65.99</span></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="pt-4 border-t border-red-950/50 flex items-center justify-between">
-                        <div>
-                            <span class="text-xs text-gray-400 block">Starting at</span>
-                            <span class="text-xl font-bold text-white">$7.99</span>
-                        </div>
-                        <a href="https://discord.gg/jGHQj4Ygqf" target="_blank" class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-lg text-sm transition flex items-center gap-2">
-                            <i class="fa-brands fa-discord"></i> BUY VIA TICKET
-                        </a>
-                    </div>
-                </article>
-
-                <article class="product-card fivem bg-black/80 border border-red-950/80 rounded-2xl p-6 flex flex-col justify-between hover:border-red-600/80 transition duration-300 shadow-xl">
-                    <div>
-                        <div class="flex justify-between items-start gap-3 mb-4">
-                            <h3 class="text-2xl font-bold text-white tracking-wide">RedEngine</h3>
-                            <span class="shrink-0 px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs font-semibold rounded-full border border-emerald-500/20">UNDETECTED</span>
-                        </div>
-                        <p class="text-xs text-gray-300 mb-5 leading-relaxed">
-                            Established FiveM Lua executor for custom scripts, premium menus, and developer tools with a long track record in the scene.
-                        </p>
-                        <div class="mb-5">
-                            <h4 class="text-xs font-bold text-red-500 uppercase tracking-wider mb-2">Plans</h4>
-                            <ul class="space-y-1 text-xs font-semibold text-white">
-                                <li>7 Days — <span class="text-emerald-400">$14.99</span></li>
-                                <li>31 Days — <span class="text-emerald-400">$24.99</span></li>
-                                <li>Lifetime — <span class="text-emerald-400">$41.99</span></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="pt-4 border-t border-red-950/50 flex items-center justify-between">
-                        <div>
-                            <span class="text-xs text-gray-400 block">Starting at</span>
-                            <span class="text-xl font-bold text-white">$14.99</span>
-                        </div>
-                        <a href="https://discord.gg/jGHQj4Ygqf" target="_blank" class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-lg text-sm transition flex items-center gap-2">
-                            <i class="fa-brands fa-discord"></i> BUY VIA TICKET
-                        </a>
-                    </div>
-                </article>
-
-                <article class="product-card fivem bg-black/80 border border-red-950/80 rounded-2xl p-6 flex flex-col justify-between hover:border-red-600/80 transition duration-300 shadow-xl">
-                    <div>
-                        <div class="flex justify-between items-start gap-3 mb-4">
-                            <h3 class="text-2xl font-bold text-white tracking-wide">Ham FiveM Executor</h3>
-                            <span class="shrink-0 px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs font-semibold rounded-full border border-emerald-500/20">UNDETECTED</span>
-                        </div>
-                        <div class="mb-5">
-                            <h4 class="text-xs font-bold text-red-500 uppercase tracking-wider mb-2">Key Features</h4>
-                            <ul class="space-y-1 text-xs text-gray-300">
-                                <li>Advanced Lua execution</li>
-                                <li>Built-in resource dumper</li>
-                                <li>Event logger and blocker</li>
-                                <li>ESP, aimbot, and stealth options</li>
-                            </ul>
-                        </div>
-                        <div class="mb-5">
-                            <h4 class="text-xs font-bold text-red-500 uppercase tracking-wider mb-2">Plans</h4>
-                            <ul class="space-y-1 text-xs font-semibold text-white">
-                                <li>7 Days — <span class="text-emerald-400">$15.99</span></li>
-                                <li>31 Days — <span class="text-emerald-400">$29.99</span></li>
-                                <li>Lifetime — <span class="text-emerald-400">$51.99</span></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="pt-4 border-t border-red-950/50 flex items-center justify-between">
-                        <div>
-                            <span class="text-xs text-gray-400 block">Starting at</span>
-                            <span class="text-xl font-bold text-white">$15.99</span>
-                        </div>
-                        <a href="https://discord.gg/jGHQj4Ygqf" target="_blank" class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-lg text-sm transition flex items-center gap-2">
-                            <i class="fa-brands fa-discord"></i> BUY VIA TICKET
-                        </a>
-                    </div>
-                </article>
-
-                <article class="product-card accounts bg-black/80 border border-red-950/80 rounded-2xl p-6 flex flex-col justify-between hover:border-red-600/80 transition duration-300 shadow-xl">
-                    <div>
-                        <div class="flex justify-between items-start gap-3 mb-4">
-                            <h3 class="text-2xl font-bold text-white tracking-wide">Fresh Steam Accounts</h3>
-                            <span class="shrink-0 px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs font-semibold rounded-full border border-emerald-500/20">IN STOCK</span>
-                        </div>
-                        <p class="text-xs text-gray-300 mb-5 leading-relaxed">
-                            Unused Steam logins delivered after checkout, ready to set up immediately.
-                        </p>
-                    </div>
-                    <div class="pt-4 border-t border-red-950/50 flex items-center justify-between">
-                        <div>
-                            <span class="text-xs text-gray-400 block">Starting at</span>
-                            <span class="text-xl font-bold text-white">$0.48</span>
-                        </div>
-                        <a href="https://blackout-market-ot.mysellauth.com/product/steam-accounts" class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-lg text-sm transition">BUY NOW</a>
-                    </div>
-                </article>
-
-                <article class="product-card accounts bg-black/80 border border-red-950/80 rounded-2xl p-6 flex flex-col justify-between hover:border-red-600/80 transition duration-300 shadow-xl">
-                    <div>
-                        <div class="flex justify-between items-start gap-3 mb-4">
-                            <h3 class="text-2xl font-bold text-white tracking-wide">FiveM-Ready Rockstar Accounts</h3>
-                            <span class="shrink-0 px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs font-semibold rounded-full border border-emerald-500/20">IN STOCK</span>
-                        </div>
-                        <p class="text-xs text-gray-300 mb-5 leading-relaxed">
-                            Rockstar logins prepared for FiveM use. Bulk orders available if you need more than one.
-                        </p>
-                    </div>
-                    <div class="pt-4 border-t border-red-950/50 flex items-center justify-between">
-                        <div>
-                            <span class="text-xs text-gray-400 block">Starting at</span>
-                            <span class="text-xl font-bold text-white">$0.48</span>
-                        </div>
-                        <a href="https://blackout-market-ot.mysellauth.com/product/rockstar-account" class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-lg text-sm transition">BUY NOW</a>
-                    </div>
-                </article>
-
-                <article class="product-card accounts bg-black/80 border border-red-950/80 rounded-2xl p-6 flex flex-col justify-between hover:border-red-600/80 transition duration-300 shadow-xl">
-                    <div>
-                        <div class="flex justify-between items-start gap-3 mb-4">
-                            <h3 class="text-2xl font-bold text-white tracking-wide">Aged Discord Accounts</h3>
-                            <span class="shrink-0 px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs font-semibold rounded-full border border-emerald-500/20">IN STOCK</span>
-                        </div>
-                        <p class="text-xs text-gray-300 mb-3 leading-relaxed">
-                            Aged Discord logins sold as single keys or a 10-pack.
-                        </p>
-                        <div class="mb-4 p-2.5 bg-red-950/30 border border-red-900/50 rounded-lg">
-                            <p class="text-xs font-bold text-amber-400">10-pack: $11.99</p>
-                        </div>
-                        <ul class="space-y-0.5 text-xs font-semibold text-white mb-4">
-                            <li>Single — <span class="text-emerald-400">$2.00</span></li>
-                            <li>10 Pack — <span class="text-emerald-400">$11.99</span></li>
-                        </ul>
-                    </div>
-                    <div class="pt-4 border-t border-red-950/50 flex items-center justify-between">
-                        <div>
-                            <span class="text-xs text-gray-400 block">Starting at</span>
-                            <span class="text-xl font-bold text-white">$2.00</span>
-                        </div>
-                        <a href="https://discord.gg/jGHQj4Ygqf" target="_blank" class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-lg text-sm transition flex items-center gap-2">
-                            <i class="fa-brands fa-discord"></i> BUY VIA TICKET
-                        </a>
-                    </div>
-                </article>
-
-                <article class="product-card accounts bg-black/80 border border-red-950/80 rounded-2xl p-6 flex flex-col justify-between hover:border-red-600/80 transition duration-300 shadow-xl">
-                    <div>
-                        <div class="flex justify-between items-start gap-3 mb-4">
-                            <h3 class="text-2xl font-bold text-white tracking-wide">Netflix Premium 4K</h3>
-                            <span class="shrink-0 px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs font-semibold rounded-full border border-emerald-500/20">IN STOCK</span>
-                        </div>
-                        <p class="text-xs text-gray-300 mb-4 leading-relaxed">
-                            4K access listing already on this store, with multi-device playback and ad-free watching.
-                        </p>
-                        <ul class="space-y-1 text-xs text-gray-300 mb-4">
-                            <li>Ultra HD 4K</li>
-                            <li>Ad-free playback</li>
-                            <li>TV, PC, mobile, and consoles</li>
-                        </ul>
-                    </div>
-                    <div class="pt-4 border-t border-red-950/50 flex items-center justify-between">
-                        <div>
-                            <span class="text-xs text-gray-400 block">Starting at</span>
-                            <span class="text-xl font-bold text-white">$10.00</span>
-                        </div>
-                        <a href="https://discord.gg/jGHQj4Ygqf" target="_blank" class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-lg text-sm transition flex items-center gap-2">
-                            <i class="fa-brands fa-discord"></i> BUY VIA TICKET
-                        </a>
-                    </div>
-                </article>
-
-                <article class="product-card accounts bg-black/80 border border-red-950/80 rounded-2xl p-6 flex flex-col justify-between hover:border-red-600/80 transition duration-300 shadow-xl">
-                    <div>
-                        <div class="flex justify-between items-start gap-3 mb-4">
-                            <h3 class="text-2xl font-bold text-white tracking-wide">Discord Nitro (1 Month)</h3>
-                            <span class="shrink-0 px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs font-semibold rounded-full border border-emerald-500/20">IN STOCK</span>
-                        </div>
-                        <p class="text-xs text-gray-300 mb-4 leading-relaxed">
-                            One-month Nitro with custom emoji, HD streaming, and larger uploads.
-                        </p>
-                        <ul class="space-y-1 text-xs text-gray-300 mb-4">
-                            <li>Custom and animated emoji</li>
-                            <li>HD streaming</li>
-                            <li>500MB uploads and two boosts</li>
-                        </ul>
-                    </div>
-                    <div class="pt-4 border-t border-red-950/50 flex items-center justify-between">
-                        <div>
-                            <span class="text-xs text-gray-400 block">1 Month</span>
-                            <span class="text-xl font-bold text-white">$7.99</span>
-                        </div>
-                        <a href="https://discord.gg/jGHQj4Ygqf" target="_blank" class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-lg text-sm transition flex items-center gap-2">
-                            <i class="fa-brands fa-discord"></i> BUY VIA TICKET
-                        </a>
-                    </div>
-                </article>
-                legacy-cards -->
             </div>
-
             <p id="empty-filter" class="hidden text-center text-gray-400 text-sm mt-8">Nothing in this category right now.</p>
         </section>
 
-        <section id="loader" class="hidden px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto py-16">
-            <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
-                <div>
-                    <p class="text-red-500 text-xs font-bold uppercase tracking-widest mb-2">Downloads</p>
-                    <h2 class="font-display text-3xl sm:text-4xl font-bold text-white">Macho Loader</h2>
-                    <p class="text-gray-400 text-sm mt-2">This stays off the product grid. Open the portal only from here.</p>
-                </div>
-            </div>
-            <div class="bg-black/80 border border-red-950/80 rounded-2xl p-6 sm:p-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 hover:border-red-600/80 transition duration-300 shadow-xl">
-                <div>
-                    <h3 class="text-2xl font-bold text-white tracking-wide mb-2">Macho Loader Downloader</h3>
-                    <p class="text-sm text-gray-300 leading-relaxed max-w-2xl">
-                        Opens the official Macho download portal so you can enter your key in a separate window.
-                    </p>
-                </div>
-                <a href="https://machocheats.com/download" target="_blank" class="shrink-0 bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded-xl text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-red-600/20">
-                    <i class="fa-solid fa-download"></i> OPEN DOWNLOAD PORTAL
-                </a>
+        <section id="loader" class="hidden px-4 max-w-7xl mx-auto py-16">
+            <h2 class="text-4xl font-bold text-white mb-6">Macho Loader</h2>
+            <div class="bg-black/80 border border-red-950 rounded-2xl p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+                <p class="text-gray-300 max-w-2xl">Opens the official Macho download portal so you can enter your key.</p>
+                <a href="https://machocheats.com/download" target="_blank" class="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded-xl">OPEN DOWNLOAD PORTAL</a>
             </div>
         </section>
     </div>
 
-    <div id="product-modal" class="hidden fixed inset-0 z-[80] bg-black/70 backdrop-blur-sm p-4 sm:p-8" onclick="if (event.target.id === 'product-modal') closeProduct()">
-        <div class="max-w-5xl mx-auto mt-6 sm:mt-12 bg-[#0c1020] border border-white/10 rounded-2xl shadow-2xl max-h-[85vh] overflow-y-auto">
+    <div id="product-modal" class="hidden fixed inset-0 z-[80] bg-black/70 p-4" onclick="if (event.target.id === 'product-modal') closeProduct()">
+        <div class="max-w-5xl mx-auto mt-10 bg-[#0c1020] border border-white/10 rounded-2xl max-h-[85vh] overflow-y-auto">
             <div class="flex items-center justify-between px-5 py-4 border-b border-white/10">
-                <h2 id="modal-title" class="text-white font-semibold text-lg"></h2>
-                <button type="button" onclick="closeProduct()" class="text-gray-400 hover:text-white text-xl leading-none" aria-label="Close">&times;</button>
+                <h2 id="modal-title" class="text-white font-semibold"></h2>
+                <button type="button" onclick="closeProduct()" class="text-gray-400 text-xl">&times;</button>
             </div>
             <div id="modal-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-5"></div>
         </div>
     </div>
 
-    <footer class="relative z-10 border-t border-red-950/50 bg-black/80">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p class="text-xs text-gray-500">Blackout Market</p>
-            <a href="https://discord.gg/jGHQj4Ygqf" target="_blank" class="text-xs text-red-400 hover:text-red-300 font-semibold flex items-center gap-2">
-                <i class="fa-brands fa-discord"></i> Discord support
-            </a>
-        </div>
-    </footer>
-
     <script>
-        const mobileBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        if (mobileBtn && mobileMenu) {
-            mobileBtn.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-            mobileMenu.querySelectorAll('a').forEach((link) => {
-                link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
-            });
-        }
-
         const TICKET = 'https://discord.gg/jGHQj4Ygqf';
+        const FIVEM = '<svg class="neon-mark" viewBox="0 0 64 64"><path d="M8 52 L32 8 L56 52"/><path d="M18 52 L32 26 L46 52"/><path d="M25 52 L32 38 L39 52"/></svg>';
         const catalog = {
-            r6: { title: 'R6 Siege Chair', art: 'art-r6', icon: 'fa-solid fa-crosshairs', label: 'Rainbow Six', status: 'Undetected', href: TICKET, options: [
-                { name: '7 Days Access', price: '$20.99' },
-                { name: '31 Days Access', price: '$34.99' },
-                { name: 'Lifetime Access', price: '$44.99' }
-            ]},
-            macho: { title: 'Macho Executor', art: 'art-macho', icon: 'fa-solid fa-bolt', label: 'Macho', status: 'Undetected', href: TICKET, options: [
-                { name: '1 Day Access', price: '$7.99' },
-                { name: '7 Days Access', price: '$14.99' },
-                { name: '31 Days Access', price: '$24.99' },
-                { name: 'Lifetime Access', price: '$65.99' }
-            ]},
-            engine: { title: 'RedEngine', art: 'art-engine', icon: 'fa-solid fa-fire', label: 'RedEngine', status: 'Undetected', href: TICKET, options: [
-                { name: '7 Days Access', price: '$14.99' },
-                { name: '31 Days Access', price: '$24.99' },
-                { name: 'Lifetime Access', price: '$41.99' }
-            ]},
-            ham: { title: 'Ham FiveM Executor', art: 'art-ham', icon: 'fa-solid fa-code', label: 'Ham', status: 'Undetected', href: TICKET, options: [
-                { name: '7 Days Access', price: '$15.99' },
-                { name: '31 Days Access', price: '$29.99' },
-                { name: 'Lifetime Access', price: '$51.99' }
-            ]},
-            steam: { title: 'Fresh Steam Accounts', art: 'art-steam', icon: 'fa-brands fa-steam', label: 'Steam', status: 'In stock', href: 'https://blackout-market-ot.mysellauth.com/product/steam-accounts', options: [
-                { name: 'Fresh Steam Account', price: '$0.48' }
-            ]},
-            rockstar: { title: 'FiveM Rockstar Accounts', art: 'art-rockstar', icon: 'fivem', label: 'FiveM', status: 'In stock', href: 'https://blackout-market-ot.mysellauth.com/product/rockstar-account', options: [
-                { name: 'FiveM-Ready Rockstar Account', price: '$0.48' }
-            ]},
-            discord: { title: 'Discord Accounts', art: 'art-discord', icon: 'fa-brands fa-discord', label: 'Discord', status: 'In stock', href: TICKET, options: [
-                { name: 'Single Aged Account', price: '$2.00' },
-                { name: '10 Pack Bundle', price: '$11.99' }
-            ]},
-            nitro: { title: 'Discord Nitro', art: 'art-nitro', icon: 'fa-solid fa-gem', label: 'Nitro', status: 'In stock', href: TICKET, options: [
-                { name: '1 Month Nitro', price: '$7.99' }
-            ]},
-            netflix: { title: 'Netflix Premium 4K', art: 'art-netflix', icon: 'fa-solid fa-film', label: 'Netflix', status: 'In stock', href: TICKET, options: [
-                { name: 'Premium 4K', price: '$10.00' }
-            ]}
+            r6: { title: 'R6 Siege Chair', art: 'art-r6', icon: 'fa-solid fa-crosshairs', label: 'Rainbow Six', status: 'Undetected', href: TICKET, options: [{ name: '7 Days Access', price: '$20.99' }, { name: '31 Days Access', price: '$34.99' }, { name: 'Lifetime Access', price: '$44.99' }] },
+            macho: { title: 'Macho Executor', art: 'art-macho', icon: 'fa-solid fa-bolt', label: 'Macho', status: 'Undetected', href: TICKET, options: [{ name: '1 Day Access', price: '$7.99' }, { name: '7 Days Access', price: '$14.99' }, { name: '31 Days Access', price: '$24.99' }, { name: 'Lifetime Access', price: '$65.99' }] },
+            engine: { title: 'RedEngine', art: 'art-engine', icon: 'fa-solid fa-fire', label: 'RedEngine', status: 'Undetected', href: TICKET, options: [{ name: '7 Days Access', price: '$14.99' }, { name: '31 Days Access', price: '$24.99' }, { name: 'Lifetime Access', price: '$41.99' }] },
+            ham: { title: 'Ham FiveM Executor', art: 'art-ham', icon: 'fa-solid fa-code', label: 'Ham', status: 'Undetected', href: TICKET, options: [{ name: '7 Days Access', price: '$15.99' }, { name: '31 Days Access', price: '$29.99' }, { name: 'Lifetime Access', price: '$51.99' }] },
+            steam: { title: 'Fresh Steam Accounts', art: 'art-steam', icon: 'fa-brands fa-steam', label: 'Steam', status: 'In stock', href: 'https://blackout-market-ot.mysellauth.com/product/steam-accounts', options: [{ name: 'Fresh Steam Account', price: '$0.48' }] },
+            rockstar: { title: 'FiveM Rockstar Accounts', art: 'art-rockstar', icon: 'fivem', label: 'FiveM', status: 'In stock', href: 'https://blackout-market-ot.mysellauth.com/product/rockstar-account', options: [{ name: 'FiveM-Ready Rockstar Account', price: '$0.48' }] },
+            discord: { title: 'Discord Accounts', art: 'art-discord', icon: 'fa-brands fa-discord', label: 'Discord', status: 'In stock', href: TICKET, options: [{ name: 'Single Aged Account', price: '$2.00' }, { name: '10 Pack Bundle', price: '$11.99' }] },
+            nitro: { title: 'Discord Nitro', art: 'art-nitro', icon: 'fa-solid fa-gem', label: 'Nitro', status: 'In stock', href: TICKET, options: [{ name: '1 Month Nitro', price: '$7.99' }] },
+            netflix: { title: 'Netflix Premium 4K', art: 'art-netflix', icon: 'fa-solid fa-film', label: 'Netflix', status: 'In stock', href: TICKET, options: [{ name: 'Premium 4K', price: '$10.00' }] }
         };
-
-        function openProduct(id) {
-            const item = catalog[id];
-            if (!item) return;
-            document.getElementById('modal-title').textContent = item.title;
-            const fivemMark = '<svg class="neon-mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 52 L32 8 L56 52"/><path d="M18 52 L32 26 L46 52"/><path d="M25 52 L32 38 L39 52"/></svg>';
-            const grid = document.getElementById('modal-grid');
-            grid.innerHTML = item.options.map((option) => (
-                '<a class="shop-card flex flex-col" href="' + item.href + '" target="_blank">' +
-                    '<div class="shop-art ' + item.art + '">' + (item.icon === 'fivem' ? fivemMark : '<i class="' + item.icon + '"></i>') + '<span>' + item.label + '</span></div>' +
-                    '<div class="p-4">' +
-                        '<h3 class="text-white font-semibold mb-3">' + option.name + '</h3>' +
-                        '<div class="flex items-center justify-between text-sm text-gray-400">' +
-                            '<span>' + option.price + '</span><span>' + item.status + '</span>' +
-                        '</div>' +
-                    '</div>' +
-                '</a>'
-            )).join('');
-            document.getElementById('product-modal').classList.remove('hidden');
-        }
-
-        function closeProduct() {
-            document.getElementById('product-modal').classList.add('hidden');
-        }
-
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape') closeProduct();
-        });
-
-        function showHome() {
-            document.getElementById('home').classList.remove('hidden');
-            document.getElementById('cheats').classList.add('hidden');
-            document.getElementById('loader').classList.add('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function showStore() {
-            document.getElementById('home').classList.add('hidden');
-            document.getElementById('loader').classList.add('hidden');
-            document.getElementById('cheats').classList.remove('hidden');
-            filterCategory('all');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function showLoader() {
-            document.getElementById('home').classList.add('hidden');
-            document.getElementById('cheats').classList.add('hidden');
-            document.getElementById('loader').classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => document.getElementById('mobile-menu').classList.toggle('hidden'));
+        function showHome() { document.getElementById('home').classList.remove('hidden'); document.getElementById('cheats').classList.add('hidden'); document.getElementById('loader').classList.add('hidden'); window.scrollTo({ top: 0 }); }
+        function showStore() { document.getElementById('home').classList.add('hidden'); document.getElementById('loader').classList.add('hidden'); document.getElementById('cheats').classList.remove('hidden'); filterCategory('all'); window.scrollTo({ top: 0 }); }
+        function showLoader() { document.getElementById('home').classList.add('hidden'); document.getElementById('cheats').classList.add('hidden'); document.getElementById('loader').classList.remove('hidden'); window.scrollTo({ top: 0 }); }
+        function openStoreCategory(category) { showStore(); filterCategory(category); }
         function filterCategory(category) {
-            const cards = document.querySelectorAll('.product-card');
-            const empty = document.getElementById('empty-filter');
             let visible = 0;
-
-            cards.forEach((card) => {
+            document.querySelectorAll('.product-card').forEach((card) => {
                 const show = category === 'all' || card.classList.contains(category);
                 card.style.display = show ? 'flex' : 'none';
                 if (show) visible += 1;
             });
-
-            document.querySelectorAll('.category-btn').forEach((btn) => {
-                btn.classList.toggle('active', btn.getAttribute('data-category') === category);
-            });
-
-            if (empty) empty.classList.toggle('hidden', visible > 0);
+            document.querySelectorAll('.category-btn').forEach((btn) => btn.classList.toggle('active', btn.getAttribute('data-category') === category));
+            document.getElementById('empty-filter').classList.toggle('hidden', visible > 0);
         }
-
-        function openStoreCategory(category) {
-            showStore();
-            filterCategory(category);
+        function openProduct(id) {
+            const item = catalog[id];
+            document.getElementById('modal-title').textContent = item.title;
+            document.getElementById('modal-grid').innerHTML = item.options.map((option) =>
+                '<a class="shop-card flex flex-col" href="' + item.href + '" target="_blank"><div class="shop-art ' + item.art + '">' +
+                (item.icon === 'fivem' ? FIVEM : '<i class="' + item.icon + '"></i>') +
+                '<span>' + item.label + '</span></div><div class="p-4"><h3 class="text-white font-semibold mb-3">' + option.name +
+                '</h3><div class="flex justify-between text-sm text-gray-400"><span>' + option.price + '</span><span>' + item.status + '</span></div></div></a>'
+            ).join('');
+            document.getElementById('product-modal').classList.remove('hidden');
         }
-
-        (function startZeroGravity() {
+        function closeProduct() { document.getElementById('product-modal').classList.add('hidden'); }
+        (function () {
             const canvas = document.getElementById('zero-g-canvas');
             const layer = document.getElementById('zero-g');
-            if (!canvas || !layer) return;
             const ctx = canvas.getContext('2d');
-            let width = 0;
-            let height = 0;
-            let particles = [];
-            const mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2, tx: window.innerWidth / 2, ty: window.innerHeight / 2 };
+            let width = 0, height = 0, particles = [];
+            const mouse = { x: innerWidth / 2, y: innerHeight / 2, tx: innerWidth / 2, ty: innerHeight / 2 };
             const nebulae = layer.querySelectorAll('.nebula-drift');
-
-            function resize() {
-                width = canvas.width = window.innerWidth;
-                height = canvas.height = window.innerHeight;
-            }
-
+            function resize() { width = canvas.width = innerWidth; height = canvas.height = innerHeight; }
             function spawn(count) {
                 particles = [];
-                for (let i = 0; i < count; i += 1) {
-                    const glow = Math.random() > 0.88;
+                for (let i = 0; i < count; i++) {
                     const angle = Math.random() * Math.PI * 2;
                     const speed = 0.35 + Math.random() * 0.95;
-                    particles.push({
-                        x: Math.random() * width,
-                        y: Math.random() * height,
-                        driftX: Math.cos(angle) * speed,
-                        driftY: Math.sin(angle) * speed,
-                        kickX: 0,
-                        kickY: 0,
-                        r: glow ? Math.random() * 2.4 + 1.2 : Math.random() * 1.4 + 0.3,
-                        a: glow ? Math.random() * 0.45 + 0.25 : Math.random() * 0.55 + 0.15,
-                        red: glow
-                    });
+                    particles.push({ x: Math.random() * width, y: Math.random() * height, driftX: Math.cos(angle) * speed, driftY: Math.sin(angle) * speed, kickX: 0, kickY: 0, r: Math.random() * 1.6 + 0.4, a: Math.random() * 0.5 + 0.25 });
                 }
             }
-
-            window.addEventListener('mousemove', (event) => {
-                mouse.tx = event.clientX;
-                mouse.ty = event.clientY;
-                layer.style.setProperty('--mx', event.clientX + 'px');
-                layer.style.setProperty('--my', event.clientY + 'px');
-            });
-
+            addEventListener('mousemove', (e) => { mouse.tx = e.clientX; mouse.ty = e.clientY; layer.style.setProperty('--mx', e.clientX + 'px'); layer.style.setProperty('--my', e.clientY + 'px'); });
             function tick() {
-                mouse.x += (mouse.tx - mouse.x) * 0.08;
-                mouse.y += (mouse.ty - mouse.y) * 0.08;
-
-                const nx = (mouse.x / Math.max(width, 1) - 0.5) * 40;
-                const ny = (mouse.y / Math.max(height, 1) - 0.5) * 40;
+                mouse.x += (mouse.tx - mouse.x) * 0.08; mouse.y += (mouse.ty - mouse.y) * 0.08;
                 const t = Date.now() / 1000;
                 nebulae.forEach((el, index) => {
                     const depth = (index + 1) * 0.55;
-                    const idleX = Math.sin(t * 0.4 + index) * 18;
-                    const idleY = Math.cos(t * 0.35 + index) * 16;
-                    el.style.transform = 'translate3d(' + (nx * depth + idleX) + 'px,' + (ny * depth + idleY) + 'px,0)';
+                    el.style.transform = 'translate3d(' + ((mouse.x / Math.max(width, 1) - 0.5) * 40 * depth + Math.sin(t * 0.4 + index) * 18) + 'px,' + ((mouse.y / Math.max(height, 1) - 0.5) * 40 * depth + Math.cos(t * 0.35 + index) * 16) + 'px,0)';
                 });
-
                 ctx.clearRect(0, 0, width, height);
-                const linkRadius = 260;
-
-                for (let i = 0; i < particles.length; i += 1) {
-                    const p = particles[i];
-                    const dx = p.x - mouse.x;
-                    const dy = p.y - mouse.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                    const radius = 160;
-
-                    if (dist < radius) {
-                        const force = (1 - dist / radius) * 0.08;
-                        p.kickX += (dx / dist) * force;
-                        p.kickY += (dy / dist) * force;
-                    }
-
-                    p.kickX *= 0.94;
-                    p.kickY *= 0.94;
-                    p.x += p.driftX + p.kickX;
-                    p.y += p.driftY + p.kickY;
-
-                    if (p.x < -8) p.x = width + 8;
-                    if (p.x > width + 8) p.x = -8;
-                    if (p.y < -8) p.y = height + 8;
-                    if (p.y > height + 8) p.y = -8;
-
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                    ctx.fillStyle = p.red
-                        ? 'rgba(255, 70, 70,' + p.a + ')'
-                        : 'rgba(255, 255, 255,' + Math.min(1, p.a + 0.15) + ')';
-                    ctx.fill();
-
-                    if (p.red) {
-                        ctx.beginPath();
-                        ctx.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2);
-                        ctx.fillStyle = 'rgba(255, 26, 26, 0.12)';
-                        ctx.fill();
-                    }
-                }
-
-                ctx.lineCap = 'round';
-                for (let i = 0; i < particles.length; i += 1) {
-                    const p = particles[i];
-                    const dx = p.x - mouse.x;
-                    const dy = p.y - mouse.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                    if (dist >= linkRadius) continue;
-
-                    const strength = 1 - dist / linkRadius;
-                    ctx.beginPath();
-                    ctx.moveTo(p.x, p.y);
-                    ctx.lineTo(mouse.x, mouse.y);
-                    ctx.strokeStyle = 'rgba(255, 90, 90,' + (0.12 + strength * 0.38) + ')';
-                    ctx.lineWidth = 1 + strength * 0.8;
-                    ctx.stroke();
-                }
+                particles.forEach((p) => {
+                    const dx = p.x - mouse.x, dy = p.y - mouse.y, dist = Math.hypot(dx, dy) || 1;
+                    if (dist < 160) { const force = (1 - dist / 160) * 0.08; p.kickX += (dx / dist) * force; p.kickY += (dy / dist) * force; }
+                    p.kickX *= 0.94; p.kickY *= 0.94; p.x += p.driftX + p.kickX; p.y += p.driftY + p.kickY;
+                    if (p.x < -8) p.x = width + 8; if (p.x > width + 8) p.x = -8; if (p.y < -8) p.y = height + 8; if (p.y > height + 8) p.y = -8;
+                    ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255,255,255,' + p.a + ')'; ctx.fill();
+                });
+                particles.forEach((p) => {
+                    const dist = Math.hypot(p.x - mouse.x, p.y - mouse.y);
+                    if (dist >= 260) return;
+                    const strength = 1 - dist / 260;
+                    ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(mouse.x, mouse.y);
+                    ctx.strokeStyle = 'rgba(255,90,90,' + (0.12 + strength * 0.38) + ')'; ctx.lineWidth = 1 + strength * 0.8; ctx.stroke();
+                });
                 requestAnimationFrame(tick);
             }
-
-            resize();
-            spawn(Math.min(520, Math.floor((window.innerWidth * window.innerHeight) / 3800)));
-            window.addEventListener('resize', () => {
-                resize();
-                spawn(Math.min(520, Math.floor((window.innerWidth * window.innerHeight) / 3800)));
-            });
+            resize(); spawn(Math.min(520, Math.floor((innerWidth * innerHeight) / 3800)));
+            addEventListener('resize', () => { resize(); spawn(Math.min(520, Math.floor((innerWidth * innerHeight) / 3800))); });
             tick();
         })();
     </script>
