@@ -226,8 +226,32 @@
             ham: { title: 'Ham FiveM Executor', art: 'art-ham', icon: 'fa-solid fa-code', label: 'Ham', status: 'Undetected', href: TICKET, options: [{ name: '7 Days Access', price: '$15.99' }, { name: '31 Days Access', price: '$29.99' }, { name: 'Lifetime Access', price: '$51.99' }] },
             steam: { title: 'Fresh Steam Accounts', art: 'art-steam', icon: 'fa-brands fa-steam', label: 'Steam', status: 'In stock', href: 'https://blackout-market-ot.mysellauth.com/product/steam-accounts', options: [{ name: 'Fresh Steam Account', price: '$0.48' }] },
             rockstar: { title: 'FiveM Rockstar Accounts', art: 'art-rockstar', icon: 'fivem', label: 'FiveM', status: 'In stock', href: 'https://blackout-market-ot.mysellauth.com/product/rockstar-account', options: [{ name: 'FiveM-Ready Rockstar Account', price: '$0.48' }] },
-            discord: { title: 'Discord Accounts', art: 'art-discord', icon: 'fa-brands fa-discord', label: 'Discord', status: 'In stock', href: TICKET, options: [{ name: 'Single Aged Account', price: '$2.00' }, { name: '10 Pack Bundle', price: '$11.99' }] },
-            nitro: { title: 'Discord Nitro', art: 'art-nitro', icon: 'fa-solid fa-gem', label: 'Nitro', status: 'In stock', href: TICKET, options: [{ name: 'Discord Nitro', price: '$7.99' }] },
+            
+      discord: { 
+    title: 'Discord Accounts', 
+    art: 'art-discord', 
+    icon: 'fa-brands fa-discord', 
+    label: 'Discord', 
+    status: 'In stock', 
+    href: '#', 
+  href: '#',
+options: [
+    { name: 'E-Mail Verified', price: '€0.15', link: 'https://blackout-market-ot.mysellauth.com/product/e-mail-verified' },
+    { name: 'E-Mail Verified + Phone Verified', price: '€0.24', link: 'https://blackout-market-ot.mysellauth.com/product/e-mail-verified-phone-verified' },
+    { name: '3+ Months Aged E-Mail + Phone Verified', price: '€0.32', link: 'https://blackout-market-ot.mysellauth.com/product/3-months-aged-e-mail-phone-verified' },
+    { name: '2023 Accounts', price: '€0.95', link: 'https://blackout-market-ot.mysellauth.com/product/2023-accounts' },
+    { name: '2021 Accounts', price: '€1.25', link: 'https://blackout-market-ot.mysellauth.com/product/2021-accounts' },
+    { name: '2020 Accounts', price: '€1.55', link: 'https://blackout-market-ot.mysellauth.com/product/2020-accounts' },
+    { name: '4 Letters Nick E-Mail + SMS', price: '€1.85', link: 'https://blackout-market-ot.mysellauth.com/product/4-letters-nick-e-mail-sms' },
+    { name: '1 Month Nitro + 2 Boosts + Phone Verified', price: '€2.05', link: 'https://blackout-market-ot.mysellauth.com/product/1-month-nitro-2-boosts-phone-verified' },
+    { name: '2019 Accounts', price: '€2.60', link: 'https://blackout-market-ot.mysellauth.com/product/2019-accounts' },
+    { name: '2018 Accounts', price: '€3.75', link: 'https://blackout-market-ot.mysellauth.com/product/2018-accounts' },
+    { name: '2017 Accounts', price: '€4.75', link: 'https://blackout-market-ot.mysellauth.com/product/2017-accounts' },
+    { name: '3 Month Nitro + 2 Boosts + Phone Verified', price: '€5.25', link: 'https://blackout-market-ot.mysellauth.com/product/3-month-nitro-2-boosts-phone-verified' },
+    { name: '2016 Accounts', price: '€11.00', link: 'https://blackout-market-ot.mysellauth.com/product/2016-accounts' },
+    { name: '10 Pack Bundle', price: '€12.00', link: 'https://blackout-market-ot.mysellauth.com/product/10-pack-bundle' }
+]
+},
             netflix: { title: 'Netflix Premium 4K', art: 'art-netflix', icon: 'fa-solid fa-film', label: 'Netflix', status: 'In stock', href: TICKET, options: [{ name: 'Premium 4K', price: '$10.00' }] }
         };
         document.getElementById('mobile-menu-btn').addEventListener('click', () => document.getElementById('mobile-menu').classList.toggle('hidden'));
@@ -235,7 +259,7 @@
         function showStore() { document.getElementById('home').classList.add('hidden'); document.getElementById('loader').classList.add('hidden'); document.getElementById('cheats').classList.remove('hidden'); filterCategory('all'); window.scrollTo({ top: 0 }); }
         function showLoader() { document.getElementById('home').classList.add('hidden'); document.getElementById('cheats').classList.add('hidden'); document.getElementById('loader').classList.remove('hidden'); window.scrollTo({ top: 0 }); }
         function openStoreCategory(category) { showStore(); filterCategory(category); }
-        function filterCategory(category) {
+        function filterCategory(category) {D
             let visible = 0;
             document.querySelectorAll('.product-card').forEach((card) => {
                 const show = category === 'all' || card.classList.contains(category);
@@ -245,30 +269,16 @@
             document.querySelectorAll('.category-btn').forEach((btn) => btn.classList.toggle('active', btn.getAttribute('data-category') === category));
             document.getElementById('empty-filter').classList.toggle('hidden', visible > 0);
         }
-        function openProduct(id) {
-            const item = catalog[id];
-            if (item.options.length === 1) {
-                window.open(item.options[0].href || item.href, '_blank');
-                return;
-            }
-            document.getElementById('modal-title').textContent = item.title;
-            document.getElementById('modal-grid').innerHTML = item.options.map((option) =>
-                '<a class="shop-card flex flex-col" href="' + (option.href || item.href) + '" target="_blank"><div class="shop-art ' + item.art + '">' +
-                (item.icon === 'fivem' ? FIVEM : '<i class="' + item.icon + '"></i>') +
-                '<span>' + item.label + '</span></div><div class="p-4"><h3 class="text-white font-semibold mb-3">' + option.name +
-                '</h3><div class="flex justify-between text-sm text-gray-400"><span>' + option.price + '</span><span>' + item.status + '</span></div></div></a>'
-            ).join('');
-            document.getElementById('product-modal').classList.remove('hidden');
-        }
+    
         function closeProduct() { document.getElementById('product-modal').classList.add('hidden'); }
-        (function () {
-            const canvas = document.getElementById('zero-g-canvas');
-            const layer = document.getElementById('zero-g');
-            const ctx = canvas.getContext('2d');
-            let width = 0, height = 0, particles = [];
-            const mouse = { x: innerWidth / 2, y: innerHeight / 2, tx: innerWidth / 2, ty: innerHeight / 2 };
-            const nebulae = layer.querySelectorAll('.nebula-drift');
-            function resize() { width = canvas.width = innerWidth; height = canvas.height = innerHeight; }
+       function openProduct(id) {
+    const item = catalog[id];
+    document.getElementById('modal-title').textContent = item.title;
+    document.getElementById('modal-grid').innerHTML = item.options.map(option => 
+        `<a class="shop-card flex flex-col" href="${option.link}" target="_blank"><div class="shop-art ${item.art}"><i class="${item.icon}"><span>${item.label}</span></i></div><div class="p-4"><h3 class="text-white font-semibold mb-3">${option.name}</h3><div class="flex justify-between text-sm text-gray-400"><span>${option.price}</span><span>${item.status}</span></div></div></a>`
+    ).join('');
+    document.getElementById('product-modal').classList.remove('hidden');
+}
             function spawn(count) {
                 particles = [];
                 for (let i = 0; i < count; i++) {
