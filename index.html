@@ -40,6 +40,12 @@
             transition: transform 0.2s ease, border-color 0.2s ease;
         }
         .shop-card:hover { transform: translateY(-4px); border-color: rgba(255, 26, 26, 0.45); }
+        .detail-art .shop-art { height: 240px; border-radius: 1rem; }
+        .purchase-panel { background: rgba(8, 6, 12, 0.92); border: 1px solid rgba(255,255,255,0.08); border-radius: 1rem; padding: 1.25rem; }
+        .detail-list { list-style: none; padding: 0; margin: 0; }
+        .detail-list li { position: relative; padding-left: 1.1rem; margin-top: 0.45rem; color: #d1d5db; font-size: 0.875rem; line-height: 1.45; }
+        .detail-list li::before { content: ''; position: absolute; left: 0; top: 0.45rem; width: 0.4rem; height: 0.4rem; border-radius: 999px; background: #ff1a1a; }
+        .shop-card .p-4 { min-height: 5.5rem; }
         .shop-art {
             --neon: #5dfff6;
             --glow: rgba(34, 211, 238, 0.85);
@@ -61,12 +67,17 @@
         .shop-art i, .shop-art .neon-mark { position: relative; z-index: 1; animation: neon-breathe 2.6s ease-in-out infinite, icon-float 4.6s ease-in-out infinite; }
         .shop-art i { font-size: 5rem; color: transparent; -webkit-text-stroke: 2px var(--neon); }
         .shop-art .neon-mark { width: 5.4rem; height: 5.4rem; fill: none; stroke: var(--neon); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+        .shop-art .neon-mark .star { fill: var(--neon); stroke: none; }
         .shop-art span { position: absolute; z-index: 1; left: 12px; bottom: 12px; letter-spacing: 0.16em; font-size: 10px; font-weight: 800; color: var(--neon); text-transform: uppercase; padding: 5px 10px; border-radius: 999px; background: rgba(0,0,0,0.4); border: 1px solid color-mix(in srgb, var(--neon) 55%, transparent); }
         .art-discord { --neon: #5dfff6; --glow: rgba(45, 226, 255, 0.95); }
         .art-nitro { --neon: #d8b4fe; --glow: rgba(168, 85, 247, 0.9); }
         .art-steam { --neon: #7dd3fc; --glow: rgba(14, 165, 233, 0.9); }
         .art-rockstar { --neon: #fde68a; --glow: rgba(245, 158, 11, 0.9); }
         .art-netflix { --neon: #fda4a4; --glow: rgba(239, 68, 68, 0.9); }
+        .art-tiktok { --neon: #25f4ee; --glow: rgba(254, 44, 85, 0.9); }
+        .art-youtube { --neon: #ff4d4d; --glow: rgba(255, 0, 0, 0.9); }
+        .art-paramount { --neon: #7eb6ff; --glow: rgba(0, 100, 255, 0.9); }
+        .art-blank { --neon: #6b7280; --glow: rgba(255,255,255,0.08); background: #0a0a0c; }
         .art-r6 { --neon: #fb7185; --glow: rgba(225, 29, 72, 0.9); }
         .art-macho { --neon: #fdba74; --glow: rgba(249, 115, 22, 0.9); }
         .art-engine { --neon: #fb923c; --glow: rgba(234, 88, 12, 0.85); }
@@ -156,44 +167,7 @@
                 <button type="button" data-category="r6" onclick="filterCategory('r6')" class="category-btn bg-black/80 border border-red-950 rounded-2xl p-5">R6 Siege</button>
                 <button type="button" data-category="spoofers" onclick="filterCategory('spoofers')" class="category-btn bg-black/80 border border-red-950 rounded-2xl p-5">Spoofers</button>
             </div>
-            <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                <button type="button" onclick="openProduct('r6')" class="product-card shop-card r6 flex flex-col">
-                    <div class="shop-art art-r6"><i class="fa-solid fa-crosshairs"></i><span>Rainbow Six</span></div>
-                    <div class="p-4"><h3 class="text-white font-semibold mb-3">R6 Siege Chair</h3><div class="flex justify-between text-sm text-gray-400"><span>$20.99 – $44.99</span><span>Undetected</span></div></div>
-                </button>
-                <button type="button" onclick="openProduct('macho')" class="product-card shop-card fivem flex flex-col">
-                    <div class="shop-art art-macho"><i class="fa-solid fa-bolt"></i><span>Macho</span></div>
-                    <div class="p-4"><h3 class="text-white font-semibold mb-3">Macho Executor</h3><div class="flex justify-between text-sm text-gray-400"><span>$7.99 – $65.99</span><span>Undetected</span></div></div>
-                </button>
-                <button type="button" onclick="openProduct('engine')" class="product-card shop-card fivem flex flex-col">
-                    <div class="shop-art art-engine"><i class="fa-solid fa-fire"></i><span>RedEngine</span></div>
-                    <div class="p-4"><h3 class="text-white font-semibold mb-3">RedEngine</h3><div class="flex justify-between text-sm text-gray-400"><span>$14.99 – $41.99</span><span>Undetected</span></div></div>
-                </button>
-                <button type="button" onclick="openProduct('ham')" class="product-card shop-card fivem flex flex-col">
-                    <div class="shop-art art-ham"><i class="fa-solid fa-code"></i><span>Ham</span></div>
-                    <div class="p-4"><h3 class="text-white font-semibold mb-3">Ham FiveM Executor</h3><div class="flex justify-between text-sm text-gray-400"><span>$15.99 – $51.99</span><span>Undetected</span></div></div>
-                </button>
-                <button type="button" onclick="openProduct('steam')" class="product-card shop-card accounts flex flex-col">
-                    <div class="shop-art art-steam"><i class="fa-brands fa-steam"></i><span>Steam</span></div>
-                    <div class="p-4"><h3 class="text-white font-semibold mb-3">Fresh Steam Accounts</h3><div class="flex justify-between text-sm text-gray-400"><span>$0.48</span><span>In stock</span></div></div>
-                </button>
-                <button type="button" onclick="openProduct('rockstar')" class="product-card shop-card accounts flex flex-col">
-                    <div class="shop-art art-rockstar"><svg class="neon-mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 52 L32 8 L56 52"/><path d="M18 52 L32 26 L46 52"/><path d="M25 52 L32 38 L39 52"/></svg><span>FiveM</span></div>
-                    <div class="p-4"><h3 class="text-white font-semibold mb-3">FiveM Rockstar Accounts</h3><div class="flex justify-between text-sm text-gray-400"><span>$0.48</span><span>In stock</span></div></div>
-                </button>
-                <button type="button" onclick="openProduct('discord')" class="product-card shop-card accounts flex flex-col">
-                    <div class="shop-art art-discord"><i class="fa-brands fa-discord"></i><span>Discord</span></div>
-                    <div class="p-4"><h3 class="text-white font-semibold mb-3">Discord Accounts</h3><div class="flex justify-between text-sm text-gray-400"><span>$2.00 – $11.99</span><span>In stock</span></div></div>
-                </button>
-                <button type="button" onclick="openProduct('nitro')" class="product-card shop-card accounts flex flex-col">
-                    <div class="shop-art art-nitro"><i class="fa-solid fa-gem"></i><span>Nitro</span></div>
-                    <div class="p-4"><h3 class="text-white font-semibold mb-3">Discord Nitro</h3><div class="flex justify-between text-sm text-gray-400"><span>$7.99</span><span>In stock</span></div></div>
-                </button>
-                <button type="button" onclick="openProduct('netflix')" class="product-card shop-card accounts flex flex-col">
-                    <div class="shop-art art-netflix"><i class="fa-solid fa-film"></i><span>Netflix</span></div>
-                    <div class="p-4"><h3 class="text-white font-semibold mb-3">Netflix Premium 4K</h3><div class="flex justify-between text-sm text-gray-400"><span>$10.00</span><span>In stock</span></div></div>
-                </button>
-            </div>
+            <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"></div>
             <p id="empty-filter" class="hidden text-center text-gray-400 text-sm mt-8">Nothing in this category right now.</p>
         </section>
 
@@ -204,36 +178,175 @@
                 <a href="https://machocheats.com/download" target="_blank" class="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded-xl">OPEN DOWNLOAD PORTAL</a>
             </div>
         </section>
-    </div>
 
-    <div id="product-modal" class="hidden fixed inset-0 z-[80] bg-black/70 p-4" onclick="if (event.target.id === 'product-modal') closeProduct()">
-        <div class="max-w-5xl mx-auto mt-10 bg-[#0c1020] border border-white/10 rounded-2xl max-h-[85vh] overflow-y-auto">
-            <div class="flex items-center justify-between px-5 py-4 border-b border-white/10">
-                <h2 id="modal-title" class="text-white font-semibold"></h2>
-                <button type="button" onclick="closeProduct()" class="text-gray-400 text-xl">&times;</button>
-            </div>
-            <div id="modal-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-5"></div>
-        </div>
+        <section id="options-page" class="hidden py-12 px-4 max-w-7xl mx-auto">
+            <button type="button" onclick="showStore(false)" class="text-sm font-semibold text-gray-400 hover:text-white mb-8">&larr; Back to store</button>
+            <h2 id="options-title" class="text-3xl font-bold text-white mb-8"></h2>
+            <div id="options-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"></div>
+        </section>
+
+        <section id="product-page" class="hidden py-12 px-4 max-w-6xl mx-auto">
+            <button type="button" onclick="backToOptions()" class="text-sm font-semibold text-gray-400 hover:text-white mb-8">&larr; Back</button>
+            <div id="product-page-body"></div>
+        </section>
     </div>
 
     <script>
         const TICKET = 'https://discord.gg/jGHQj4Ygqf';
         const FIVEM = '<svg class="neon-mark" viewBox="0 0 64 64"><path d="M8 52 L32 8 L56 52"/><path d="M18 52 L32 26 L46 52"/><path d="M25 52 L32 38 L39 52"/></svg>';
+        const PARAMOUNT = '<svg class="neon-mark" viewBox="0 0 64 64"><path d="M8 54 L32 14 L56 54"/><path d="M20 54 L32 32 L44 54"/><circle class="star" cx="32" cy="8" r="1.7"/><circle class="star" cx="18" cy="14" r="1.15"/><circle class="star" cx="46" cy="14" r="1.15"/><circle class="star" cx="11" cy="26" r="1.05"/><circle class="star" cx="53" cy="26" r="1.05"/></svg>';
+        // Each entry is one store box. Copy a block, give it a new id, and edit the fields.
+        // category: fivem | accounts | r6 | spoofers
+        // Each product's options list ends with blank choices. Fill one in by setting its name and price.
         const catalog = {
-            r6: { title: 'R6 Siege Chair', art: 'art-r6', icon: 'fa-solid fa-crosshairs', label: 'Rainbow Six', status: 'Undetected', href: TICKET, options: [{ name: '7 Days Access', price: '$20.99' }, { name: '31 Days Access', price: '$34.99' }, { name: 'Lifetime Access', price: '$44.99' }] },
-            macho: { title: 'Macho Executor', art: 'art-macho', icon: 'fa-solid fa-bolt', label: 'Macho', status: 'Undetected', href: TICKET, options: [{ name: '1 Day Access', price: '$7.99' }, { name: '7 Days Access', price: '$14.99' }, { name: '31 Days Access', price: '$24.99' }, { name: 'Lifetime Access', price: '$65.99' }] },
-            engine: { title: 'RedEngine', art: 'art-engine', icon: 'fa-solid fa-fire', label: 'RedEngine', status: 'Undetected', href: TICKET, options: [{ name: '7 Days Access', price: '$14.99' }, { name: '31 Days Access', price: '$24.99' }, { name: 'Lifetime Access', price: '$41.99' }] },
-            ham: { title: 'Ham FiveM Executor', art: 'art-ham', icon: 'fa-solid fa-code', label: 'Ham', status: 'Undetected', href: TICKET, options: [{ name: '7 Days Access', price: '$15.99' }, { name: '31 Days Access', price: '$29.99' }, { name: 'Lifetime Access', price: '$51.99' }] },
-            steam: { title: 'Fresh Steam Accounts', art: 'art-steam', icon: 'fa-brands fa-steam', label: 'Steam', status: 'In stock', href: 'https://blackout-market-ot.mysellauth.com/product/steam-accounts', options: [{ name: 'Fresh Steam Account', price: '$0.48' }] },
-            rockstar: { title: 'FiveM Rockstar Accounts', art: 'art-rockstar', icon: 'fivem', label: 'FiveM', status: 'In stock', href: 'https://blackout-market-ot.mysellauth.com/product/rockstar-account', options: [{ name: 'FiveM-Ready Rockstar Account', price: '$0.48' }] },
-            discord: { title: 'Discord Accounts', art: 'art-discord', icon: 'fa-brands fa-discord', label: 'Discord', status: 'In stock', href: TICKET, options: [{ name: 'Single Aged Account', price: '$2.00' }, { name: '10 Pack Bundle', price: '$11.99' }] },
-            nitro: { title: 'Discord Nitro', art: 'art-nitro', icon: 'fa-solid fa-gem', label: 'Nitro', status: 'In stock', href: TICKET, options: [{ name: 'Discord Nitro', price: '$7.99' }] },
-            netflix: { title: 'Netflix Premium 4K', art: 'art-netflix', icon: 'fa-solid fa-film', label: 'Netflix', status: 'In stock', href: TICKET, options: [{ name: 'Premium 4K', price: '$10.00' }] }
+            r6: { category: 'r6', title: 'R6 Siege Chair', art: 'art-r6', icon: 'fa-solid fa-crosshairs', label: 'Rainbow Six', status: 'Undetected', href: TICKET, options: [{ name: '7 Days Access', price: '$20.99' }, { name: '31 Days Access', price: '$34.99' }, { name: 'Lifetime Access', price: '$44.99' }, { name: '', price: '' }, { name: '', price: '' }] },
+            macho: { category: 'fivem', title: 'Macho Executor', art: 'art-macho', icon: 'fa-solid fa-bolt', label: 'Macho', status: 'Undetected', href: TICKET, options: [{ name: '1 Day Access', price: '$7.99' }, { name: '7 Days Access', price: '$15.50' }, { name: '31 Days Access', price: '$25.99' }, { name: 'Lifetime Access', price: '$71.99' }, { name: '', price: '' }, { name: '', price: '' }] },
+            engine: { category: 'fivem', title: 'RedEngine', art: 'art-engine', icon: 'fa-solid fa-fire', label: 'RedEngine', status: 'Undetected', href: TICKET, options: [{ name: '7 Days Access', price: '$14.99' }, { name: '31 Days Access', price: '$24.99' }, { name: 'Lifetime Access', price: '$41.99' }, { name: '', price: '' }, { name: '', price: '' }] },
+            ham: { category: 'fivem', title: 'Ham FiveM Executor', art: 'art-ham', icon: 'fa-solid fa-code', label: 'Ham', status: 'Undetected', href: TICKET, options: [{ name: '7 Days Access', price: '$15.99' }, { name: '31 Days Access', price: '$29.99' }, { name: 'Lifetime Access', price: '$51.99' }, { name: '', price: '' }, { name: '', price: '' }] },
+            steam: { category: 'accounts', title: 'Fresh Steam Accounts', art: 'art-steam', icon: 'fa-brands fa-steam', label: 'Steam', status: 'In stock', href: 'https://blackout-market-ot.mysellauth.com/product/steam-accounts', options: [{ name: 'Fresh Steam Account', price: '$0.48' }, { name: '', price: '' }, { name: '', price: '' }] },
+            rockstar: { category: 'accounts', title: 'FiveM Rockstar Accounts', art: 'art-rockstar', icon: 'fivem', label: 'FiveM', status: 'In stock', href: 'https://blackout-market-ot.mysellauth.com/product/rockstar-account', options: [{ name: 'FiveM-Ready Rockstar Account', price: '$0.48' }, { name: '', price: '' }, { name: '', price: '' }] },
+            discord: { category: 'accounts', title: 'Discord Accounts', art: 'art-discord', icon: 'fa-brands fa-discord', label: 'Discord', status: 'In stock', href: TICKET, options: [
+                { name: '10 Pack Bundle', price: '$11.99', href: 'https://blackout-market-ot.mysellauth.com/product/10-pack-bundle' },
+                { name: 'E-Mail Verified', price: '$0.15', status: 'Out of stock', href: 'https://blackout-market-ot.mysellauth.com/product/e-mail-verified' },
+                { name: '3+ Months Aged E-Mail + Phone Verified', price: '$0.32', status: 'Out of stock', href: 'https://blackout-market-ot.mysellauth.com/product/3-months-aged-e-mail-phone-verified' },
+                { name: 'E-Mail Verified + Phone Verified', price: '$0.24', status: 'Out of stock', href: 'https://blackout-market-ot.mysellauth.com/product/e-mail-verified-phone-verified' },
+                { name: '2023 Accounts', price: '$0.95', status: 'Out of stock', href: 'https://blackout-market-ot.mysellauth.com/product/2023-accounts' },
+                { name: '2021 Accounts', price: '$1.25', status: 'Out of stock', href: 'https://blackout-market-ot.mysellauth.com/product/2021-accounts' },
+                { name: '2020 Accounts', price: '$1.55', status: 'Out of stock', href: 'https://blackout-market-ot.mysellauth.com/product/2020-accounts' },
+                { name: '1 Month Nitro + 2 Boosts + Phone Verified', price: '$2.05', status: 'Out of stock', href: 'https://blackout-market-ot.mysellauth.com/product/1-month-nitro-2-boosts-phone-verified' },
+                { name: '4 Letters Nick E-Mail + SMS', price: '$1.85', status: 'Out of stock', href: 'https://blackout-market-ot.mysellauth.com/product/4-letters-nick-e-mail-sms' },
+                { name: '2018 Accounts', price: '$3.75', status: 'Out of stock', href: 'https://blackout-market-ot.mysellauth.com/product/2018-accounts' },
+                { name: '2019 Accounts', price: '$2.60', status: 'Out of stock', href: 'https://blackout-market-ot.mysellauth.com/product/2019-accounts' },
+                { name: '2017 Accounts', price: '$4.75', status: 'Out of stock', href: 'https://blackout-market-ot.mysellauth.com/product/2017-accounts' },
+                { name: '3 Month Nitro + 2 Boosts + Phone Verified', price: '$5.25', status: 'Out of stock', href: 'https://blackout-market-ot.mysellauth.com/product/3-month-nitro-2-boosts-phone-verified' },
+                { name: '2016 Accounts', price: '$11.00', status: 'Out of stock', href: 'https://blackout-market-ot.mysellauth.com/product/2016-accounts' }
+            ] },
+            nitro: { category: 'accounts', title: 'Discord Nitro', art: 'art-nitro', icon: 'fa-solid fa-gem', label: 'Nitro', status: 'In stock', href: TICKET, options: [{ name: 'Discord Nitro', price: '$7.99' }, { name: '', price: '' }, { name: '', price: '' }] },
+            netflix: { category: 'accounts', title: 'Netflix Premium 4K', art: 'art-netflix', icon: 'fa-solid fa-film', label: 'Netflix', status: 'In stock', href: TICKET, options: [{ name: 'Premium 4K', price: '$10.00' }, { name: '', price: '' }, { name: '', price: '' }] },
+            // Blank account boxes. Fill in title, icon, label, status, href, and options.
+            account1: { category: 'accounts', title: 'TikTok Accounts [HIGH\u00A0QUALITY]', art: 'art-tiktok', icon: 'fa-brands fa-tiktok', label: 'TikTok', status: 'In stock', href: TICKET, options: [{ name: 'TikTok Accounts 1k+ Followers', price: '$13.99' }, { name: 'TikTok Accounts 10k+ Followers', price: '$27.99' }, { name: 'TikTok Accounts 20k+ Followers', price: '$44.99' }] },
+            account2: { category: 'accounts', title: 'YouTube Premium Lifetime Accounts', art: 'art-youtube', icon: 'fa-brands fa-youtube', label: 'YouTube', status: 'In stock', href: 'https://blackout-market-ot.mysellauth.com/product/youtube-premium-lifetime', options: [{ name: 'YouTube Premium Lifetime Accounts', price: '$9.99' }] },
+            account3: { category: 'accounts', title: 'Paramount+ Full Access', art: 'art-paramount', icon: 'paramount', label: 'Paramount+', status: 'In stock', href: 'https://blackout-market-ot.mysellauth.com/product/paramount-region-usa', options: [{ name: 'Paramount+ Full Access', price: '$5.50' }] }
         };
+        const productInfo = {
+            r6: { summary: 'Rainbow Six access sold by length. Pick a plan, then continue on Discord and the key is sent in a ticket.', included: ['The access length you select', 'Key delivery through Discord'] },
+            macho: { summary: 'Macho Executor access sold by length. Pick a plan, then continue on Discord and the key is sent in a ticket.', included: ['The access length you select', 'Key delivery through Discord'] },
+            engine: { summary: 'RedEngine access sold by length. Pick a plan, then continue on Discord and the key is sent in a ticket.', included: ['The access length you select', 'Key delivery through Discord'] },
+            ham: { summary: 'Ham FiveM Executor access sold by length. Pick a plan, then continue on Discord and the key is sent in a ticket.', included: ['The access length you select', 'Key delivery through Discord'] },
+            steam: { summary: 'A private Steam account delivered with full access. The login details are yours after purchase, and you can update them whenever you want.', included: ['Full access', 'Login details you can change', 'Private account, ready to use', 'Instant delivery after checkout', '24-hour warranty if there is an issue with the account'] },
+            rockstar: { summary: 'A private Rockstar account delivered with full access for FiveM. The login details are yours after purchase, and you can update them whenever you want.', included: ['Full access', 'Login details you can change', 'Private account, ready to use', 'Instant delivery after checkout', '24-hour warranty if there is an issue with the account'] },
+            discord: { summary: 'Discord accounts in several ages and verification types. The 10 pack bundle is available now. The other types stay listed while they are out of stock.', included: ['The account type you select', 'Checkout on SellAuth', '24-hour warranty on accounts that are delivered'] },
+            nitro: { summary: 'Discord Nitro delivered through a ticket. Continue on Discord and the login or gift is sent there.', included: ['Discord Nitro', 'Delivery through Discord'] },
+            netflix: { summary: 'A Netflix Premium 4K login. Continue on Discord and the account details are sent in a ticket.', included: ['Premium 4K access', 'Login sent through Discord', '24-hour warranty if there is an issue with the account'] },
+            account1: { summary: 'High quality TikTok accounts, sold by follower count. Pick a size, then continue on Discord to receive the login.', included: ['The follower count you select', 'Login you can change', 'Delivery through Discord', '24-hour warranty if there is an issue with the account'] },
+            account2: { summary: 'A lifetime YouTube Premium account with full access. The login is yours after delivery, and you can change it whenever you want. Premium removes ads and keeps playback going in the background.', included: ['Lifetime YouTube Premium access', 'Full login you can change', 'Private account, ready to use', 'Checkout on SellAuth', '24-hour warranty if there is an issue with the account'] }
+        };
+        const WEBMAIL = ['https://notletters.com/email/login', 'https://firstmail.ltd/en-US/webmail/login', 'https://id.rambler.ru/login-20/login'];
+        const faDiscord = {
+            headline: 'FA Discord Accounts – Full Access & Verified',
+            paragraphs: ['Secure, private, and fully verified Discord accounts ready for real use or automation.', 'Perfect for personal use, bots, Nitro boosting, or business setups.'],
+            included: ['Full access & changeable credentials', 'Email and/or phone verification depending on variant', 'Private, unused & 100% safe', 'Instant delivery right after purchase', '24-hour replacement warranty'],
+            webmail: WEBMAIL,
+            closing: 'Start using trusted Discord accounts in seconds!'
+        };
+        const optionCopy = {
+            'E-Mail Verified': faDiscord,
+            'E-Mail Verified + Phone Verified': faDiscord,
+            '2023 Accounts': faDiscord,
+            '2021 Accounts': faDiscord,
+            '2020 Accounts': faDiscord,
+            '2018 Accounts': faDiscord,
+            '2017 Accounts': faDiscord,
+            '2016 Accounts': faDiscord,
+            '3 Month Nitro + 2 Boosts + Phone Verified': faDiscord,
+            '3+ Months Aged E-Mail + Phone Verified': {
+                headline: 'FA Discord Accounts',
+                paragraphs: ['Private and fully secured Discord accounts.', 'Verified by email and phone, and safe to use anytime.', 'Full access, so the credentials can be changed freely.', 'Suitable for bots, Nitro features, boosting, and real use.'],
+                included: ['Full access and login credentials', 'Email and phone verification depending on variant', 'Private, unused, and safe for real use', 'Instant delivery after purchase'],
+                note: '24-hour warranty for replacements.',
+                webmail: WEBMAIL
+            },
+            '4 Letters Nick E-Mail + SMS': {
+                headline: '4 Letter Nick Discord Accounts – E-Mail + SMS Verified',
+                paragraphs: ['Rare, clean 4-letter username Discord accounts, fully verified and ready for resell or personal use. Short usernames are increasingly hard to find, making these accounts a high-value pickup for collectors and resellers.'],
+                sections: [
+                    { title: 'Why 4-letter names', items: ['Rare and valuable. Short usernames are scarce and highly sought after.', 'Clean. Unused, never flagged, no warnings or bans.', 'Strong resale demand.'] },
+                    { title: 'Account details', items: ['E-mail verified, with a verified email attached.', 'SMS verified for an extra layer of trust.', '4-letter username. Clean, short, and original.', 'Unused and private, ready to use.'] }
+                ],
+                included: ['Full access and changeable credentials', 'Email and phone (SMS) verification included', 'Private, unused, and safe', 'Instant delivery right after purchase', '24-hour replacement warranty']
+            },
+            '1 Month Nitro + 2 Boosts + Phone Verified': {
+                headline: faDiscord.headline,
+                paragraphs: faDiscord.paragraphs,
+                sections: [{ title: 'Account types', items: ['E-Mail Verified – basic verified', 'E-Mail + Phone Verified – double verified', '3+ Months Aged – verified and aged', 'Year-based accounts – 2023, 2020, 2019, 2017, 2016', 'Nitro 1 Month + 2 Boosts – phone verified', 'Nitro 3 Months + 2 Boosts – phone verified'] }],
+                included: faDiscord.included,
+                webmail: WEBMAIL,
+                closing: faDiscord.closing
+            },
+            'TikTok Accounts 1k+ Followers': {
+                headline: 'TikTok Account — 1,000+ Followers [ HIGH QUALITY ]',
+                paragraphs: ['Perfect for instant growth and live streaming on TikTok.'],
+                sections: [
+                    { title: 'Why high quality', items: ['No-drop guarantee. Followers are real, aged, and stable, so they do not disappear over time.', 'Not bot-filled. Unlike cheap accounts, this follower base will not get wiped in a purge.', 'You get what you pay for. A higher price, with a following that actually stays.'] },
+                    { title: 'Key benefits', items: ['Live stream ready. Go live instantly.', 'Fast start. No need to grow followers manually.', 'Boosted credibility. An established, stable audience is included.'] },
+                    { title: 'Account information', items: ['Changeable email and password.', 'Ready for mobile use.', 'Replacement available.', '24-hour warranty.'] },
+                    { title: 'Notes', items: ['Ideal for creators, streamers, and promotions.', 'Instant delivery after purchase.'] }
+                ]
+            },
+            'TikTok Accounts 10k+ Followers': {
+                headline: 'TikTok Account — 10,000+ Followers',
+                paragraphs: ['Perfect for instant growth and live streaming on TikTok.'],
+                sections: [
+                    { title: 'Key benefits', items: ['Live stream ready. Go live instantly.', 'Fast start. No need to grow followers manually.', 'Boosted credibility. An established audience is included.'] },
+                    { title: 'Account information', items: ['Changeable email and password.', 'Ready for mobile use.', 'Replacement available.', '24-hour warranty.'] },
+                    { title: 'Notes', items: ['Ideal for creators, streamers, and promotions.'] }
+                ]
+            },
+            'TikTok Accounts 20k+ Followers': {
+                headline: 'TikTok Full Access Account — 20,000+ Followers',
+                paragraphs: ['High-quality TikTok account for instant growth and monetization.'],
+                sections: [
+                    { title: 'Key features', items: ['20,000+ real followers.', 'Full access, with email and password included.', 'You can change all credentials.', 'Live streaming enabled.', 'Monetization ready, suitable for promos and sponsorships.'] },
+                    { title: 'Account details', items: ['Fully verified and secure.', 'Clean history, with no bans or violations.', 'Mobile ready.', 'Instant delivery.', '24-hour warranty.'] },
+                    { title: 'Best for', items: ['Influencers and content creators.', 'Businesses and brand promotion.', 'Resellers and marketing use.'] },
+                    { title: 'Notes', items: ['Fresh and trusted setup.', 'Built for fast TikTok scaling.'] }
+                ]
+            },
+            'Paramount+ Full Access': {
+                headline: 'Paramount+ Account — Full Access (LATAM + EU & USA)',
+                paragraphs: ['Premium, fully verified Paramount+ streaming accounts for unlimited access to movies, series, and exclusive originals.', 'You can choose between LATAM + EU or USA region during checkout.', 'Some accounts may include active premium bundles or add-ons. This is random and not guaranteed.'],
+                sections: [
+                    { title: 'Available regions', items: ['USA region. Works only in the United States.'] }
+                ],
+                included: ['Full access, with a changeable email and password', 'Unlimited streaming of movies, shows, and originals', 'Some accounts may include active premium add-ons', '24-hour replacement warranty', 'Instant delivery after purchase']
+            }
+        };
+        function cardPrice(item) {
+            const prices = item.options.map((option) => option.price).filter(Boolean);
+            if (prices.length < 2) return prices[0] || '';
+            const amount = (price) => parseFloat(String(price).replace(/[^0-9.]/g, '')) || 0;
+            const sorted = prices.slice().sort((a, b) => amount(a) - amount(b));
+            return sorted[0] + ' – ' + sorted[sorted.length - 1];
+        }
+        function artMarkup(item) {
+            const icon = item.icon === 'fivem' ? FIVEM : item.icon === 'paramount' ? PARAMOUNT : (item.icon ? '<i class="' + item.icon + '"></i>' : '');
+            const label = item.label ? '<span>' + item.label + '</span>' : '';
+            return '<div class="shop-art ' + item.art + '">' + icon + label + '</div>';
+        }
+        function renderProducts() {
+            document.getElementById('products-grid').innerHTML = Object.entries(catalog).map(([id, item]) =>
+                '<button type="button" onclick="openProduct(\'' + id + '\')" class="product-card shop-card ' + item.category + ' flex flex-col">' +
+                artMarkup(item) +
+                '<div class="p-4"><h3 class="text-white font-semibold mb-3">' + item.title +
+                '</h3><div class="flex justify-between text-sm text-gray-400"><span>' + cardPrice(item) +
+                '</span><span>' + item.status + '</span></div></div></button>'
+            ).join('');
+        }
+        renderProducts();
         document.getElementById('mobile-menu-btn').addEventListener('click', () => document.getElementById('mobile-menu').classList.toggle('hidden'));
-        function showHome() { document.getElementById('home').classList.remove('hidden'); document.getElementById('cheats').classList.add('hidden'); document.getElementById('loader').classList.add('hidden'); window.scrollTo({ top: 0 }); }
-        function showStore() { document.getElementById('home').classList.add('hidden'); document.getElementById('loader').classList.add('hidden'); document.getElementById('cheats').classList.remove('hidden'); filterCategory('all'); window.scrollTo({ top: 0 }); }
-        function showLoader() { document.getElementById('home').classList.add('hidden'); document.getElementById('cheats').classList.add('hidden'); document.getElementById('loader').classList.remove('hidden'); window.scrollTo({ top: 0 }); }
+        function showHome() { document.getElementById('home').classList.remove('hidden'); document.getElementById('cheats').classList.add('hidden'); document.getElementById('loader').classList.add('hidden'); document.getElementById('options-page').classList.add('hidden'); document.getElementById('product-page').classList.add('hidden'); window.scrollTo({ top: 0 }); }
+        function showStore(reset) { document.getElementById('home').classList.add('hidden'); document.getElementById('loader').classList.add('hidden'); document.getElementById('options-page').classList.add('hidden'); document.getElementById('product-page').classList.add('hidden'); document.getElementById('cheats').classList.remove('hidden'); if (reset !== false) filterCategory('all'); window.scrollTo({ top: 0 }); }
+        function showLoader() { document.getElementById('home').classList.add('hidden'); document.getElementById('cheats').classList.add('hidden'); document.getElementById('options-page').classList.add('hidden'); document.getElementById('product-page').classList.add('hidden'); document.getElementById('loader').classList.remove('hidden'); window.scrollTo({ top: 0 }); }
         function openStoreCategory(category) { showStore(); filterCategory(category); }
         function filterCategory(category) {
             let visible = 0;
@@ -245,22 +358,90 @@
             document.querySelectorAll('.category-btn').forEach((btn) => btn.classList.toggle('active', btn.getAttribute('data-category') === category));
             document.getElementById('empty-filter').classList.toggle('hidden', visible > 0);
         }
-        function openProduct(id) {
-            const item = catalog[id];
-            if (item.options.length === 1) {
-                window.open(item.options[0].href || item.href, '_blank');
-                return;
-            }
-            document.getElementById('modal-title').textContent = item.title;
-            document.getElementById('modal-grid').innerHTML = item.options.map((option) =>
-                '<a class="shop-card flex flex-col" href="' + (option.href || item.href) + '" target="_blank"><div class="shop-art ' + item.art + '">' +
-                (item.icon === 'fivem' ? FIVEM : '<i class="' + item.icon + '"></i>') +
-                '<span>' + item.label + '</span></div><div class="p-4"><h3 class="text-white font-semibold mb-3">' + option.name +
-                '</h3><div class="flex justify-between text-sm text-gray-400"><span>' + option.price + '</span><span>' + item.status + '</span></div></div></a>'
-            ).join('');
-            document.getElementById('product-modal').classList.remove('hidden');
+        function esc(value) {
+            return String(value == null ? '' : value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
-        function closeProduct() { document.getElementById('product-modal').classList.add('hidden'); }
+        function isSellAuth(href) {
+            return /sellauth\.com/i.test(href || '');
+        }
+        let activeProduct = null;
+        function optionCard(item, option, index) {
+            const blank = !option.name && !option.price;
+            const art = blank ? '<div class="shop-art art-blank"></div>' : artMarkup(item);
+            const status = blank ? '' : (option.status || item.status);
+            const body = '<div class="p-4"><h3 class="text-white font-semibold mb-3">' + esc(option.name) +
+                '</h3><div class="flex justify-between text-sm text-gray-400"><span>' + esc(option.price) + '</span><span>' + esc(status) + '</span></div></div>';
+            if (blank) return '<div class="shop-card flex flex-col">' + art + body + '</div>';
+            return '<button type="button" onclick="openOption(\'' + activeProduct + '\',' + index + ')" class="shop-card flex flex-col text-left">' + art + body + '</button>';
+        }
+        function showOptions(id) {
+            const item = catalog[id];
+            if (!item || !item.title) return;
+            activeProduct = id;
+            document.getElementById('home').classList.add('hidden');
+            document.getElementById('cheats').classList.add('hidden');
+            document.getElementById('loader').classList.add('hidden');
+            document.getElementById('product-page').classList.add('hidden');
+            document.getElementById('options-title').textContent = item.title;
+            document.getElementById('options-grid').innerHTML = item.options.map((option, index) => optionCard(item, option, index)).join('');
+            document.getElementById('options-page').classList.remove('hidden');
+            window.scrollTo({ top: 0 });
+        }
+        function openProduct(id) { showOptions(id); }
+        function backToOptions() { if (activeProduct) showOptions(activeProduct); else showStore(false); }
+        function copyHtml(copy) {
+            const blocks = (copy.paragraphs || []).map((line) => '<p class="text-sm text-gray-300 leading-relaxed mb-3">' + esc(line) + '</p>').join('');
+            const sections = (copy.sections || []).map((section) =>
+                '<h3 class="text-white font-semibold mt-6 mb-2">' + esc(section.title) + '</h3><ul class="detail-list">' +
+                section.items.map((line) => '<li>' + esc(line) + '</li>').join('') + '</ul>'
+            ).join('');
+            const included = copy.included ? '<h3 class="text-white font-semibold mt-6 mb-2">What\'s included</h3><ul class="detail-list">' + copy.included.map((line) => '<li>' + esc(line) + '</li>').join('') + '</ul>' : '';
+            const note = copy.note ? '<p class="text-sm text-gray-300 mt-4">' + esc(copy.note) + '</p>' : '';
+            const webmail = copy.webmail ? '<h3 class="text-white font-semibold mt-6 mb-2">Webmail access (if needed)</h3><ul class="detail-list">' + copy.webmail.map((url) => '<li><a class="text-red-400 hover:text-red-300 break-all" href="' + esc(url) + '" target="_blank">' + esc(url) + '</a></li>').join('') + '</ul>' : '';
+            const closing = copy.closing ? '<p class="text-sm text-gray-300 mt-4">' + esc(copy.closing) + '</p>' : '';
+            return (copy.headline ? '<h3 class="text-white font-semibold mb-2">' + esc(copy.headline) + '</h3>' : '') + blocks + sections + included + note + webmail + closing;
+        }
+        function detailMarkup(item, option) {
+            const info = productInfo[activeProduct] || { summary: 'Review the details, then buy when you are ready.', included: [] };
+            const custom = optionCopy[option.name];
+            const status = option.status || item.status;
+            const out = status === 'Out of stock';
+            const href = option.href || item.href || '';
+            const included = (info.included || []).map((line) => '<li>' + esc(line) + '</li>').join('');
+            const description = custom
+                ? copyHtml(custom)
+                : '<h3 class="text-white font-semibold mb-2">Description</h3><p class="text-sm text-gray-300 leading-relaxed">' + esc(info.summary) + '</p>' +
+                    (included ? '<h3 class="text-white font-semibold mt-6 mb-2">What\'s included</h3><ul class="detail-list">' + included + '</ul>' : '');
+            const buy = !href || out
+                ? '<button type="button" disabled class="w-full bg-white/10 text-gray-500 font-bold px-6 py-3 rounded-xl cursor-not-allowed">Out of stock</button>'
+                : '<a class="block text-center bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded-xl" href="' + esc(href) + '" target="_blank">Buy</a>';
+            return '<div class="grid lg:grid-cols-2 gap-8 items-start">' +
+                '<div class="detail-art">' + artMarkup(item) + '</div>' +
+                '<div>' +
+                '<h2 class="text-3xl sm:text-4xl font-bold text-white mb-5">' + esc(option.name) + '</h2>' +
+                '<div class="purchase-panel">' +
+                '<p class="text-center text-sm text-gray-400 mb-4">Purchase</p>' +
+                '<div class="flex items-start justify-between gap-4 border border-white/10 rounded-xl p-4">' +
+                '<div><p class="text-white font-medium">' + esc(option.name) + '</p><p class="text-3xl font-bold text-white mt-2">' + esc(option.price) + '</p></div>' +
+                '<p class="text-sm ' + (out ? 'text-red-400' : 'text-gray-400') + '">' + esc(status) + '</p></div>' +
+                '<div class="mt-4">' + buy + '</div>' +
+                '<p class="text-sm text-gray-500 mt-3">' + (isSellAuth(href) ? 'Buy opens the SellAuth checkout.' : 'Buy opens a Discord ticket so the login or key can be sent to you.') + '</p>' +
+                '</div></div>' +
+                '<div>' + description + '</div></div>';
+        }
+        function openOption(id, index) {
+            const item = catalog[id];
+            const option = item && item.options[index];
+            if (!item || !option || (!option.name && !option.price)) return;
+            activeProduct = id;
+            document.getElementById('home').classList.add('hidden');
+            document.getElementById('cheats').classList.add('hidden');
+            document.getElementById('loader').classList.add('hidden');
+            document.getElementById('options-page').classList.add('hidden');
+            document.getElementById('product-page-body').innerHTML = detailMarkup(item, option);
+            document.getElementById('product-page').classList.remove('hidden');
+            window.scrollTo({ top: 0 });
+        }
         (function () {
             const canvas = document.getElementById('zero-g-canvas');
             const layer = document.getElementById('zero-g');

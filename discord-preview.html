@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord picture preview</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { margin: 0; min-height: 100vh; background: #050203; color: #f3f4f6; font-family: Inter, Segoe UI, sans-serif; }
+        main { max-width: 760px; margin: 0 auto; padding: 32px 16px 48px; }
+        h1 { font-size: 1.4rem; font-weight: 600; margin: 0 0 8px; }
+        p { color: #9ca3af; margin: 0 0 24px; line-height: 1.5; }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .label { font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: #fca5a5; margin-bottom: 8px; }
+        .shop-card { background: rgba(8, 6, 12, 0.88); border: 1px solid rgba(255,255,255,0.06); border-radius: 1.15rem; overflow: hidden; }
+        .shop-art {
+            --neon: #5dfff6;
+            --glow: rgba(45, 226, 255, 0.95);
+            height: 176px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            background:
+                radial-gradient(1.2px 1.2px at 18% 28%, rgba(255,255,255,0.85), transparent),
+                radial-gradient(1px 1px at 72% 22%, rgba(255,255,255,0.7), transparent),
+                radial-gradient(1.4px 1.4px at 84% 68%, rgba(255,255,255,0.8), transparent),
+                #021018;
+        }
+        .shop-art::before, .shop-art::after { content: ''; position: absolute; border-radius: 999px; filter: blur(10px); pointer-events: none; z-index: 1; }
+        .shop-art::before { width: 240px; height: 240px; left: -18%; top: -40%; background: radial-gradient(circle, var(--glow), transparent 68%); opacity: 0.75; animation: nebula-a 8s ease-in-out infinite; }
+        .shop-art::after { width: 260px; height: 200px; right: -24%; bottom: -46%; background: radial-gradient(circle, var(--glow), transparent 70%); opacity: 0.55; animation: nebula-b 11s ease-in-out infinite; }
+        .shop-art i { position: relative; z-index: 2; font-size: 5rem; color: transparent; -webkit-text-stroke: 2px var(--neon); animation: neon-breathe 2.6s ease-in-out infinite, icon-float 4.6s ease-in-out infinite; }
+        .shop-art span { position: absolute; z-index: 3; left: 12px; bottom: 12px; letter-spacing: 0.16em; font-size: 10px; font-weight: 800; color: var(--neon); text-transform: uppercase; padding: 5px 10px; border-radius: 999px; background: rgba(0,0,0,0.4); border: 1px solid color-mix(in srgb, var(--neon) 55%, transparent); }
+        .photo-card { height: auto; aspect-ratio: 1; background: #021018; }
+        .photo-card::before, .photo-card::after { display: none; }
+        .art-photo { position: absolute; left: -8px; top: -8px; z-index: 0; width: calc(100% + 16px); height: calc(100% + 16px); object-fit: cover; object-position: center; animation: icon-float 4.6s ease-in-out infinite; }
+        .pad { padding: 16px; }
+        .pad h2 { margin: 0 0 12px; font-size: 1rem; }
+        .meta { display: flex; justify-content: space-between; color: #9ca3af; font-size: 0.875rem; }
+        @keyframes nebula-a { 0%,100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(28px,22px,0) scale(1.18); } }
+        @keyframes nebula-b { 0%,100% { transform: translate3d(0,0,0) scale(1.05); } 50% { transform: translate3d(-26px,-18px,0) scale(0.92); } }
+        @keyframes neon-breathe {
+            0%,100% { filter: drop-shadow(0 0 4px var(--neon)) drop-shadow(0 0 12px var(--glow)); opacity: 0.88; }
+            50% { filter: drop-shadow(0 0 8px var(--neon)) drop-shadow(0 0 22px var(--glow)); opacity: 1; }
+        }
+        @keyframes icon-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+        @media (max-width: 640px) { .row { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>Discord picture preview</h1>
+        <p>The new card uses your picture as the background. It only floats up and down, the same way the current Discord icon does.</p>
+        <div class="row">
+            <div>
+                <div class="label">Current</div>
+                <div class="shop-card">
+                    <div class="shop-art">
+                        <i class="fa-brands fa-discord"></i>
+                        <span>Discord</span>
+                    </div>
+                    <div class="pad">
+                        <h2>10 Pack Bundle</h2>
+                        <div class="meta"><span>$11.99</span><span>In stock</span></div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="label">New picture</div>
+                <div class="shop-card">
+                    <div class="shop-art photo-card">
+                        <img class="art-photo" src="discord-art.jpg" alt="">
+                        <span>Discord</span>
+                    </div>
+                    <div class="pad">
+                        <h2>10 Pack Bundle</h2>
+                        <div class="meta"><span>$11.99</span><span>In stock</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
