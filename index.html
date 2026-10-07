@@ -77,6 +77,20 @@
         .art-tiktok { --neon: #25f4ee; --glow: rgba(254, 44, 85, 0.9); }
         .art-youtube { --neon: #ff4d4d; --glow: rgba(255, 0, 0, 0.9); }
         .art-paramount { --neon: #7eb6ff; --glow: rgba(0, 100, 255, 0.9); }
+        .art-hbo { --neon: #c084fc; --glow: rgba(96, 165, 250, 0.9); }
+        .art-nba { --neon: #ff8a3d; --glow: rgba(37, 99, 235, 0.9); }
+        .art-ufc { --neon: #ff2a2a; --glow: rgba(255, 40, 40, 0.95); }
+        .art-capcut { --neon: #f4f7fb; --glow: rgba(180, 220, 255, 0.85); }
+        .art-fortnite { --neon: #d8b4fe; --glow: rgba(250, 204, 21, 0.8); }
+        .art-disney { --neon: #7eb6ff; --glow: rgba(0, 99, 229, 0.9); }
+        .art-amc { --neon: #ff5a5a; --glow: rgba(225, 6, 0, 0.95); }
+        .shop-art .neon-mark.fn { width: 7.4rem; height: 3.3rem; }
+        .shop-art .neon-mark.disney { width: 7.2rem; height: 3.6rem; }
+        .shop-art .neon-mark.amc { width: 8.8rem; height: 2.8rem; }
+        .shop-art .neon-mark.capcut { width: 6.4rem; height: 5.8rem; fill: none; stroke: var(--neon); stroke-width: 18; stroke-linecap: round; stroke-linejoin: round; }
+        .shop-art .neon-mark.ufc { width: 6.5rem; height: 6.5rem; stroke-width: 2.8; }
+        .shop-art .neon-mark.ufc text { fill: var(--neon); stroke: none; font-family: "Arial Black", Impact, sans-serif; font-size: 18px; font-weight: 900; letter-spacing: 0.2px; }
+        .shop-art .neon-mark.hbo { width: 9.2rem; height: 3.2rem; }
         .art-blank { --neon: #6b7280; --glow: rgba(255,255,255,0.08); background: #0a0a0c; }
         .art-r6 { --neon: #fb7185; --glow: rgba(225, 29, 72, 0.9); }
         .art-macho { --neon: #fdba74; --glow: rgba(249, 115, 22, 0.9); }
@@ -195,6 +209,12 @@
         const TICKET = 'https://discord.gg/jGHQj4Ygqf';
         const FIVEM = '<svg class="neon-mark" viewBox="0 0 64 64"><path d="M8 52 L32 8 L56 52"/><path d="M18 52 L32 26 L46 52"/><path d="M25 52 L32 38 L39 52"/></svg>';
         const PARAMOUNT = '<svg class="neon-mark" viewBox="0 0 64 64"><path d="M8 54 L32 14 L56 54"/><path d="M20 54 L32 32 L44 54"/><circle class="star" cx="32" cy="8" r="1.7"/><circle class="star" cx="18" cy="14" r="1.15"/><circle class="star" cx="46" cy="14" r="1.15"/><circle class="star" cx="11" cy="26" r="1.05"/><circle class="star" cx="53" cy="26" r="1.05"/></svg>';
+        const HBO = '<svg class="neon-mark hbo" viewBox="0 0 112 48" aria-hidden="true"><path d="M4 6 V42 M4 24 H26 M26 6 V42"/><path d="M36 6 V42 M36 6 H52 C64 6 64 24 52 24 H36 M36 24 H54 C68 24 68 42 54 42 H36"/><circle cx="90" cy="24" r="16"/></svg>';
+        const UFC = '<svg class="neon-mark ufc" viewBox="0 0 64 64" aria-hidden="true"><path d="M22 6 H42 L58 22 V42 L42 58 H22 L6 42 V22 Z"/><path d="M26 12 H38 L50 24 V40 L38 52 H26 L14 40 V24 Z" opacity="0.55"/><text x="32" y="39" text-anchor="middle">UFC</text></svg>';
+        const CAPCUT = '<svg class="neon-mark capcut" viewBox="0 0 148 136" aria-hidden="true"><rect x="12" y="26" width="108" height="80" rx="24"/><line x1="70" y1="6" x2="128" y2="128" style="stroke-linecap:butt"/></svg>';
+        const FORTNITE = '<svg class="neon-mark fn" viewBox="0 0 92 48" aria-hidden="true"><path d="M4 6 H38 M4 6 V42 M4 24 H28"/><path d="M50 42 V6 L78 42 V6"/></svg>';
+        const DISNEY = '<svg class="neon-mark disney" viewBox="0 0 92 48" aria-hidden="true"><path d="M6 6 V42 H28 C46 42 46 6 28 6 Z"/><path d="M60 24 H84 M72 12 V36"/></svg>';
+        const AMC = '<svg class="neon-mark amc" viewBox="0 0 156 48" aria-hidden="true"><path d="M2 42 L16 6 L30 42 M9 28 H23"/><path d="M38 42 V8 L52 32 L66 8 V42"/><path d="M98 8 H84 A18 18 0 0 0 84 40 H98"/><path d="M112 24 H148 M130 8 V40"/></svg>';
         // Each entry is one store box. Copy a block, give it a new id, and edit the fields.
         // category: fivem | accounts | r6 | spoofers
         // Each product's options list ends with blank choices. Fill one in by setting its name and price.
@@ -222,11 +242,35 @@
                 { name: '2016 Accounts', price: '$11.00', status: 'Out of stock', href: 'https://blackout-market-ot.mysellauth.com/product/2016-accounts' }
             ] },
             nitro: { category: 'accounts', title: 'Discord Nitro', art: 'art-nitro', icon: 'fa-solid fa-gem', label: 'Nitro', status: 'In stock', href: TICKET, options: [{ name: 'Discord Nitro', price: '$7.99' }, { name: '', price: '' }, { name: '', price: '' }] },
-            netflix: { category: 'accounts', title: 'Netflix Premium 4K', art: 'art-netflix', icon: 'fa-solid fa-film', label: 'Netflix', status: 'In stock', href: TICKET, options: [{ name: 'Premium 4K', price: '$10.00' }, { name: '', price: '' }, { name: '', price: '' }] },
+            netflix: { category: 'accounts', title: 'Netflix Premium 4K', art: 'art-netflix', icon: 'fa-solid fa-film', label: 'Netflix', status: 'In stock', href: 'https://blackout-market-ot.mysellauth.com/product/netflix-accounts', options: [{ name: 'Premium 4K', price: '$5.99' }, { name: '', price: '' }, { name: '', price: '' }] },
             // Blank account boxes. Fill in title, icon, label, status, href, and options.
             account1: { category: 'accounts', title: 'TikTok Accounts [HIGH\u00A0QUALITY]', art: 'art-tiktok', icon: 'fa-brands fa-tiktok', label: 'TikTok', status: 'In stock', href: TICKET, options: [{ name: 'TikTok Accounts 1k+ Followers', price: '$13.99' }, { name: 'TikTok Accounts 10k+ Followers', price: '$27.99' }, { name: 'TikTok Accounts 20k+ Followers', price: '$44.99' }] },
             account2: { category: 'accounts', title: 'YouTube Premium Lifetime Accounts', art: 'art-youtube', icon: 'fa-brands fa-youtube', label: 'YouTube', status: 'In stock', href: 'https://blackout-market-ot.mysellauth.com/product/youtube-premium-lifetime', options: [{ name: 'YouTube Premium Lifetime Accounts', price: '$9.99' }] },
-            account3: { category: 'accounts', title: 'Paramount+ Full Access', art: 'art-paramount', icon: 'paramount', label: 'Paramount+', status: 'In stock', href: 'https://blackout-market-ot.mysellauth.com/product/paramount-region-usa', options: [{ name: 'Paramount+ Full Access', price: '$5.50' }] }
+            account3: { category: 'accounts', title: 'Paramount+ Full Access', art: 'art-paramount', icon: 'paramount', label: 'Paramount+', status: 'In stock', href: 'https://blackout-market-ot.mysellauth.com/product/paramount-region-usa', options: [{ name: 'Paramount+ Full Access', price: '$5.50' }] },
+            account4: { category: 'accounts', title: 'HBO Max Lifetime Accounts', art: 'art-hbo', icon: 'hbo', label: 'HBO Max', status: 'In stock', href: 'https://blackout-market-ot.mysellauth.com/product/hbo-max-lifetime-accounts', options: [{ name: 'HBO Max Lifetime Accounts', price: '$3.50' }] },
+            account5: { category: 'accounts', title: 'NBA Lifetime Accounts', art: 'art-nba', icon: 'fa-solid fa-basketball', label: 'NBA', status: 'Out of stock', href: 'https://blackout-market-ot.mysellauth.com/product/nba-lifetime', options: [{ name: 'NBA Lifetime Accounts', price: '$3.50', status: 'Out of stock' }] },
+            account6: { category: 'accounts', title: 'UFC Lifetime Accounts', art: 'art-ufc', icon: 'ufc', label: 'UFC', status: 'Out of stock', href: 'https://blackout-market-ot.mysellauth.com/product/ufc-lifetime-accounts', options: [{ name: 'UFC Lifetime Accounts', price: '$3.50', status: 'Out of stock' }] },
+            account7: { category: 'accounts', title: 'CapCut Pro Lifetime', art: 'art-capcut', icon: 'capcut', label: 'CapCut', status: 'Out of stock', href: 'https://blackout-market-ot.mysellauth.com/product/capcut-pro-lifetime', options: [{ name: 'CapCut Pro Lifetime', price: '$3.00', status: 'Out of stock' }] },
+            account8: { category: 'accounts', title: 'Fortnite Accounts', art: 'art-fortnite', icon: 'fortnite', label: 'Fortnite', status: 'Out of stock', href: 'https://blackout-market-ot.mysellauth.com/product/fa-fortnite-accounts', options: [
+                { name: 'Fresh UNUSED Accounts', price: '$0.75', status: 'Out of stock' },
+                { name: '3-10 Skins [ Ranked Ready ] Fortnite Accounts', price: '$3.50', status: 'Out of stock' },
+                { name: '10-20 Skins [ Ranked Ready ] Fortnite Accounts', price: '$5.00', status: 'Out of stock' },
+                { name: '20-50 Skins [ Ranked Ready ] Fortnite Accounts', price: '$9.00', status: 'Out of stock' },
+                { name: '50-100 Skins [ OG Outfits Included ] Fortnite Accounts', price: '$15.00', status: 'Out of stock' },
+                { name: '100-150 Skins [ OG Outfits Included ] Fortnite Accounts', price: '$20.00', status: 'Out of stock' },
+                { name: '100-250 [ Tryhard SKINS ONLY ]', price: '$25.00', status: 'Out of stock' },
+                { name: '250-400 Skins [ OG Outfits Included ] Fortnite Accounts', price: '$35.00', status: 'Out of stock' },
+                { name: '150-250 Skins [ OG Outfits Included ] Fortnite Accounts', price: '$25.00', status: 'Out of stock' },
+                { name: 'OG STW + 100-200 Skins [ 20% OG Skull Trooper ]', price: '$20.00', status: 'Out of stock' },
+                { name: 'Leviathan Axe + 100-200 Skins', price: '$26.00', status: 'Out of stock' },
+                { name: '350 Level + 14+ Events Tournament Ready', price: '$26.00', status: 'Out of stock' },
+                { name: 'Minty Axe + 100-250 [ OG Outfits Included ]', price: '$31.00', status: 'Out of stock' },
+                { name: 'Travis Scott + 100-250 [ OG Outfits Included ]', price: '$46.00', status: 'Out of stock' },
+                { name: '400-600 Skins [ OG Outfits Included ] Fortnite Accounts', price: '$80.00', status: 'Out of stock' },
+                { name: 'Black Knight + 50-250 [ MOST OG Outfits Included ]', price: '$100.00', status: 'Out of stock' }
+            ] },
+            account9: { category: 'accounts', title: 'Disney+ Accounts', art: 'art-disney', icon: 'disney', label: 'Disney+', status: 'In stock', href: 'https://blackout-market-ot.mysellauth.com/product/disney-accounts', options: [{ name: 'Disney+ Accounts', price: '$5.50' }] },
+            account10: { category: 'accounts', title: 'AMC+ Lifetime Accounts', art: 'art-amc', icon: 'amc', label: 'AMC+', status: 'In stock', href: 'https://blackout-market-ot.mysellauth.com/product/amc-lifetime', options: [{ name: 'AMC+ Lifetime Accounts', price: '$5.50' }] }
         };
         const productInfo = {
             r6: { summary: 'Rainbow Six access sold by length. Pick a plan, then continue on Discord and the key is sent in a ticket.', included: ['The access length you select', 'Key delivery through Discord'] },
@@ -237,9 +281,10 @@
             rockstar: { summary: 'A private Rockstar account delivered with full access for FiveM. The login details are yours after purchase, and you can update them whenever you want.', included: ['Full access', 'Login details you can change', 'Private account, ready to use', 'Instant delivery after checkout', '24-hour warranty if there is an issue with the account'] },
             discord: { summary: 'Discord accounts in several ages and verification types. The 10 pack bundle is available now. The other types stay listed while they are out of stock.', included: ['The account type you select', 'Checkout on SellAuth', '24-hour warranty on accounts that are delivered'] },
             nitro: { summary: 'Discord Nitro delivered through a ticket. Continue on Discord and the login or gift is sent there.', included: ['Discord Nitro', 'Delivery through Discord'] },
-            netflix: { summary: 'A Netflix Premium 4K login. Continue on Discord and the account details are sent in a ticket.', included: ['Premium 4K access', 'Login sent through Discord', '24-hour warranty if there is an issue with the account'] },
+            netflix: { summary: 'A Netflix Premium 4K key. Checkout on SellAuth and the key is delivered there.', included: ['Premium 4K access', 'Key delivered through SellAuth', 'Instant replacement if the account drops'] },
             account1: { summary: 'High quality TikTok accounts, sold by follower count. Pick a size, then continue on Discord to receive the login.', included: ['The follower count you select', 'Login you can change', 'Delivery through Discord', '24-hour warranty if there is an issue with the account'] },
-            account2: { summary: 'A lifetime YouTube Premium account with full access. The login is yours after delivery, and you can change it whenever you want. Premium removes ads and keeps playback going in the background.', included: ['Lifetime YouTube Premium access', 'Full login you can change', 'Private account, ready to use', 'Checkout on SellAuth', '24-hour warranty if there is an issue with the account'] }
+            account2: { summary: 'A lifetime YouTube Premium account with full access. The login is yours after delivery, and you can change it whenever you want. Premium removes ads and keeps playback going in the background.', included: ['Lifetime YouTube Premium access', 'Full login you can change', 'Private account, ready to use', 'Checkout on SellAuth', '24-hour warranty if there is an issue with the account'] },
+            account8: { summary: 'Full access Fortnite accounts, sold by the listing you pick. Activation is usually a few minutes, and the login works on PC, PlayStation, Xbox, Switch, and mobile.', included: ['Ranked ready on the ranked listings. The account level meets the requirements to play Ranked', 'Full access. Email and password for Epic Games and the email login', 'You can change the email and password', 'Works worldwide on any server region', 'Instant delivery after checkout', 'Replacement if there is a login issue at the start'] }
         };
         const WEBMAIL = ['https://notletters.com/email/login', 'https://firstmail.ltd/en-US/webmail/login', 'https://id.rambler.ru/login-20/login'];
         const faDiscord = {
@@ -312,6 +357,45 @@
                     { title: 'Notes', items: ['Fresh and trusted setup.', 'Built for fast TikTok scaling.'] }
                 ]
             },
+            'HBO Max Lifetime Accounts': {
+                headline: 'HBO Max Lifetime Account',
+                paragraphs: ['Stream blockbuster movies and hit series for life.', 'Enjoy everything HBO Max offers without monthly fees.'],
+                included: ['HBO Max Premium, lifetime access', 'Full access to HBO Originals, Max exclusives, and Warner Bros. releases', 'Watch on smart TVs, mobile, tablets, and desktop', 'Global access, with a VPN if needed', 'Instant delivery after purchase', 'Support included'],
+                closing: 'One-time payment. Unlimited streaming. Lifetime entertainment.'
+            },
+            'NBA Lifetime Accounts': {
+                headline: 'NBA Lifetime Account — Full Access (Streaming)',
+                paragraphs: ['Premium, fully verified NBA streaming accounts with lifetime access. Watch every game, highlight, and exclusive content without limits.', 'Perfect for basketball fans who want unlimited access to NBA games, the same way HBO or Netflix works.', 'Some accounts may also include access to bonus features like archived games or exclusive events.'],
+                included: ['Full access, with a changeable email and password', 'Lifetime streaming access, with no monthly subscription', 'Watch live games, highlights, replays, and exclusive NBA content', 'Some accounts include bonus features or premium extras', '24-hour replacement warranty', 'Instant automatic delivery after purchase', 'Platform: official NBA streaming service (NBA League Pass)', 'Unlimited NBA access. Once purchased, it is yours']
+            },
+            'UFC Lifetime Accounts': {
+                headline: 'UFC Fight Pass Lifetime Account',
+                paragraphs: ['Watch every fight. Anytime. Forever.', 'Get full access to UFC Fight Pass content without any monthly cost.'],
+                included: ['UFC Fight Pass, lifetime access', 'Live and on-demand fights, original series, events, and archives', 'Watch on PC, mobile, tablet, or smart TV', 'Global access, with no region restrictions', 'Instant delivery and a setup guide', 'Full customer support included'],
+                closing: 'Perfect for true MMA fans. One-time payment for unlimited fighting action.'
+            },
+            'AMC+ Lifetime Accounts': {
+                headline: 'AMC+ Lifetime — Premium Streaming Access',
+                paragraphs: ['Get your AMC+ Lifetime account with access to top-tier series, movies, and exclusive originals. Perfect for fans of high-quality storytelling and iconic shows.'],
+                sections: [
+                    { title: 'What you get', items: ['Lifetime access, with no monthly payments', 'Premium series and exclusive AMC originals', 'Popular shows, including The Walking Dead and more', 'Ready login with instant access'] },
+                    { title: 'Account features', items: ['Instant delivery', 'Checked and working accounts', 'HD streaming quality', 'Support and a replacement if needed'] },
+                    { title: 'What you can watch', items: ['The Walking Dead universe', 'Exclusive AMC originals', 'Thriller, horror, and drama series', 'Premium movies and collections'] }
+                ],
+                closing: 'AMC+ is known for some of the most iconic series in TV history, especially in the thriller and horror genre.'
+            },
+            'Disney+ Accounts': {
+                headline: 'Disney+ NFA/FA Account',
+                paragraphs: ['Unlimited streaming of your favorite movies and series, forever.', 'Enjoy Disney classics, Marvel, Star Wars, Pixar, and National Geographic with lifetime access.'],
+                included: ['Disney+ Premium Account, lifetime access', 'Watch unlimited shows, movies, and originals', 'Works worldwide. Stream anywhere', 'Instant delivery after purchase', 'Support included'],
+                closing: 'Dive into endless entertainment. One payment, lifetime access.'
+            },
+            'CapCut Pro Lifetime': {
+                headline: 'CapCut Pro Lifetime Account — Non Full Access',
+                paragraphs: ['Unlock the full power of CapCut Pro with a lifetime account. No monthly subscription needed.', 'Perfect for creators, editors, and anyone who wants to access all premium features forever.', 'Some accounts may include early access to new features or templates.'],
+                included: ['Lifetime CapCut Pro access', 'All premium editing tools and effects unlocked', 'No watermark on exports', 'Clean account, secure and ready to use', '24-hour replacement warranty', 'Instant automatic delivery after purchase', 'Platform: CapCut Pro (PC / Mobile)'],
+                closing: 'Enjoy unlimited editing power, forever.'
+            },
             'Paramount+ Full Access': {
                 headline: 'Paramount+ Account — Full Access (LATAM + EU & USA)',
                 paragraphs: ['Premium, fully verified Paramount+ streaming accounts for unlimited access to movies, series, and exclusive originals.', 'You can choose between LATAM + EU or USA region during checkout.', 'Some accounts may include active premium bundles or add-ons. This is random and not guaranteed.'],
@@ -329,7 +413,7 @@
             return sorted[0] + ' – ' + sorted[sorted.length - 1];
         }
         function artMarkup(item) {
-            const icon = item.icon === 'fivem' ? FIVEM : item.icon === 'paramount' ? PARAMOUNT : (item.icon ? '<i class="' + item.icon + '"></i>' : '');
+            const icon = item.icon === 'fivem' ? FIVEM : item.icon === 'paramount' ? PARAMOUNT : item.icon === 'hbo' ? HBO : item.icon === 'ufc' ? UFC : item.icon === 'capcut' ? CAPCUT : item.icon === 'fortnite' ? FORTNITE : item.icon === 'disney' ? DISNEY : item.icon === 'amc' ? AMC : (item.icon ? '<i class="' + item.icon + '"></i>' : '');
             const label = item.label ? '<span>' + item.label + '</span>' : '';
             return '<div class="shop-art ' + item.art + '">' + icon + label + '</div>';
         }
@@ -454,7 +538,7 @@
                 particles = [];
                 for (let i = 0; i < count; i++) {
                     const angle = Math.random() * Math.PI * 2;
-                    const speed = 0.35 + Math.random() * 0.95;
+                    const speed = 0.30 + Math.random() * 0.80;
                     particles.push({ x: Math.random() * width, y: Math.random() * height, driftX: Math.cos(angle) * speed, driftY: Math.sin(angle) * speed, kickX: 0, kickY: 0, r: Math.random() * 1.6 + 0.4, a: Math.random() * 0.5 + 0.25 });
                 }
             }
@@ -483,8 +567,8 @@
                 });
                 requestAnimationFrame(tick);
             }
-            resize(); spawn(Math.min(520, Math.floor((innerWidth * innerHeight) / 3800)));
-            addEventListener('resize', () => { resize(); spawn(Math.min(520, Math.floor((innerWidth * innerHeight) / 3800))); });
+            resize(); spawn(Math.min(460, Math.floor((innerWidth * innerHeight) / 4300)));
+            addEventListener('resize', () => { resize(); spawn(Math.min(460, Math.floor((innerWidth * innerHeight) / 4300))); });
             tick();
         })();
     </script>
