@@ -30,6 +30,8 @@
         }
         .feature-tile { background: rgba(8, 4, 8, 0.72); border: 1px solid rgba(255,255,255,0.06); backdrop-filter: blur(10px); }
         .feature-tile:hover { border-color: rgba(255, 26, 26, 0.55); box-shadow: 0 12px 40px rgba(255,26,26,0.12); transform: translateY(-4px); }
+        .picker-panel { animation: picker-in 0.28s ease; }
+        @keyframes picker-in { from { opacity: 0; transform: translateY(14px) scale(0.98); } to { opacity: 1; transform: none; } }
         .shop-card {
             background: rgba(8, 6, 12, 0.88);
             border: 1px solid rgba(255,255,255,0.06);
@@ -187,13 +189,17 @@
 
         <section id="cheats" class="hidden py-12 px-4 max-w-7xl mx-auto">
             <div class="text-center mb-8">
-                <h2 class="text-4xl font-bold text-white">Select a Category</h2>
+                <h2 id="store-heading" class="text-4xl font-bold text-white">Store</h2>
             </div>
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-                <button type="button" data-category="fivem" onclick="filterCategory('fivem')" class="category-btn bg-black/80 border border-red-950 rounded-2xl p-5">FiveM</button>
-                <button type="button" data-category="accounts" onclick="filterCategory('accounts')" class="category-btn bg-black/80 border border-red-950 rounded-2xl p-5">Accounts</button>
-                <button type="button" data-category="r6" onclick="filterCategory('r6')" class="category-btn bg-black/80 border border-red-950 rounded-2xl p-5">R6 Siege</button>
-                <button type="button" data-category="spoofers" onclick="filterCategory('spoofers')" class="category-btn bg-black/80 border border-red-950 rounded-2xl p-5">Spoofers</button>
+                <button type="button" data-category="fivem" onclick="chooseCategory('fivem')" class="category-btn bg-black/80 border border-red-950 rounded-2xl p-5">FiveM</button>
+                <button type="button" data-category="accounts" onclick="chooseCategory('accounts')" class="category-btn bg-black/80 border border-red-950 rounded-2xl p-5">Accounts</button>
+                <button type="button" data-category="r6" onclick="chooseCategory('r6')" class="category-btn bg-black/80 border border-red-950 rounded-2xl p-5">R6 Siege</button>
+                <button type="button" data-category="spoofers" onclick="chooseCategory('spoofers')" class="category-btn bg-black/80 border border-red-950 rounded-2xl p-5">Spoofers</button>
+            </div>
+            <div id="store-prompt" class="hidden text-center py-16">
+                <p class="text-gray-300 mb-6">Pick a category to see what's in stock.</p>
+                <button type="button" onclick="openCategoryPicker()" class="px-6 py-3 rounded-full bg-red-600 hover:bg-red-500 text-white font-semibold">Choose a category</button>
             </div>
             <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"></div>
             <p id="empty-filter" class="hidden text-center text-gray-400 text-sm mt-8">Nothing in this category right now.</p>
@@ -217,6 +223,26 @@
             <button type="button" onclick="backToOptions()" class="text-sm font-semibold text-gray-400 hover:text-white mb-8">&larr; Back</button>
             <div id="product-page-body"></div>
         </section>
+    </div>
+
+    <div id="category-picker" class="hidden fixed inset-0 z-[80] flex items-center justify-center p-4">
+        <button type="button" class="absolute inset-0 bg-black/75 backdrop-blur-sm" onclick="closeCategoryPicker()" aria-label="Close"></button>
+        <div class="picker-panel relative w-full max-w-3xl rounded-3xl border border-red-950 bg-[#0a0608]/95 p-6 sm:p-8 shadow-[0_0_80px_rgba(255,26,26,0.2)]">
+            <div class="flex items-start justify-between gap-4 mb-6">
+                <div>
+                    <p class="text-red-400 text-xs font-semibold tracking-wide mb-2">Store</p>
+                    <h2 class="text-3xl font-semibold text-white">Pick a category</h2>
+                    <p class="text-gray-400 text-sm mt-2">Choose what you want to look through. The products for that category open next.</p>
+                </div>
+                <button type="button" onclick="closeCategoryPicker()" class="text-gray-400 hover:text-white text-2xl leading-none px-2" aria-label="Close">&times;</button>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <button type="button" onclick="chooseCategory('accounts')" class="feature-tile rounded-3xl py-8 flex flex-col items-center gap-3 transition"><i class="fa-regular fa-id-card text-4xl"></i><span>Accounts</span></button>
+                <button type="button" onclick="chooseCategory('fivem')" class="feature-tile rounded-3xl py-8 flex flex-col items-center gap-3 transition"><i class="fa-solid fa-campground text-4xl"></i><span>FiveM</span></button>
+                <button type="button" onclick="chooseCategory('r6')" class="feature-tile rounded-3xl py-8 flex flex-col items-center gap-3 transition"><i class="fa-solid fa-crosshairs text-4xl"></i><span>Rainbow Six Siege</span></button>
+                <button type="button" onclick="chooseCategory('spoofers')" class="feature-tile rounded-3xl py-8 flex flex-col items-center gap-3 transition"><i class="fa-solid fa-user-secret text-4xl"></i><span>Spoofers</span></button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -442,20 +468,36 @@
         }
         renderProducts();
         document.getElementById('mobile-menu-btn').addEventListener('click', () => document.getElementById('mobile-menu').classList.toggle('hidden'));
-        function showHome() { document.getElementById('home').classList.remove('hidden'); document.getElementById('cheats').classList.add('hidden'); document.getElementById('loader').classList.add('hidden'); document.getElementById('options-page').classList.add('hidden'); document.getElementById('product-page').classList.add('hidden'); window.scrollTo({ top: 0 }); }
-        function showStore(reset) { document.getElementById('home').classList.add('hidden'); document.getElementById('loader').classList.add('hidden'); document.getElementById('options-page').classList.add('hidden'); document.getElementById('product-page').classList.add('hidden'); document.getElementById('cheats').classList.remove('hidden'); if (reset !== false) filterCategory('all'); window.scrollTo({ top: 0 }); }
-        function showLoader() { document.getElementById('home').classList.add('hidden'); document.getElementById('cheats').classList.add('hidden'); document.getElementById('options-page').classList.add('hidden'); document.getElementById('product-page').classList.add('hidden'); document.getElementById('loader').classList.remove('hidden'); window.scrollTo({ top: 0 }); }
-        function openStoreCategory(category) { showStore(); filterCategory(category); }
+        const categoryNames = { accounts: 'Accounts', fivem: 'FiveM', r6: 'R6 Siege', spoofers: 'Spoofers' };
+        let activeCategory = null;
+        function openCategoryPicker() {
+            document.getElementById('category-picker').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeCategoryPicker() {
+            document.getElementById('category-picker').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+        function showHome() { closeCategoryPicker(); document.getElementById('home').classList.remove('hidden'); document.getElementById('cheats').classList.add('hidden'); document.getElementById('loader').classList.add('hidden'); document.getElementById('options-page').classList.add('hidden'); document.getElementById('product-page').classList.add('hidden'); window.scrollTo({ top: 0 }); }
+        function showStore(reset) { closeCategoryPicker(); document.getElementById('home').classList.add('hidden'); document.getElementById('loader').classList.add('hidden'); document.getElementById('options-page').classList.add('hidden'); document.getElementById('product-page').classList.add('hidden'); document.getElementById('cheats').classList.remove('hidden'); if (reset !== false) { activeCategory = null; filterCategory(null); openCategoryPicker(); } window.scrollTo({ top: 0 }); }
+        function showLoader() { closeCategoryPicker(); document.getElementById('home').classList.add('hidden'); document.getElementById('cheats').classList.add('hidden'); document.getElementById('options-page').classList.add('hidden'); document.getElementById('product-page').classList.add('hidden'); document.getElementById('loader').classList.remove('hidden'); window.scrollTo({ top: 0 }); }
+        function openStoreCategory(category) { showStore(false); chooseCategory(category); }
+        function chooseCategory(category) { activeCategory = category; filterCategory(category); closeCategoryPicker(); }
         function filterCategory(category) {
+            const waiting = !category;
             let visible = 0;
             document.querySelectorAll('.product-card').forEach((card) => {
-                const show = category === 'all' || card.classList.contains(category);
+                const show = !waiting && card.classList.contains(category);
                 card.style.display = show ? 'flex' : 'none';
                 if (show) visible += 1;
             });
             document.querySelectorAll('.category-btn').forEach((btn) => btn.classList.toggle('active', btn.getAttribute('data-category') === category));
-            document.getElementById('empty-filter').classList.toggle('hidden', visible > 0);
+            document.getElementById('products-grid').style.display = waiting ? 'none' : 'grid';
+            document.getElementById('store-prompt').classList.toggle('hidden', !waiting);
+            document.getElementById('store-heading').textContent = waiting ? 'Store' : categoryNames[category];
+            document.getElementById('empty-filter').classList.toggle('hidden', waiting || visible > 0);
         }
+        document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeCategoryPicker(); });
         function esc(value) {
             return String(value == null ? '' : value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
