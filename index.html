@@ -76,7 +76,6 @@
         .art-steam { --neon: #7dd3fc; --glow: rgba(14, 165, 233, 0.9); }
         .art-rockstar { --neon: #fde68a; --glow: rgba(245, 158, 11, 0.9); }
         .art-netflix { --neon: #fda4a4; --glow: rgba(239, 68, 68, 0.9); }
-        .art-tiktok { --neon: #25f4ee; --glow: rgba(254, 44, 85, 0.9); }
         .art-youtube { --neon: #ff4d4d; --glow: rgba(255, 0, 0, 0.9); }
         .art-paramount { --neon: #7eb6ff; --glow: rgba(0, 100, 255, 0.9); }
         .art-hbo { --neon: #c084fc; --glow: rgba(96, 165, 250, 0.9); }
@@ -285,8 +284,6 @@
             ] },
             nitro: { category: 'accounts', title: 'Discord Nitro', art: 'art-nitro', icon: 'fa-solid fa-gem', label: 'Nitro', status: 'In stock', href: TICKET, options: [{ name: 'Discord Nitro', price: '$7.99' }, { name: '', price: '' }, { name: '', price: '' }] },
             netflix: { category: 'accounts', title: 'Netflix Premium 4K', art: 'art-netflix', icon: 'fa-solid fa-film', label: 'Netflix', status: 'In stock', href: 'https://blackout-market-ot.mysellauth.com/product/netflix-accounts', options: [{ name: 'Premium 4K', price: '$5.99' }, { name: '', price: '' }, { name: '', price: '' }] },
-            // Blank account boxes. Fill in title, icon, label, status, href, and options.
-            account1: { category: 'accounts', title: 'TikTok Accounts [HIGH\u00A0QUALITY]', art: 'art-tiktok', icon: 'fa-brands fa-tiktok', label: 'TikTok', status: 'In stock', href: TICKET, options: [{ name: 'TikTok Accounts 1k+ Followers', price: '$13.99' }, { name: 'TikTok Accounts 10k+ Followers', price: '$27.99' }, { name: 'TikTok Accounts 20k+ Followers', price: '$44.99' }] },
             account2: { category: 'accounts', title: 'YouTube Premium Lifetime Accounts', art: 'art-youtube', icon: 'fa-brands fa-youtube', label: 'YouTube', status: 'In stock', href: 'https://blackout-market-ot.mysellauth.com/product/youtube-premium-lifetime', options: [{ name: 'YouTube Premium Lifetime Accounts', price: '$9.99' }] },
             account3: { category: 'accounts', title: 'Paramount+ Full Access', art: 'art-paramount', icon: 'paramount', label: 'Paramount+', status: 'In stock', href: 'https://blackout-market-ot.mysellauth.com/product/paramount-region-usa', options: [{ name: 'Paramount+ Full Access', price: '$5.50' }] },
             account4: { category: 'accounts', title: 'HBO Max Lifetime Accounts', art: 'art-hbo', icon: 'hbo', label: 'HBO Max', status: 'In stock', href: 'https://blackout-market-ot.mysellauth.com/product/hbo-max-lifetime-accounts', options: [{ name: 'HBO Max Lifetime Accounts', price: '$3.50' }] },
@@ -324,7 +321,6 @@
             discord: { summary: 'Discord accounts in several ages and verification types. The 10 pack bundle is available now. The other types stay listed while they are out of stock.', included: ['The account type you select', 'Checkout on SellAuth', '24-hour warranty on accounts that are delivered'] },
             nitro: { summary: 'Discord Nitro delivered through a ticket. Continue on Discord and the login or gift is sent there.', included: ['Discord Nitro', 'Delivery through Discord'] },
             netflix: { summary: 'A Netflix Premium 4K key. Checkout on SellAuth and the key is delivered there.', included: ['Premium 4K access', 'Key delivered through SellAuth', 'Instant replacement if the account drops'] },
-            account1: { summary: 'High quality TikTok accounts, sold by follower count. Pick a size, then continue on Discord to receive the login.', included: ['The follower count you select', 'Login you can change', 'Delivery through Discord', '24-hour warranty if there is an issue with the account'] },
             account2: { summary: 'A lifetime YouTube Premium account with full access. The login is yours after delivery, and you can change it whenever you want. Premium removes ads and keeps playback going in the background.', included: ['Lifetime YouTube Premium access', 'Full login you can change', 'Private account, ready to use', 'Checkout on SellAuth', '24-hour warranty if there is an issue with the account'] },
             account8: { summary: 'Full access Fortnite accounts, sold by the listing you pick. Activation is usually a few minutes, and the login works on PC, PlayStation, Xbox, Switch, and mobile.', included: ['Ranked ready on the ranked listings. The account level meets the requirements to play Ranked', 'Full access. Email and password for Epic Games and the email login', 'You can change the email and password', 'Works worldwide on any server region', 'Instant delivery after checkout', 'Replacement if there is a login issue at the start'] }
         };
@@ -369,35 +365,6 @@
                 included: faDiscord.included,
                 webmail: WEBMAIL,
                 closing: faDiscord.closing
-            },
-            'TikTok Accounts 1k+ Followers': {
-                headline: 'TikTok Account — 1,000+ Followers [ HIGH QUALITY ]',
-                paragraphs: ['Perfect for instant growth and live streaming on TikTok.'],
-                sections: [
-                    { title: 'Why high quality', items: ['No-drop guarantee. Followers are real, aged, and stable, so they do not disappear over time.', 'Not bot-filled. Unlike cheap accounts, this follower base will not get wiped in a purge.', 'You get what you pay for. A higher price, with a following that actually stays.'] },
-                    { title: 'Key benefits', items: ['Live stream ready. Go live instantly.', 'Fast start. No need to grow followers manually.', 'Boosted credibility. An established, stable audience is included.'] },
-                    { title: 'Account information', items: ['Changeable email and password.', 'Ready for mobile use.', 'Replacement available.', '24-hour warranty.'] },
-                    { title: 'Notes', items: ['Ideal for creators, streamers, and promotions.', 'Instant delivery after purchase.'] }
-                ]
-            },
-            'TikTok Accounts 10k+ Followers': {
-                headline: 'TikTok Account — 10,000+ Followers',
-                paragraphs: ['Perfect for instant growth and live streaming on TikTok.'],
-                sections: [
-                    { title: 'Key benefits', items: ['Live stream ready. Go live instantly.', 'Fast start. No need to grow followers manually.', 'Boosted credibility. An established audience is included.'] },
-                    { title: 'Account information', items: ['Changeable email and password.', 'Ready for mobile use.', 'Replacement available.', '24-hour warranty.'] },
-                    { title: 'Notes', items: ['Ideal for creators, streamers, and promotions.'] }
-                ]
-            },
-            'TikTok Accounts 20k+ Followers': {
-                headline: 'TikTok Full Access Account — 20,000+ Followers',
-                paragraphs: ['High-quality TikTok account for instant growth and monetization.'],
-                sections: [
-                    { title: 'Key features', items: ['20,000+ real followers.', 'Full access, with email and password included.', 'You can change all credentials.', 'Live streaming enabled.', 'Monetization ready, suitable for promos and sponsorships.'] },
-                    { title: 'Account details', items: ['Fully verified and secure.', 'Clean history, with no bans or violations.', 'Mobile ready.', 'Instant delivery.', '24-hour warranty.'] },
-                    { title: 'Best for', items: ['Influencers and content creators.', 'Businesses and brand promotion.', 'Resellers and marketing use.'] },
-                    { title: 'Notes', items: ['Fresh and trusted setup.', 'Built for fast TikTok scaling.'] }
-                ]
             },
             'HBO Max Lifetime Accounts': {
                 headline: 'HBO Max Lifetime Account',
