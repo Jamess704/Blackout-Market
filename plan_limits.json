@@ -1,6 +1,6 @@
 {
-  "1 Day":    20,
-  "1 Week":   35,
-  "1 Month":  65,
-  "Lifetime": 125
+  "1 Day":    35,
+  "1 Week":   50,
+  "1 Month":  100,
+  "Lifetime": 150
 }
