@@ -1,0 +1,2201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GenHub</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --card: #16161f;
+    --border: #ffffff0f;
+    --border-hover: #ffffff1a;
+    --text: #f0f0f5;
+    --muted: #666680;
+    --accent: #6c5ce7;
+    --accent2: #a29bfe;
+    --green: #00b894;
+    --red: #e17055;
+    --radius: 12px;
+    --font: 'Segoe UI', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #05050a; color: var(--text); font-family: var(--font); min-height: 100vh; }
+
+  /* ── ANIMATED BACKGROUND ── */
+  #bg-canvas {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 0; pointer-events: none;
+  }
+  nav, .screen { position: relative; z-index: 1; }
+
+  /* Nav glass */
+  nav {
+    background: rgba(10,10,18,0.75) !important;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+  }
+
+  /* Cards glass */
+  .auth-card, .redeem-card, .modal, .product-card, .history-item, .account-box {
+    background: rgba(16,16,26,0.72) !important;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(255,255,255,0.07) !important;
+  }
+  .product-card:hover {
+    background: rgba(22,22,36,0.85) !important;
+    border-color: rgba(108,92,231,0.35) !important;
+  }
+  .main-wrap { background: transparent !important; }
+
+  /* ── NAV ── */
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 32px; border-bottom: 1px solid var(--border);
+    background: var(--surface); position: sticky; top: 0; z-index: 100;
+  }
+  .logo { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; color: var(--text); }
+  .logo span { color: var(--accent2); }
+  .nav-right { display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--muted); }
+  .user-badge {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 6px 12px; font-size: 12px; color: var(--accent2);
+    display: none;
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── AUTH SCREEN ── */
+  .auth-wrap {
+    min-height: calc(100vh - 61px); display: flex;
+    align-items: center; justify-content: center; padding: 40px 20px;
+  }
+  .auth-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 18px; padding: 40px; width: 100%; max-width: 420px;
+  }
+  .auth-card h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .auth-card p { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+  .tabs { display: flex; gap: 4px; margin-bottom: 24px; background: rgba(8,8,18,0.6); padding: 4px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06); }
+  .tab {
+    flex: 1; padding: 9px; border: none; background: transparent;
+    color: var(--muted); font-size: 13px; font-weight: 500; border-radius: 7px;
+    cursor: pointer; transition: all .15s;
+  }
+  .tab.active { background: var(--accent); color: #fff; }
+  label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; margin-top: 14px; }
+  input[type=text], input[type=password], input[type=email] {
+    width: 100%; background: rgba(8,8,18,0.55); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 9px; padding: 11px 14px; color: var(--text); font-size: 14px;
+    outline: none; transition: border .15s;
+  }
+  input:focus { border-color: var(--accent); }
+  .btn {
+    width: 100%; margin-top: 20px; padding: 12px;
+    background: var(--accent); color: #fff; border: none;
+    border-radius: 10px; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: opacity .15s;
+  }
+  .btn:hover { opacity: .85; }
+  .btn.secondary {
+    background: var(--surface); color: var(--text);
+    border: 1px solid var(--border); margin-top: 10px;
+  }
+  .err { font-size: 12px; color: var(--red); margin-top: 8px; display: none; }
+
+  /* ── REDEEM SCREEN ── */
+  .redeem-wrap {
+    min-height: calc(100vh - 61px); display: flex;
+    align-items: center; justify-content: center; padding: 40px 20px;
+  }
+  .redeem-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 18px; padding: 40px; width: 100%; max-width: 460px; text-align: center;
+  }
+  .redeem-card h2 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .redeem-card p { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+  .key-input {
+    width: 100%; background: rgba(8,8,18,0.55); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px; padding: 14px 16px; color: var(--text); font-size: 15px;
+    font-family: monospace; letter-spacing: 2px; text-align: center;
+    outline: none; transition: border .15s;
+  }
+  .key-input:focus { border-color: var(--accent); }
+  .key-input::placeholder { letter-spacing: 0; font-family: var(--font); color: var(--muted); font-size: 13px; }
+  .plan-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #6c5ce715; border: 1px solid #6c5ce730;
+    color: var(--accent2); border-radius: 8px; padding: 6px 14px;
+    font-size: 13px; font-weight: 500; margin-bottom: 20px;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+
+  /* ── MAIN GEN SCREEN ── */
+  .main-wrap { max-width: 960px; margin: 0 auto; padding: 36px 24px; }
+  .main-header { margin-bottom: 28px; }
+  .main-header h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .main-header p { font-size: 14px; color: var(--muted); }
+  .gens-left {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(10,10,22,0.6); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 8px; padding: 8px 14px; font-size: 13px;
+    color: var(--muted); margin-top: 12px;
+  }
+  .gens-left strong { color: var(--green); }
+
+  /* ── PRODUCT GRID ── */
+  .section-label {
+    font-size: 11px; font-weight: 600; letter-spacing: .08em;
+    color: var(--muted); text-transform: uppercase; margin-bottom: 14px; margin-top: 28px;
+  }
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 12px;
+  }
+  .product-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px 14px;
+    text-align: center; cursor: pointer;
+    transition: border .15s, transform .12s, background .15s;
+    position: relative; overflow: hidden;
+  }
+  .product-card:hover { border-color: var(--border-hover); transform: translateY(-2px); }
+  .product-card.zero { opacity: .45; cursor: not-allowed; }
+  .product-card.zero:hover { transform: none; }
+  .product-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 12px; font-size: 24px;
+  }
+  .product-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .product-stock { font-size: 11px; }
+  .product-stock.has-stock { color: var(--green); }
+  .product-stock.no-stock { color: var(--red); }
+
+  /* ── MODAL ── */
+  .modal-bg {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,8,0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 200;
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-bg.open { display: flex; }
+  .modal {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 18px; padding: 32px; width: 100%; max-width: 420px;
+  }
+  .modal h3 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .modal p { font-size: 13px; color: var(--muted); margin-bottom: 22px; }
+  .account-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px; margin-bottom: 16px;
+  }
+  .account-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .account-row:last-child { margin-bottom: 0; }
+  .account-label { font-size: 11px; color: var(--muted); }
+  .account-val { font-size: 13px; font-family: monospace; color: var(--text); }
+  .copy-btn {
+    background: var(--accent); color: #fff; border: none;
+    border-radius: 7px; padding: 5px 10px; font-size: 11px;
+    cursor: pointer; transition: opacity .15s;
+  }
+  .copy-btn:hover { opacity: .8; }
+  .modal-close {
+    width: 100%; padding: 11px; background: var(--surface);
+    border: 1px solid var(--border); color: var(--muted);
+    border-radius: 10px; font-size: 13px; cursor: pointer;
+  }
+  .modal-close:hover { color: var(--text); }
+  .gen-spinner { display: none; text-align: center; padding: 20px 0; color: var(--muted); font-size: 13px; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 28px; right: 28px;
+    background: var(--green); color: #fff;
+    border-radius: 10px; padding: 12px 18px; font-size: 13px; font-weight: 500;
+    z-index: 999; transform: translateY(80px); opacity: 0;
+    transition: all .25s; pointer-events: none;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.err-toast { background: var(--red); }
+
+  .divider { height: 1px; background: var(--border); margin: 32px 0; }
+
+  /* ── HISTORY ── */
+  .history-wrap { margin-top: 8px; }
+  .history-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; margin-bottom: 8px; font-size: 13px;
+  }
+  .history-left { display: flex; align-items: center; gap: 10px; }
+  .history-icon { font-size: 18px; }
+  .history-name { font-weight: 500; }
+  .history-time { font-size: 11px; color: var(--muted); }
+  .view-btn {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--muted); border-radius: 7px; padding: 5px 12px;
+    font-size: 12px; cursor: pointer;
+  }
+  .view-btn:hover { color: var(--text); border-color: var(--border-hover); }
+
+  /* ── HISTORY HEADER ── */
+  .history-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .download-hist-btn {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(108,92,231,0.12); border: 1px solid rgba(108,92,231,0.25);
+    color: var(--accent2); border-radius: 8px; padding: 7px 14px;
+    font-size: 12px; font-weight: 500; cursor: pointer; transition: all .15s;
+  }
+  .download-hist-btn:hover { background: rgba(108,92,231,0.22); }
+
+  /* ── SETTINGS GEAR ── */
+  .gear-btn {
+    background: rgba(108,92,231,0.1); border: 1px solid rgba(108,92,231,0.2);
+    color: var(--muted); border-radius: 8px; padding: 6px 11px; font-size: 15px;
+    cursor: pointer; transition: all .15s; line-height: 1;
+  }
+  .gear-btn:hover { color: var(--accent2); border-color: rgba(108,92,231,0.4); }
+
+  /* ── SETTINGS SCREEN ── */
+  .settings-wrap { max-width: 680px; margin: 0 auto; padding: 36px 24px 60px; }
+  .settings-back {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: none; border: none; color: var(--muted); font-size: 13px;
+    cursor: pointer; margin-bottom: 28px; transition: color .15s;
+  }
+  .settings-back:hover { color: var(--text); }
+  .settings-title { font-size: 22px; font-weight: 700; margin-bottom: 32px; }
+
+  .settings-section {
+    background: rgba(16,16,26,0.72); backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 16px; padding: 24px; margin-bottom: 20px;
+  }
+  .settings-section-title {
+    font-size: 11px; font-weight: 600; letter-spacing: .1em;
+    color: var(--muted); text-transform: uppercase; margin-bottom: 20px;
+  }
+
+  /* background option tiles */
+  .bg-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+  .bg-tile {
+    border-radius: 10px; height: 72px; cursor: pointer; position: relative;
+    border: 2px solid transparent; transition: border .15s, transform .12s;
+    overflow: hidden; display: flex; align-items: flex-end;
+  }
+  .bg-tile:hover { transform: translateY(-2px); }
+  .bg-tile.selected { border-color: var(--accent2); }
+  .bg-tile-label {
+    font-size: 10px; font-weight: 600; color: #fff; padding: 4px 7px;
+    background: rgba(0,0,0,0.55); width: 100%;
+  }
+  /* Tile preview gradients */
+  .bg-aurora  { background: linear-gradient(135deg, #0a0a1f 0%, #1a0a3f 40%, #0d1a4f 100%); }
+  .bg-matrix  { background: linear-gradient(135deg, #000a00 0%, #002200 50%, #001200 100%); }
+  .bg-galaxy  { background: linear-gradient(135deg, #05020f 0%, #120530 50%, #1a0525 100%); }
+  .bg-synthwave { background: linear-gradient(180deg, #1a0030 0%, #2d0050 40%, #500070 70%, #ff6b9d33 100%); }
+  .bg-cyber   { background: linear-gradient(135deg, #000d1a 0%, #001a2e 50%, #00111f 100%); }
+  .bg-custom-tile { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border: 2px dashed rgba(255,255,255,0.15); }
+
+  .upload-bg-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 11px; background: rgba(108,92,231,0.1);
+    border: 1px dashed rgba(108,92,231,0.3); color: var(--accent2);
+    border-radius: 10px; font-size: 13px; cursor: pointer; transition: all .15s;
+  }
+  .upload-bg-btn:hover { background: rgba(108,92,231,0.18); }
+
+  .dim-row { display: flex; align-items: center; gap: 14px; margin-top: 16px; }
+  .dim-row label { font-size: 12px; color: var(--muted); white-space: nowrap; margin: 0; }
+  .dim-slider {
+    flex: 1; -webkit-appearance: none; height: 4px;
+    background: rgba(255,255,255,0.1); border-radius: 2px; outline: none;
+  }
+  .dim-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
+    background: var(--accent); cursor: pointer;
+  }
+
+  /* account info rows */
+  .acct-info-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 13px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .acct-info-row:last-child { border-bottom: none; }
+  .acct-info-label { font-size: 12px; color: var(--muted); }
+  .acct-info-val { font-size: 13px; font-family: monospace; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .eye-btn {
+    background: none; border: none; color: var(--muted); cursor: pointer;
+    font-size: 14px; padding: 2px 4px; transition: color .15s;
+  }
+  .eye-btn:hover { color: var(--accent2); }
+
+  /* upgrade section */
+  .upgrade-card {
+    background: linear-gradient(135deg, rgba(108,92,231,0.12), rgba(162,155,254,0.08));
+    border: 1px solid rgba(108,92,231,0.3); border-radius: 12px;
+    padding: 18px; margin-bottom: 16px;
+  }
+  .upgrade-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .upgrade-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(108,92,231,0.2); border: 1px solid rgba(108,92,231,0.35);
+    color: var(--accent2); border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: 600;
+  }
+  .upgrade-price { font-size: 20px; font-weight: 700; color: var(--text); }
+  .upgrade-desc { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+  .purchase-btn {
+    width: 100%; padding: 12px; background: var(--accent); color: #fff;
+    border: none; border-radius: 10px; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: opacity .15s;
+  }
+  .purchase-btn:hover { opacity: .85; }
+  .purchase-btn:disabled { opacity: .4; cursor: not-allowed; }
+  .boost-active-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(0,184,148,0.15); border: 1px solid rgba(0,184,148,0.35);
+    color: var(--green); border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: 600;
+  }
+  .boost-redeem-row { display: flex; gap: 8px; margin-top: 12px; }
+  .boost-redeem-row input {
+    flex: 1; background: rgba(8,8,18,0.55); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 9px; padding: 10px 13px; color: var(--text); font-size: 13px;
+    font-family: monospace; outline: none; letter-spacing: 1px;
+  }
+  .boost-redeem-row input:focus { border-color: var(--accent); }
+  .boost-redeem-btn {
+    padding: 10px 18px; background: rgba(108,92,231,0.15);
+    border: 1px solid rgba(108,92,231,0.3); color: var(--accent2);
+    border-radius: 9px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap;
+    transition: all .15s;
+  }
+  .boost-redeem-btn:hover { background: rgba(108,92,231,0.25); }
+  .boost-err { font-size: 12px; color: var(--red); margin-top: 6px; display: none; }
+
+  /* ── UPDATE BANNER ── */
+  #update-banner {
+    display: none;
+    position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+    background: linear-gradient(135deg, #1a1040 0%, #0d0d1a 100%);
+    border-bottom: 1px solid rgba(108,92,231,0.45);
+    padding: 10px 24px;
+    align-items: center; justify-content: space-between; gap: 12px;
+    box-shadow: 0 2px 18px rgba(108,92,231,0.22);
+  }
+  #update-banner.visible { display: flex; }
+  .update-text { font-size: 13px; color: #c8c8e8; line-height: 1.4; }
+  .update-text strong { color: var(--accent2); }
+  .update-text .update-notes { color: var(--muted); font-size: 11px; margin-top: 2px; }
+  .update-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .update-dl-btn {
+    background: var(--accent); color: #fff; border: none; border-radius: 8px;
+    padding: 7px 16px; font-size: 12px; font-weight: 600; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .update-dl-btn:hover { background: #7c6df0; }
+  .update-dismiss {
+    background: none; border: none; color: var(--muted); font-size: 18px;
+    cursor: pointer; padding: 2px 6px; border-radius: 6px; line-height: 1;
+    transition: color 0.15s;
+  }
+  .update-dismiss:hover { color: var(--text); }
+  /* shift everything down when banner is visible */
+  body.has-update nav { top: 45px; }
+</style>
+</head>
+<body>
+
+<!-- UPDATE BANNER (shown if a new version is available) -->
+<div id="update-banner" role="alert" aria-live="polite">
+  <div class="update-text">
+    <div>🚀 <strong id="update-version-label">GenHub v1.0.1</strong> is available — you're on <span id="update-current-label">v1.0.0</span></div>
+    <div class="update-notes" id="update-notes-label"></div>
+  </div>
+  <div class="update-actions">
+    <button class="update-dl-btn" onclick="downloadUpdate()">Download Update</button>
+    <button class="update-dismiss" title="Dismiss" onclick="dismissUpdateBanner()">×</button>
+  </div>
+</div>
+
+<!-- ANIMATED BACKGROUND CANVAS -->
+<canvas id="bg-canvas"></canvas>
+<!-- Custom wallpaper layer (behind canvas) -->
+<div id="custom-bg-layer" style="display:none;position:fixed;inset:0;z-index:0;background-size:cover;background-position:center;pointer-events:none"></div>
+<!-- Dim overlay -->
+<div id="dim-overlay" style="display:none;position:fixed;inset:0;z-index:0;background:rgba(0,0,0,0.3);pointer-events:none"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Gen<span>Hub</span></div>
+  <div class="nav-right">
+    <span id="nav-status">Not signed in</span>
+    <div class="user-badge" id="user-badge">●&nbsp; <span id="badge-email"></span></div>
+    <button class="gear-btn" id="gear-btn" onclick="openSettings()" style="display:none" title="Settings">⚙</button>
+  </div>
+</nav>
+
+<!-- ══ SCREEN: AUTH ══ -->
+<div class="screen active" id="screen-auth">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <h2>Welcome to GenHub</h2>
+      <p>Sign in or create an account to access your generator.</p>
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('login')">Sign In</button>
+        <button class="tab" onclick="switchTab('register')">Register</button>
+      </div>
+
+      <!-- Login -->
+      <div id="form-login">
+        <label>Username</label>
+        <input type="text" id="login-email" placeholder="cooluser99" autocomplete="username">
+        <label>Password</label>
+        <input type="password" id="login-pass" placeholder="••••••••">
+        <div class="err" id="login-err">Invalid username or password.</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:14px;margin-bottom:2px">
+          <input type="checkbox" id="remember-me" style="width:15px;height:15px;accent-color:var(--accent);cursor:pointer">
+          <label for="remember-me" style="margin:0;font-size:13px;color:var(--muted);cursor:pointer;user-select:none">Remember me</label>
+        </div>
+        <button class="btn" onclick="doLogin()">Sign In</button>
+      </div>
+
+      <!-- Register -->
+      <div id="form-register" style="display:none">
+        <label>Email</label>
+        <input type="email" id="reg-email" placeholder="you@example.com">
+        <label>Username</label>
+        <input type="text" id="reg-user" placeholder="cooluser99">
+        <label>Password</label>
+        <input type="password" id="reg-pass" placeholder="Min. 6 characters">
+        <div class="err" id="reg-err">Please fill all fields.</div>
+        <button class="btn" onclick="doRegister()">Create Account</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCREEN: REDEEM ══ -->
+<div class="screen" id="screen-redeem">
+  <div class="redeem-wrap">
+    <div class="redeem-card">
+      <h2>Redeem Your Key</h2>
+      <p>Enter the key you received from your purchase to unlock the generator.</p>
+      <input type="text" class="key-input" id="key-input" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19" oninput="formatKey(this)">
+      <div class="err" id="key-err" style="margin:10px auto;text-align:center;">Invalid or already used key.</div>
+      <button class="btn" style="margin-top:16px" onclick="doRedeem()">Redeem Key</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCREEN: MAIN GEN ══ -->
+<div class="screen" id="screen-main">
+  <div class="main-wrap">
+    <div class="main-header">
+      <h1>Account Generator</h1>
+      <p>Select a product below to generate an account instantly.</p>
+      <div class="gens-left">
+        Plan: <strong id="plan-name">—</strong>&nbsp;·&nbsp;Expires: <strong id="plan-exp">—</strong>&nbsp;·&nbsp;Daily: <strong id="plan-daily">—</strong>&nbsp;·&nbsp;Today: <strong id="plan-today">0</strong>
+      </div>
+    </div>
+
+    <div class="section-label">Available Products</div>
+    <div class="product-grid" id="product-grid"></div>
+
+    <div class="divider"></div>
+    <div class="history-header">
+      <div class="section-label" style="margin:0">Generation History</div>
+      <button class="download-hist-btn" onclick="downloadHistory()">⬇ Download Last 100</button>
+    </div>
+    <div class="history-wrap" id="history-wrap">
+      <div style="font-size:13px;color:var(--muted)">No generations yet.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCREEN: SETTINGS ══ -->
+<div class="screen" id="screen-settings">
+  <div class="settings-wrap">
+    <button class="settings-back" onclick="closeSettings()">← Back</button>
+    <div class="settings-title">Settings</div>
+
+    <!-- CUSTOMIZATION -->
+    <div class="settings-section">
+      <div class="settings-section-title">Customization</div>
+
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Background Style</div>
+      <div class="bg-grid">
+        <div class="bg-tile bg-aurora selected" id="bg-tile-aurora" onclick="selectBg('aurora')">
+          <div class="bg-tile-label">Aurora</div>
+        </div>
+        <div class="bg-tile bg-matrix" id="bg-tile-matrix" onclick="selectBg('matrix')">
+          <div class="bg-tile-label">Matrix</div>
+        </div>
+        <div class="bg-tile bg-galaxy" id="bg-tile-galaxy" onclick="selectBg('galaxy')">
+          <div class="bg-tile-label">Galaxy</div>
+        </div>
+        <div class="bg-tile bg-synthwave" id="bg-tile-synthwave" onclick="selectBg('synthwave')">
+          <div class="bg-tile-label">Synthwave</div>
+        </div>
+        <div class="bg-tile bg-cyber" id="bg-tile-cyber" onclick="selectBg('cyber')">
+          <div class="bg-tile-label">Cyber</div>
+        </div>
+        <div class="bg-tile bg-custom-tile" id="bg-tile-custom" onclick="triggerWallpaperUpload()" style="align-items:center;justify-content:center;flex-direction:column;gap:4px">
+          <div style="font-size:20px">🖼</div>
+          <div class="bg-tile-label" style="text-align:center">Custom</div>
+        </div>
+      </div>
+      <input type="file" id="wallpaper-input" accept="image/*" style="display:none" onchange="handleWallpaperUpload(event)">
+      <button class="upload-bg-btn" onclick="triggerWallpaperUpload()">📁 Upload Custom Wallpaper</button>
+
+      <div class="dim-row">
+        <label>Background Dim</label>
+        <input type="range" class="dim-slider" id="dim-slider" min="0" max="90" value="30" oninput="applyDim(this.value)">
+        <span id="dim-val" style="font-size:12px;color:var(--muted);min-width:32px">30%</span>
+      </div>
+    </div>
+
+    <!-- ACCOUNT -->
+    <div class="settings-section">
+      <div class="settings-section-title">Account</div>
+      <div class="acct-info-row">
+        <span class="acct-info-label">Email</span>
+        <span class="acct-info-val" id="acct-email">—</span>
+      </div>
+      <div class="acct-info-row">
+        <span class="acct-info-label">Username</span>
+        <span class="acct-info-val" id="acct-username">—</span>
+      </div>
+      <div class="acct-info-row">
+        <span class="acct-info-label">Password</span>
+        <span class="acct-info-val">
+          <span id="acct-pass-dots">••••••••</span>
+          <span id="acct-pass-clear" style="display:none"></span>
+          <button class="eye-btn" id="pass-eye" onclick="togglePassVis()">👁</button>
+        </span>
+      </div>
+      <div class="acct-info-row">
+        <span class="acct-info-label">Plan</span>
+        <span class="acct-info-val" id="acct-plan">—</span>
+      </div>
+      <div class="acct-info-row" style="border-bottom:none">
+        <span class="acct-info-label">Expires</span>
+        <span class="acct-info-val" id="acct-exp">—</span>
+      </div>
+      <div style="margin-top:16px;display:flex;gap:10px">
+        <button class="modal-close" onclick="doSignOut()" style="font-size:13px;color:var(--red);border-color:rgba(225,112,85,0.25)">Sign Out</button>
+        <button class="modal-close" onclick="doDeleteAccount()" style="font-size:13px;color:#e17055;border-color:rgba(225,112,85,0.25);background:rgba(225,112,85,0.08)">🗑 Delete Account</button>
+      </div>
+    </div>
+
+    <!-- LOGGER -->
+    <div class="settings-section" id="logger-section">
+      <div class="settings-section-title">Redemption Logger</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Paste a Discord webhook URL to receive a log entry every time a buyer redeems a key.</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input id="webhook-url-input" type="text" placeholder="https://discord.com/api/webhooks/..." autocomplete="off"
+          style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;outline:none"/>
+        <button onclick="saveWebhook()" style="padding:9px 16px;border-radius:8px;border:1px solid rgba(108,92,231,0.4);background:rgba(108,92,231,0.15);color:var(--accent2);font-size:13px;cursor:pointer;white-space:nowrap">Save</button>
+        <button onclick="testWebhook()" style="padding:9px 16px;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);color:var(--muted);font-size:13px;cursor:pointer;white-space:nowrap">Test</button>
+      </div>
+      <div id="webhook-status" style="font-size:12px;margin-top:8px;display:none"></div>
+    </div>
+
+    <!-- UPGRADE -->
+    <div class="settings-section">
+      <div class="settings-section-title">Upgrade</div>
+      <div class="upgrade-card">
+        <div class="upgrade-card-top">
+          <div class="upgrade-badge">⚡ +50 Daily Gens</div>
+          <div class="upgrade-price">$10.99</div>
+        </div>
+        <div class="upgrade-desc">Permanently adds 50 extra generations per day for the lifetime of your key. Purchase, then redeem your boost code below.</div>
+        <div id="boost-active-row" style="display:none;margin-bottom:12px">
+          <span class="boost-active-badge">✓ Boost Active — +<span id="boost-count">50</span> gens/day</span>
+        </div>
+        <button class="purchase-btn" onclick="openPurchaseUrl()">Purchase — $10.99</button>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Already purchased? Enter your boost code:</div>
+      <div class="boost-redeem-row">
+        <input type="text" id="boost-code-input" placeholder="BOST-XXXX-XXXX" maxlength="14" oninput="formatBoostCode(this)">
+        <button class="boost-redeem-btn" onclick="redeemBoost()">Redeem</button>
+      </div>
+      <div class="boost-err" id="boost-err">Invalid or already used boost code.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ MODAL: ACCOUNT OUTPUT ══ -->
+<div class="modal-bg" id="modal-bg" onclick="closeModal(event)">
+  <div class="modal">
+    <h3 id="modal-title">Account Generated</h3>
+    <p id="modal-sub">Your account details are below. Save them somewhere safe.</p>
+    <div class="gen-spinner" id="gen-spinner">Generating account<span id="dots">...</span></div>
+    <div id="modal-content">
+      <div class="account-box" id="account-fields-box">
+        <!-- Dynamically populated by fillModal() -->
+      </div>
+      <button class="btn" onclick="copyAll()" style="margin-bottom:10px">📋 Copy All</button>
+      <button class="modal-close" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// SELF-VALIDATING KEY SYSTEM
+// Keys carry a cryptographic signature — no database sync
+// needed. Secret must match the one in KeyGen.html.
+// ══════════════════════════════════════════════════════════
+
+const GH_SECRET  = 'GH_BLACKOUT_7x9K';
+const KV_CHARS   = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+
+// ── SUPABASE — reads stock from central database ──────────
+const SB_URL = 'https://liaeducrofflulwkejug.supabase.co';
+const SB_PUB = 'sb_publishable_bG0aYMf6HpNHcqhUTjfsZw_7wgORfyh';
+
+async function sbGet(table, params = '') {
+  try {
+    const r = await fetch(`${SB_URL}/rest/v1/${table}?${params}`, {
+      headers: { 'apikey': SB_PUB, 'Authorization': 'Bearer ' + SB_PUB }
+    });
+    return r.ok ? r.json() : [];
+  } catch { return []; }
+}
+
+async function sbRpc(fn, args) {
+  try {
+    const r = await fetch(`${SB_URL}/rest/v1/rpc/${fn}`, {
+      method: 'POST',
+      headers: {
+        'apikey': SB_PUB, 'Authorization': 'Bearer ' + SB_PUB,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(args),
+    });
+    if (!r.ok) return null;
+    const text = await r.text();
+    return text ? JSON.parse(text) : true;
+  } catch { return null; }
+}
+
+async function sbPatch(table, params, body) {
+  try {
+    const r = await fetch(`${SB_URL}/rest/v1/${table}?${params}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': SB_PUB, 'Authorization': 'Bearer ' + SB_PUB,
+        'Content-Type': 'application/json', 'Prefer': 'return=representation',
+      },
+      body: JSON.stringify(body),
+    });
+    return r.ok ? r.json() : null;
+  } catch { return null; }
+}
+
+const TIER_MAP = {
+  DAYZ: { name: '1 Day',    days: 1     },
+  WEEK: { name: '1 Week',   days: 7     },
+  MNTH: { name: '1 Month',  days: 30    },
+  LIFE: { name: 'Lifetime', days: 36500 },
+};
+
+// FNV-1a 32-bit → 4-char signature
+function keySign(payload) {
+  let h = 2166136261;
+  const src = GH_SECRET + payload;
+  for (let i = 0; i < src.length; i++) {
+    h ^= src.charCodeAt(i);
+    h  = Math.imul(h, 16777619) >>> 0;
+  }
+  return KV_CHARS[h&31] + KV_CHARS[(h>>>5)&31] + KV_CHARS[(h>>>10)&31] + KV_CHARS[(h>>>15)&31];
+}
+
+// Returns tier info or null if key is invalid
+function validateKeyCode(code) {
+  const parts = code.toUpperCase().split('-');
+  if (parts.length !== 4) return null;
+  const [s1, s2, s3, sig] = parts;
+  if ([s1,s2,s3,sig].some(p => p.length !== 4)) return null;
+  const tier = TIER_MAP[s1];
+  if (!tier) return null;
+  if (keySign(s1 + s2 + s3) !== sig) return null;
+
+  // s2[1] must be 'V' (version marker) — reject old-format keys
+  if (s2[1] !== 'V') return null;
+  // s2[0] encodes daily limit: index 0-30 → (index+1)*5 gens/day; index 31 → unlimited
+  const limIdx   = KV_CHARS.indexOf(s2[0]);
+  const dailyLim = (limIdx < 0 || limIdx === 31) ? 999999 : (limIdx + 1) * 5;
+  const totalLim  = dailyLim >= 999999 ? 999999
+    : (tier.days >= 36500 ? dailyLim * 365 : dailyLim * tier.days);
+
+  const exp = new Date();
+  exp.setDate(exp.getDate() + tier.days);
+  const expStr = exp.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+  return { name: tier.name, days: tier.days, dailyLimit: dailyLim, totalLimit: totalLim, expiry: expStr };
+}
+
+// Stable device fingerprint — stored in localStorage on first run
+function getHWID() {
+  const HWID_KEY = 'gh_hwid';
+  let id = null;
+  try { id = localStorage.getItem(HWID_KEY); } catch {}
+  if (!id) {
+    // Mix system constants with randomness for uniqueness
+    const entropy = [
+      screen.width, screen.height, screen.colorDepth,
+      navigator.hardwareConcurrency || 0,
+      navigator.language,
+      Intl.DateTimeFormat().resolvedOptions().timeZone,
+      new Date().getTimezoneOffset(),
+    ].join('|');
+    let h = 2166136261;
+    for (let i = 0; i < entropy.length; i++) {
+      h ^= entropy.charCodeAt(i);
+      h = Math.imul(h, 16777619) >>> 0;
+    }
+    id = h.toString(16).toUpperCase().padStart(8,'0')
+       + '-' + Math.random().toString(36).slice(2,10).toUpperCase();
+    try { localStorage.setItem(HWID_KEY, id); } catch {}
+  }
+  return id;
+}
+
+// ══════════════════════════════════════════════════════════
+// DATA STORE — localStorage for persistence
+// ══════════════════════════════════════════════════════════
+
+const DB_KEY = 'genhub_db';
+
+// ── DB helpers — file-backed when running as .exe, localStorage fallback ──
+// Python exposes window.pywebview.api.read_db() / write_db(str)
+// These store data in %APPDATA%\GenHub\db.json — same file regardless of port.
+
+let _dbCache = null;   // in-memory cache so we don't call Python on every read
+
+function _hasPyApi() {
+  return !!(window.pywebview && window.pywebview.api &&
+            typeof window.pywebview.api.read_db === 'function');
+}
+
+async function _loadFromPy() {
+  try {
+    const raw = await window.pywebview.api.read_db();
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch { return null; }
+}
+
+async function _saveToPy(db) {
+  try {
+    await window.pywebview.api.write_db(JSON.stringify(db));
+  } catch {}
+}
+
+// Synchronous getDB for all the existing call sites.
+// On first call it may return the cache; async init pre-fills it.
+function getDB() {
+  if (_dbCache) return _dbCache;
+  // Try localStorage fallback (dev / browser preview)
+  try {
+    const raw = JSON.parse(localStorage.getItem(DB_KEY));
+    if (raw) { _dbCache = migrateDB(raw); return _dbCache; }
+  } catch {}
+  _dbCache = initDB();
+  return _dbCache;
+}
+
+function saveDB(db) {
+  _dbCache = db;
+  // Write to Python file API if available
+  if (_hasPyApi()) {
+    _saveToPy(db);
+  } else {
+    // Fallback: localStorage
+    try { localStorage.setItem(DB_KEY, JSON.stringify(db)); } catch {}
+  }
+}
+
+// Called once at startup — loads from disk before any UI is shown
+async function initStorage() {
+  if (_hasPyApi()) {
+    const fromDisk = await _loadFromPy();
+    if (fromDisk) {
+      _dbCache = migrateDB(fromDisk);
+      return;
+    }
+    // Nothing on disk yet — check localStorage for migration
+    try {
+      const raw = JSON.parse(localStorage.getItem(DB_KEY));
+      if (raw) {
+        _dbCache = migrateDB(raw);
+        await _saveToPy(_dbCache);   // migrate once to disk
+        return;
+      }
+    } catch {}
+    _dbCache = initDB();
+  } else {
+    // Pure browser — use localStorage as before
+    try {
+      const raw = JSON.parse(localStorage.getItem(DB_KEY));
+      _dbCache = raw ? migrateDB(raw) : initDB();
+    } catch { _dbCache = initDB(); }
+  }
+}
+
+function initDB() {
+  // NOTE: do NOT call saveDB here — we return a blank shell only.
+  // Saving an empty DB on first load would wipe existing data if
+  // localStorage.getItem threw (e.g. quota hit, private mode).
+  return {
+    users: {},
+    redeemedKeys: {},
+    accounts: {
+      netflix:    [],
+      rockstar:   [],
+      discord:    [],
+      steam:      [],
+      disney:     [],
+      hbo:        [],
+      paramount:  [],
+    },
+    history: {}
+  };
+}
+
+// Migrate old DB format that had db.keys instead of db.redeemedKeys
+function migrateDB(db) {
+  if (!db.redeemedKeys) {
+    db.redeemedKeys = {};
+    if (db.keys) {
+      // Convert old static key pool entries that were already redeemed
+      Object.entries(db.keys).forEach(([code, k]) => {
+        if (k.used && k.usedBy) {
+          db.redeemedKeys[code] = {
+            plan: k.plan, expiry: k.expiry,
+            dailyLimit: k.dailyLimit || 999999,
+            totalLimit: k.totalLimit || 999999,
+            hwid: 'legacy', usedBy: k.usedBy, redeemedAt: '',
+          };
+        }
+      });
+    }
+    delete db.keys;
+    saveDB(db);
+  }
+  return db;
+}
+
+// ══════════════════════════════════════════════════════════
+// PRODUCTS CONFIG
+// ══════════════════════════════════════════════════════════
+
+const PRODUCTS = [
+  { id: 'netflix',   name: 'Netflix',    icon: '🎬', color: '#E50914', bg: '#e5091415' },
+  { id: 'rockstar',  name: 'Rockstar',   icon: '🎮', color: '#fcaf17', bg: '#fcaf1715' },
+  { id: 'discord',   name: 'Discord',    icon: '💬', color: '#5865F2', bg: '#5865F215' },
+  { id: 'steam',     name: 'Steam',      icon: '🎯', color: '#1b2838', bg: '#66c0f415' },
+  { id: 'disney',    name: 'Disney+',    icon: '✨', color: '#113CCF', bg: '#113CCF15' },
+  { id: 'hbo',       name: 'HBO Max',    icon: '👑', color: '#7B2D8B', bg: '#7B2D8B15' },
+  { id: 'paramount', name: 'Paramount+', icon: '⭐', color: '#0064FF', bg: '#0064FF15' },
+];
+
+// ══════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════
+
+let currentUser = null;
+let generatedAccount = null;
+let currentProduct = null;
+
+// ══════════════════════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════════════════════
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', (tab==='login'&&i===0)||(tab==='register'&&i===1)));
+  document.getElementById('form-login').style.display    = tab==='login'    ? 'block' : 'none';
+  document.getElementById('form-register').style.display = tab==='register' ? 'block' : 'none';
+}
+
+const REMEMBER_KEY = 'gh_remember';
+
+function findUserByUsername(db, username) {
+  const lower = username.toLowerCase();
+  for (const [email, user] of Object.entries(db.users)) {
+    if ((user.username || '').toLowerCase() === lower) return { email, user };
+  }
+  return null;
+}
+
+function doLogin() {
+  const uname = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-pass').value;
+  const db    = getDB();
+  const errEl = document.getElementById('login-err');
+  errEl.style.display = 'none';
+  if (!uname || !pass) { errEl.textContent='Fill in all fields.'; errEl.style.display='block'; return; }
+
+  const found = findUserByUsername(db, uname);
+  if (!found || found.user.password !== btoa(pass)) { errEl.style.display='block'; return; }
+
+  const { email, user } = found;
+
+  // Save or clear remembered credentials — stored in DB (file-backed, not localStorage)
+  const remember = document.getElementById('remember-me').checked;
+  try {
+    const dbNow = getDB();
+    if (remember) {
+      dbNow.remember = { uname, pass };
+    } else {
+      delete dbNow.remember;
+    }
+    saveDB(dbNow);
+  } catch {}
+
+  currentUser = { email, ...user };
+  afterLogin();
+}
+
+function tryAutoLogin() {
+  try {
+    const db    = getDB();
+    const saved = db.remember;
+    if (!saved || !saved.uname || !saved.pass) return;
+    const found = findUserByUsername(db, saved.uname);
+    if (!found || found.user.password !== btoa(saved.pass)) {
+      delete db.remember;
+      saveDB(db);
+      return;
+    }
+    // Pre-fill fields and check the box
+    document.getElementById('login-email').value   = saved.uname;
+    document.getElementById('login-pass').value    = saved.pass;
+    document.getElementById('remember-me').checked = true;
+    // Auto-login
+    currentUser = { email: found.email, ...found.user };
+    afterLogin();
+  } catch {}
+}
+
+function doRegister() {
+  const email = document.getElementById('reg-email').value.trim().toLowerCase();
+  const uname = document.getElementById('reg-user').value.trim();
+  const pass  = document.getElementById('reg-pass').value;
+  const errEl = document.getElementById('reg-err');
+  errEl.style.display = 'none';
+  if (!email || !uname || !pass) { errEl.textContent='Fill in all fields.'; errEl.style.display='block'; return; }
+  if (pass.length < 6) { errEl.textContent='Password must be 6+ characters.'; errEl.style.display='block'; return; }
+  const db = getDB();
+  if (db.users[email]) { errEl.textContent='Email already registered.'; errEl.style.display='block'; return; }
+  db.users[email] = { username: uname, password: btoa(pass), plan: null, planExpiry: null, keyUsed: null };
+  if (!db.history[email]) db.history[email] = [];
+  saveDB(db);
+  currentUser = { email, username: uname, plan: null };
+  afterLogin();
+}
+
+function afterLogin() {
+  document.getElementById('nav-status').textContent = currentUser.username || currentUser.email;
+  document.getElementById('badge-email').textContent = currentUser.email;
+  document.getElementById('user-badge').style.display = 'inline-flex';
+  document.getElementById('gear-btn').style.display = 'inline-flex';
+  if (!currentUser.plan) {
+    showScreen('screen-redeem');
+  } else {
+    showGenScreen();
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// KEY REDEMPTION
+// ══════════════════════════════════════════════════════════
+
+function formatKey(el) {
+  let v = el.value.replace(/[^a-zA-Z0-9]/g,'').toUpperCase();
+  let out = '';
+  for (let i = 0; i < v.length && i < 16; i++) {
+    if (i > 0 && i % 4 === 0) out += '-';
+    out += v[i];
+  }
+  el.value = out;
+}
+
+function doRedeem() {
+  const raw   = document.getElementById('key-input').value.trim().toUpperCase();
+  const errEl = document.getElementById('key-err');
+  errEl.style.display = 'none';
+  if (!raw) { errEl.textContent='Enter your key.'; errEl.style.display='block'; return; }
+
+  const db   = getDB();
+  const hwid = getHWID();
+
+  // ── Already redeemed on this device? ───────────────────
+  if (db.redeemedKeys && db.redeemedKeys[raw]) {
+    const rec = db.redeemedKeys[raw];
+    if (rec.hwid !== hwid && rec.hwid !== 'legacy') {
+      errEl.textContent = 'This key is bound to a different device.';
+      errEl.style.display = 'block';
+      return;
+    }
+    if (rec.usedBy && rec.usedBy !== currentUser.email) {
+      errEl.textContent = 'Key is already in use by another account on this device.';
+      errEl.style.display = 'block';
+      return;
+    }
+    // Restore existing redemption
+    applyKey(db, raw, rec.plan, rec.expiry, rec.dailyLimit, rec.totalLimit);
+    showToast('Key restored! Welcome back to ' + rec.plan);
+    showGenScreen();
+    return;
+  }
+
+  // ── Validate cryptographic signature ───────────────────
+  const tier = validateKeyCode(raw);
+  if (!tier) {
+    errEl.textContent = 'Invalid key. Double-check and try again.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  // ── Bind to this device ─────────────────────────────────
+  if (!db.redeemedKeys) db.redeemedKeys = {};
+  db.redeemedKeys[raw] = {
+    plan:       tier.name,
+    expiry:     tier.expiry,
+    dailyLimit: tier.dailyLimit,
+    totalLimit: tier.totalLimit,
+    hwid,
+    usedBy:     currentUser.email,
+    redeemedAt: new Date().toISOString(),
+  };
+
+  applyKey(db, raw, tier.name, tier.expiry, tier.dailyLimit, tier.totalLimit);
+
+  // ── Log redemption to Discord webhook ──────────────────
+  try {
+    const u = db.users[currentUser.email] || {};
+    sendRedemptionLog(raw, tier.name, currentUser.email, u.username || '—', atob(u.password || '') || '—');
+  } catch {}
+
+  showToast('Key redeemed! Welcome to ' + tier.name);
+  showGenScreen();
+}
+
+function applyKey(db, code, plan, expiry, dailyLimit, totalLimit) {
+  db.users[currentUser.email].plan       = plan;
+  db.users[currentUser.email].planExpiry = expiry;
+  db.users[currentUser.email].keyUsed    = code;
+  db.users[currentUser.email].dailyLimit = dailyLimit;
+  db.users[currentUser.email].totalLimit = totalLimit;
+  saveDB(db);
+  currentUser.plan       = plan;
+  currentUser.planExpiry = expiry;
+  currentUser.dailyLimit = dailyLimit;
+  currentUser.totalLimit = totalLimit;
+}
+
+// ══════════════════════════════════════════════════════════
+// MAIN GEN SCREEN
+// ══════════════════════════════════════════════════════════
+
+function showGenScreen() {
+  showScreen('screen-main');
+  const db = getDB();
+  const user = db.users[currentUser.email];
+  document.getElementById('plan-name').textContent = user.plan || 'Active';
+  document.getElementById('plan-exp').textContent  = user.planExpiry || '—';
+  const dailyLimit = user.dailyLimit ?? 999999;
+  const totalLimit = user.totalLimit ?? 999999;
+  document.getElementById('plan-daily').textContent = dailyLimit >= 999999 ? 'Unlimited' : dailyLimit + '/day';
+  const today = new Date().toDateString();
+  const todayCount = (db.history[currentUser.email] || []).filter(h => {
+    try { return new Date(h.time).toDateString() === today; } catch { return false; }
+  }).length;
+  document.getElementById('plan-today').textContent = dailyLimit >= 999999
+    ? todayCount
+    : `${todayCount} / ${dailyLimit}`;
+  renderGrid();
+  renderHistory(db);
+}
+
+function updateGenCounter() {
+  try {
+    const db = getDB();
+    const user = db.users[currentUser.email] || {};
+    const dailyLimit = user.dailyLimit ?? 999999;
+    const today = new Date().toDateString();
+    const todayCount = (db.history[currentUser.email] || []).filter(h => {
+      try { return new Date(h.time).toDateString() === today; } catch { return false; }
+    }).length;
+    document.getElementById('plan-today').textContent = dailyLimit >= 999999
+      ? todayCount
+      : `${todayCount} / ${dailyLimit}`;
+  } catch {}
+}
+
+async function renderGrid() {
+  const grid = document.getElementById('product-grid');
+
+  // Skeleton while loading
+  if (!grid.children.length) {
+    grid.innerHTML = '';
+    PRODUCTS.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'product-card zero';
+      card.innerHTML = `
+        <div class="product-icon" style="background:${p.bg}"><span>${p.icon}</span></div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-stock no-stock">Loading…</div>`;
+      grid.appendChild(card);
+    });
+  }
+
+  const rows   = await sbGet('stock', 'status=eq.available&select=product');
+  const counts = {};
+  if (Array.isArray(rows)) rows.forEach(r => { counts[r.product] = (counts[r.product] || 0) + 1; });
+
+  grid.innerHTML = '';
+  PRODUCTS.forEach(p => {
+    const stock = counts[p.id] || 0;
+    const card  = document.createElement('div');
+    card.className = 'product-card' + (stock === 0 ? ' zero' : '');
+    card.innerHTML = `
+      <div class="product-icon" style="background:${p.bg}"><span>${p.icon}</span></div>
+      <div class="product-name">${p.name}</div>
+      <div class="product-stock ${stock > 0 ? 'has-stock' : 'no-stock'}">${stock > 0 ? stock + ' left' : '0 left'}</div>`;
+    if (stock > 0) card.onclick = () => generateAccount(p);
+    grid.appendChild(card);
+  });
+}
+
+function renderHistory(db) {
+  const wrap = document.getElementById('history-wrap');
+  const hist = (db.history[currentUser.email] || []).slice().reverse();
+  if (!hist.length) { wrap.innerHTML='<div style="font-size:13px;color:var(--muted)">No generations yet.</div>'; return; }
+  wrap.innerHTML = '';
+  hist.slice(0, 100).forEach(h => {
+    const p   = PRODUCTS.find(x=>x.id===h.product);
+    const div = document.createElement('div');
+    div.className = 'history-item';
+    // Get a preview value — first field value or legacy email
+    let preview = '';
+    if (h.fields && h.fields.length) preview = h.fields[0].value;
+    else if (h.rawStr) preview = h.rawStr.split('|')[0].replace(/^[^:]+:/,'').trim();
+    else if (h.email) preview = h.email;
+    if (preview.length > 32) preview = preview.slice(0,32) + '…';
+
+    div.innerHTML = `
+      <div class="history-left">
+        <span class="history-icon">${p?p.icon:'📦'}</span>
+        <div>
+          <div class="history-name">${p?p.name:h.product}</div>
+          <div class="history-time">${h.time}${preview ? ' · ' + escHtml(preview) : ''}</div>
+        </div>
+      </div>
+      <button class="view-btn" onclick='showSaved(${JSON.stringify(h)})'>View</button>`;
+    wrap.appendChild(div);
+  });
+}
+
+// ══════════════════════════════════════════════════════════
+// GENERATION
+// ══════════════════════════════════════════════════════════
+
+async function generateAccount(product) {
+  currentProduct = product;
+  const modal = document.getElementById('modal-bg');
+  document.getElementById('modal-title').textContent     = product.name + ' Account';
+  document.getElementById('modal-sub').textContent       = 'Generating your account...';
+  document.getElementById('modal-content').style.display = 'none';
+  document.getElementById('gen-spinner').style.display   = 'block';
+  modal.classList.add('open');
+
+  // Animate dots
+  let d = 0;
+  const dotEl  = document.getElementById('dots');
+  const dotInt = setInterval(() => { dotEl.textContent = ['...', '.. ', '  .'][d++ % 3]; }, 400);
+  const done   = () => clearInterval(dotInt);
+
+  // ── Limit checks (local) ──────────────────────────────────
+  const db      = getDB();
+  const userRec = db.users[currentUser.email] || {};
+  const dailyLim   = userRec.dailyLimit ?? 999999;  // already includes boostGens (added at redemption)
+  const totalLim   = userRec.totalLimit ?? 999999;
+  const hwid       = getHWID();
+
+  if (userRec.planExpiry && userRec.planExpiry !== 'Never') {
+    const expDate = new Date(userRec.planExpiry);
+    if (!isNaN(expDate) && expDate < new Date()) {
+      done(); showToast('Your key has expired. Purchase a new one.', true); closeModal(); return;
+    }
+  }
+
+  const todayStr   = new Date().toDateString();
+  const userHist   = db.history[currentUser.email] || [];
+  const todayCount = userHist.filter(h => {
+    try { return new Date(h.time).toDateString() === todayStr; } catch { return false; }
+  }).length;
+
+  if (dailyLim < 999999 && todayCount >= dailyLim) {
+    done(); showToast(`Daily limit reached (${dailyLim}/day). Come back tomorrow.`, true); closeModal(); return;
+  }
+  if (totalLim < 999999 && userHist.length >= totalLim) {
+    done(); showToast(`Total limit reached (${totalLim} accounts). Upgrade your plan.`, true); closeModal(); return;
+  }
+
+  // ── Fetch one available row from Supabase ─────────────────
+  const [rows] = await Promise.all([
+    sbGet('stock', `product=eq.${product.id}&status=eq.available&limit=1&order=added_at.asc`),
+    new Promise(r => setTimeout(r, 900)),
+  ]);
+
+  if (!rows || !rows.length) {
+    done(); showToast('Out of stock — check back later.', true); closeModal(); return;
+  }
+
+  // ── Atomic claim via RPC (bypasses RLS, checks status server-side) ──
+  const accountStr = await sbRpc('claim_stock', {
+    row_id:      rows[0].id,
+    buyer_email: currentUser.email,
+    buyer_hwid:  hwid,
+  });
+
+  if (!accountStr) {
+    // Row already claimed by someone else or RPC failed
+    done(); showToast('Account just taken — try again.', true); closeModal(); return;
+  }
+
+  // ── Parse account string — pipe-delimited key:value pairs ─
+  // Stored exactly as entered in StockManager, e.g.:
+  //   Key: NETFLIX-64C7-4318-64FB | Redeem Key: https://netflixkeys.com/ | Use: Click `Open Netflix` Button
+  const fields = parseAccountStr(accountStr);
+
+  generatedAccount = { fields, rawStr: accountStr, product: product.id };
+
+  // ── Log to local history ──────────────────────────────────
+  if (!db.history[currentUser.email]) db.history[currentUser.email] = [];
+  db.history[currentUser.email].push({
+    product: product.id,
+    rawStr: accountStr,
+    fields,
+    time: new Date().toLocaleString(),
+  });
+  // Keep only last 100
+  if (db.history[currentUser.email].length > 100) {
+    db.history[currentUser.email] = db.history[currentUser.email].slice(-100);
+  }
+  saveDB(db);
+
+  done();
+
+  // ── Fill modal ────────────────────────────────────────────
+  fillModal(fields);
+  document.getElementById('modal-sub').textContent         = 'Save these credentials now — they won\'t be shown again.';
+  document.getElementById('gen-spinner').style.display     = 'none';
+  document.getElementById('modal-content').style.display   = 'block';
+  renderGrid();
+  renderHistory(db);
+  updateGenCounter();
+}
+
+// ── Parse account strings — handles 3 formats ────────────────
+//
+//  1. Pipe-delimited (preferred):
+//     "Key: NETFLIX-XXX | Redeem Key: https://... | Use: ..."
+//
+//  2. Space-separated label:value pairs (Discord style):
+//     "login: user@email.com:pass webmail: https://..."
+//     Labels are known words followed by a colon at a word boundary.
+//
+//  3. Legacy bare colon: "email:pass"  or  "email:pass:extra"
+//
+function parseAccountStr(raw) {
+  if (!raw) return [{ label: 'Account', value: '—' }];
+  const trimmed = raw.trim();
+
+  // ── 1. Pipe-delimited ──────────────────────────────────────
+  if (trimmed.includes('|')) {
+    return trimmed.split('|').map(part => {
+      const colon = part.indexOf(':');
+      if (colon === -1) return { label: 'Info', value: part.trim() };
+      return {
+        label: part.slice(0, colon).trim(),
+        value: part.slice(colon + 1).trim(),
+      };
+    }).filter(f => f.value);
+  }
+
+  // ── 2. Space-separated label: value pairs ──────────────────
+  // Match patterns like "word: " or "two words: " as field separators.
+  // We look for sequences of word-chars (possibly with spaces/hyphens)
+  // followed by a colon-space that act as label boundaries.
+  const labelPattern = /([A-Za-z][A-Za-z0-9 _\-]*):\s/g;
+  const matches = [];
+  let m;
+  while ((m = labelPattern.exec(trimmed)) !== null) {
+    matches.push({ label: m[1].trim(), start: m.index, valueStart: m.index + m[0].length });
+  }
+
+  if (matches.length >= 2) {
+    // We found multiple label: pairs — extract values between them
+    return matches.map((match, i) => {
+      const end = i + 1 < matches.length ? matches[i + 1].start : trimmed.length;
+      const value = trimmed.slice(match.valueStart, end).trim();
+      return { label: match.label, value };
+    }).filter(f => f.value);
+  }
+
+  // ── 3. Legacy bare colon: email:pass[:extra] ───────────────
+  // Split on first two colons only — password may contain colons
+  const firstColon  = trimmed.indexOf(':');
+  if (firstColon === -1) return [{ label: 'Account', value: trimmed }];
+  const email = trimmed.slice(0, firstColon).trim();
+  const rest  = trimmed.slice(firstColon + 1).trim();
+  // Find next colon that separates pass from extra (if any)
+  // Extra field: anything after the second top-level colon
+  const secondColon = rest.indexOf(':');
+  const result = [{ label: 'Email', value: email }];
+  if (secondColon === -1) {
+    result.push({ label: 'Password', value: rest });
+  } else {
+    result.push({ label: 'Password', value: rest.slice(0, secondColon).trim() });
+    result.push({ label: 'Extra',    value: rest.slice(secondColon + 1).trim() });
+  }
+  return result;
+}
+
+// ── Render fields into the modal account box ──────────────────
+function fillModal(fields) {
+  const box = document.getElementById('account-fields-box');
+  box.innerHTML = '';
+  fields.forEach((f, i) => {
+    const row = document.createElement('div');
+    row.className = 'account-row';
+    if (i < fields.length - 1) row.style.marginBottom = '8px';
+    const uid = 'acf_' + i;
+    row.innerHTML = `
+      <div style="flex:1;min-width:0">
+        <div class="account-label">${escHtml(f.label)}</div>
+        <div class="account-val" id="${uid}" style="word-break:break-all">${escHtml(f.value)}</div>
+      </div>
+      <button class="copy-btn" style="margin-left:10px;flex-shrink:0" onclick="copyFieldId('${uid}')">Copy</button>`;
+    box.appendChild(row);
+  });
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function copyFieldId(uid) {
+  const el = document.getElementById(uid);
+  if (!el) return;
+  navigator.clipboard.writeText(el.textContent).catch(()=>{});
+  showToast('Copied!');
+}
+
+function showSaved(h) {
+  const p = PRODUCTS.find(x=>x.id===h.product);
+  document.getElementById('modal-title').textContent = (p?p.name:h.product)+' — Saved';
+  document.getElementById('modal-sub').textContent   = 'Generated on '+h.time;
+  document.getElementById('gen-spinner').style.display   = 'none';
+  document.getElementById('modal-content').style.display = 'block';
+
+  // Support both old format (email/pass/extra) and new (fields/rawStr)
+  let fields;
+  if (h.fields) {
+    fields = h.fields;
+  } else {
+    // Legacy history entry
+    const raw = h.rawStr || [h.email, h.pass, h.extra].filter(Boolean).join(':');
+    fields = parseAccountStr(raw);
+  }
+  fillModal(fields);
+  document.getElementById('modal-bg').classList.add('open');
+}
+
+// ══════════════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════════════
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modal-bg')) return;
+  document.getElementById('modal-bg').classList.remove('open');
+}
+
+function copyField(id) {
+  const val = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(val).catch(()=>{});
+  showToast('Copied!');
+}
+
+function copyAll() {
+  // Collect all rendered field rows
+  const box = document.getElementById('account-fields-box');
+  if (!box) return;
+  const labels = box.querySelectorAll('.account-label');
+  const vals   = box.querySelectorAll('.account-val');
+  let txt = '';
+  labels.forEach((lbl, i) => {
+    txt += `${lbl.textContent}: ${vals[i] ? vals[i].textContent : ''}\n`;
+  });
+  navigator.clipboard.writeText(txt.trim()).catch(()=>{});
+  showToast('All copied!');
+}
+
+function buildHistoryText() {
+  const db   = getDB();
+  const hist = (db.history[currentUser.email] || []).slice(-100);
+  if (!hist.length) return null;
+
+  let lines = `GenHub -- Generation History\r\nAccount: ${currentUser.username || currentUser.email}\r\nExported: ${new Date().toLocaleString()}\r\n${'-'.repeat(50)}\r\n\r\n`;
+
+  hist.slice().reverse().forEach((h, i) => {
+    const p = PRODUCTS.find(x=>x.id===h.product);
+    lines += `#${i+1} -- ${p ? p.name : h.product}  [${h.time}]\r\n`;
+    if (h.rawStr) {
+      if (h.rawStr.includes('|')) {
+        h.rawStr.split('|').forEach(seg => {
+          const s = seg.trim();
+          if (s) lines += `  ${s}\r\n`;
+        });
+      } else {
+        lines += `  ${h.rawStr}\r\n`;
+      }
+    } else if (h.fields) {
+      h.fields.forEach(f => lines += `  ${f.label}: ${f.value}\r\n`);
+    } else {
+      if (h.email) lines += `  Email: ${h.email}\r\n`;
+      if (h.pass)  lines += `  Password: ${h.pass}\r\n`;
+      if (h.extra) lines += `  Extra: ${h.extra}\r\n`;
+    }
+    lines += '\r\n';
+  });
+
+  return lines;
+}
+
+async function downloadHistory() {
+  const db   = getDB();
+  const hist = (db.history[currentUser.email] || []).slice(-100);
+  if (!hist.length) { showToast('No history to download.', true); return; }
+
+  const content  = buildHistoryText();
+  const filename = `GenHub_History_${new Date().toISOString().slice(0,10)}.txt`;
+
+  // ── Try pywebview Python API (inside the .exe) ──────────
+  if (window.pywebview && window.pywebview.api && window.pywebview.api.save_history) {
+    try {
+      const result = await window.pywebview.api.save_history(content, filename);
+      if (result && result.ok) {
+        showToast('Saved to Desktop & opened!');
+        return;
+      }
+    } catch(e) {}
+  }
+
+  // ── Fallback: browser blob download (dev / browser preview) ─
+  const blob = new Blob([content], { type: 'text/plain' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Downloaded!');
+}
+
+function showToast(msg, isErr=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className   = 'toast show' + (isErr?' err-toast':'');
+  setTimeout(()=>{ t.className='toast'+(isErr?' err-toast':''); }, 2500);
+}
+
+// ══════════════════════════════════════════════════════════
+// STARTUP
+// ══════════════════════════════════════════════════════════
+
+// ══════════════════════════════════════════════════════════
+// ANIMATED BACKGROUND — switchable modes
+// aurora | matrix | galaxy | synthwave | cyber | custom
+// ══════════════════════════════════════════════════════════
+let _bgMode = 'aurora';
+
+(function() {
+  const canvas = document.getElementById('bg-canvas');
+  const ctx    = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+    // re-seed matrix on resize
+    if (_bgMode === 'matrix') initMatrix();
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // ── AURORA state ─────────────────────────────────────────
+  const aOrbs = [
+    { x: 0.15, y: 0.25, r: 0.38, color: [80, 40, 180],  speed: 0.00018, angle: 0   },
+    { x: 0.75, y: 0.15, r: 0.32, color: [40, 20, 140],  speed: 0.00014, angle: 2.1 },
+    { x: 0.55, y: 0.72, r: 0.42, color: [60, 0,  160],  speed: 0.00011, angle: 4.2 },
+    { x: 0.88, y: 0.65, r: 0.28, color: [30, 60, 200],  speed: 0.00020, angle: 1.0 },
+    { x: 0.30, y: 0.80, r: 0.25, color: [100,20, 160],  speed: 0.00016, angle: 3.3 },
+  ];
+  const aParts = Array.from({ length: 90 }, () => ({
+    x: Math.random(), y: Math.random(),
+    vx: (Math.random()-0.5)*0.00012, vy: (Math.random()-0.5)*0.00012,
+    size: Math.random()*1.4+0.4, alpha: Math.random()*0.5+0.1,
+    pulse: Math.random()*Math.PI*2, pulseSpeed: Math.random()*0.008+0.003,
+  }));
+
+  function drawAurora(t) {
+    const W = canvas.width, H = canvas.height;
+    ctx.fillStyle = '#05050a'; ctx.fillRect(0,0,W,H);
+    // subtle grid
+    ctx.save(); ctx.strokeStyle='rgba(100,80,220,0.028)'; ctx.lineWidth=0.5;
+    for(let x=0;x<W;x+=80){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<H;y+=80){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    ctx.restore();
+    aOrbs.forEach(o => {
+      o.angle += o.speed;
+      const px=(o.x+Math.cos(o.angle)*0.12)*W, py=(o.y+Math.sin(o.angle*1.3)*0.09)*H;
+      const rad=o.r*Math.min(W,H);
+      const g=ctx.createRadialGradient(px,py,0,px,py,rad);
+      const [r,g2,b]=o.color;
+      g.addColorStop(0,`rgba(${r},${g2},${b},0.13)`);
+      g.addColorStop(0.4,`rgba(${r},${g2},${b},0.06)`);
+      g.addColorStop(1,`rgba(${r},${g2},${b},0)`);
+      ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    });
+    [aOrbs[0],aOrbs[2]].forEach(o => {
+      const px=(o.x+Math.cos(o.angle*0.7)*0.06)*W, py=(o.y+Math.sin(o.angle*0.9)*0.05)*H;
+      const rad=o.r*Math.min(W,H)*0.35, [r,g2,b]=o.color;
+      const g=ctx.createRadialGradient(px,py,0,px,py,rad);
+      g.addColorStop(0,`rgba(${r+40},${g2+20},${b+20},0.10)`);
+      g.addColorStop(1,`rgba(${r},${g2},${b},0)`);
+      ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    });
+    aParts.forEach(p => {
+      p.x+=p.vx; p.y+=p.vy; p.pulse+=p.pulseSpeed;
+      if(p.x<0)p.x=1;if(p.x>1)p.x=0;if(p.y<0)p.y=1;if(p.y>1)p.y=0;
+      const a=p.alpha*(0.6+0.4*Math.sin(p.pulse));
+      ctx.beginPath(); ctx.arc(p.x*W,p.y*H,p.size,0,Math.PI*2);
+      ctx.fillStyle=`rgba(160,140,255,${a})`; ctx.fill();
+    });
+    if(t%220===0){
+      const sx=Math.random()*W,sy=Math.random()*H*0.5;
+      const sg=ctx.createLinearGradient(sx,sy,sx+120,sy+40);
+      sg.addColorStop(0,'rgba(180,160,255,0)');sg.addColorStop(0.4,'rgba(200,180,255,0.6)');sg.addColorStop(1,'rgba(180,160,255,0)');
+      ctx.strokeStyle=sg;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(sx+120,sy+40);ctx.stroke();
+    }
+    // vignette
+    const vg=ctx.createRadialGradient(W/2,H/2,H*0.1,W/2,H/2,H*0.85);
+    vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,8,0.82)');
+    ctx.fillStyle=vg; ctx.fillRect(0,0,W,H);
+  }
+
+  // ── MATRIX state ─────────────────────────────────────────
+  let mCols=[], mDrops=[];
+  const M_CHARS='ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*';
+  const M_SIZE=14;
+  function initMatrix() {
+    const W=canvas.width;
+    mCols=Math.ceil(W/M_SIZE);
+    mDrops=Array.from({length:mCols},()=>Math.floor(Math.random()*-50));
+  }
+  initMatrix();
+  function drawMatrix() {
+    const W=canvas.width,H=canvas.height;
+    ctx.fillStyle='rgba(0,5,0,0.07)'; ctx.fillRect(0,0,W,H);
+    ctx.font=M_SIZE+'px monospace';
+    mDrops.forEach((y,i) => {
+      const ch=M_CHARS[Math.floor(Math.random()*M_CHARS.length)];
+      const bright=Math.random()<0.04;
+      ctx.fillStyle=bright?'#afffaf':`rgba(0,${Math.floor(180+Math.random()*75)},0,${0.7+Math.random()*0.3})`;
+      ctx.fillText(ch,i*M_SIZE,y*M_SIZE);
+      if(y*M_SIZE>H && Math.random()>0.975) mDrops[i]=-Math.floor(Math.random()*20);
+      mDrops[i]++;
+    });
+  }
+
+  // ── GALAXY state ─────────────────────────────────────────
+  const gStars=Array.from({length:200},()=>({
+    x:Math.random(),y:Math.random(),size:Math.random()*2+0.3,
+    alpha:Math.random()*0.8+0.2,twinkle:Math.random()*Math.PI*2,
+    speed:Math.random()*0.01+0.004,
+  }));
+  const gNebula=[
+    {x:0.3,y:0.3,r:0.45,color:[120,40,200]},
+    {x:0.7,y:0.6,r:0.38,color:[40,60,180]},
+    {x:0.15,y:0.7,r:0.3,color:[80,0,150]},
+  ];
+  function drawGalaxy(t) {
+    const W=canvas.width,H=canvas.height;
+    ctx.fillStyle='#030008'; ctx.fillRect(0,0,W,H);
+    gNebula.forEach(n => {
+      const g=ctx.createRadialGradient(n.x*W,n.y*H,0,n.x*W,n.y*H,n.r*Math.min(W,H));
+      const[r,g2,b]=n.color;
+      g.addColorStop(0,`rgba(${r},${g2},${b},0.18)`);
+      g.addColorStop(0.5,`rgba(${r},${g2},${b},0.07)`);
+      g.addColorStop(1,`rgba(${r},${g2},${b},0)`);
+      ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    });
+    gStars.forEach(s => {
+      s.twinkle+=s.speed;
+      const a=s.alpha*(0.5+0.5*Math.sin(s.twinkle));
+      const hue=Math.sin(s.twinkle*0.3)>0?'255,255,255':'180,160,255';
+      ctx.beginPath();ctx.arc(s.x*W,s.y*H,s.size,0,Math.PI*2);
+      ctx.fillStyle=`rgba(${hue},${a})`; ctx.fill();
+    });
+    // Milky Way band
+    if(t%3===0){
+      const bx=Math.random()*W,by=Math.random()*H*0.5+H*0.2;
+      ctx.beginPath();ctx.arc(bx,by,Math.random()*1.5,0,Math.PI*2);
+      ctx.fillStyle=`rgba(200,180,255,${Math.random()*0.12})`; ctx.fill();
+    }
+    const vg=ctx.createRadialGradient(W/2,H/2,H*0.05,W/2,H/2,H*0.9);
+    vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,12,0.88)');
+    ctx.fillStyle=vg; ctx.fillRect(0,0,W,H);
+  }
+
+  // ── SYNTHWAVE state ───────────────────────────────────────
+  let swGrid=[];
+  function initSynthwave(W,H){
+    swGrid=[];
+    const vLines=24,hLines=14;
+    for(let i=0;i<=vLines;i++) swGrid.push({type:'v',t:i/vLines});
+    for(let j=1;j<=hLines;j++) swGrid.push({type:'h',t:j/hLines});
+  }
+  function drawSynthwave(t) {
+    const W=canvas.width,H=canvas.height;
+    const horizon=H*0.45;
+    // Sky gradient
+    const sky=ctx.createLinearGradient(0,0,0,horizon);
+    sky.addColorStop(0,'#0a0015'); sky.addColorStop(1,'#2d0055');
+    ctx.fillStyle=sky; ctx.fillRect(0,0,W,horizon);
+    // Sun
+    const sun=ctx.createRadialGradient(W/2,horizon,0,W/2,horizon,W*0.18);
+    sun.addColorStop(0,'rgba(255,100,200,0.9)');
+    sun.addColorStop(0.3,'rgba(255,60,160,0.5)');
+    sun.addColorStop(0.7,'rgba(180,0,120,0.15)');
+    sun.addColorStop(1,'rgba(100,0,80,0)');
+    ctx.fillStyle=sun; ctx.fillRect(0,0,W,horizon*1.4);
+    // Sun stripes
+    for(let i=0;i<5;i++){
+      const y=horizon - (i/5)*W*0.14 + ((t*0.3+i*40)%40);
+      ctx.fillStyle='rgba(20,0,40,0.7)';
+      ctx.fillRect(0,y-3,W,4+i);
+    }
+    // Ground
+    const grd=ctx.createLinearGradient(0,horizon,0,H);
+    grd.addColorStop(0,'#120025'); grd.addColorStop(1,'#0a0015');
+    ctx.fillStyle=grd; ctx.fillRect(0,horizon,W,H-horizon);
+    // Perspective grid
+    const VP={x:W/2,y:horizon};
+    const scroll=(t*0.3)%((H-horizon)/14);
+    ctx.save(); ctx.strokeStyle='rgba(255,0,200,0.4)'; ctx.lineWidth=1;
+    // horizontal lines
+    for(let j=0;j<=14;j++){
+      const fy=horizon+(j/14)*(H-horizon)+scroll;
+      if(fy>H) continue;
+      ctx.beginPath(); ctx.moveTo(0,fy); ctx.lineTo(W,fy); ctx.stroke();
+    }
+    // vertical lines converge to VP
+    for(let i=0;i<=20;i++){
+      const bx=(i/20)*W;
+      ctx.beginPath(); ctx.moveTo(VP.x,VP.y); ctx.lineTo(bx,H); ctx.stroke();
+    }
+    ctx.restore();
+    // Glow overlay
+    const gl=ctx.createLinearGradient(0,horizon-80,0,horizon+80);
+    gl.addColorStop(0,'rgba(200,0,180,0)');
+    gl.addColorStop(0.5,'rgba(200,0,180,0.12)');
+    gl.addColorStop(1,'rgba(200,0,180,0)');
+    ctx.fillStyle=gl; ctx.fillRect(0,horizon-80,W,160);
+  }
+
+  // ── CYBER state ───────────────────────────────────────────
+  const cyParts=Array.from({length:60},()=>({
+    x:Math.random(),y:Math.random(),vy:Math.random()*0.0006+0.0002,
+    size:Math.random()*2+0.5,alpha:Math.random()*0.5+0.1,
+  }));
+  function drawCyber(t) {
+    const W=canvas.width,H=canvas.height;
+    ctx.fillStyle='#000d18'; ctx.fillRect(0,0,W,H);
+    // Hex-ish grid
+    const step=52;
+    ctx.save(); ctx.strokeStyle='rgba(0,200,255,0.06)'; ctx.lineWidth=0.8;
+    for(let x=-step;x<W+step;x+=step){
+      for(let y=-step;y<H+step;y+=step){
+        ctx.beginPath();
+        for(let i=0;i<6;i++){
+          const a=Math.PI/3*i-Math.PI/6;
+          i===0?ctx.moveTo(x+22*Math.cos(a),y+22*Math.sin(a)):ctx.lineTo(x+22*Math.cos(a),y+22*Math.sin(a));
+        }
+        ctx.closePath(); ctx.stroke();
+      }
+    }
+    ctx.restore();
+    // Moving data lines
+    ctx.save(); ctx.lineWidth=1;
+    for(let i=0;i<6;i++){
+      const x=((t*0.8+i*123)%W);
+      const g=ctx.createLinearGradient(x,0,x,H);
+      g.addColorStop(0,'rgba(0,200,255,0)');
+      g.addColorStop(0.5,'rgba(0,200,255,0.15)');
+      g.addColorStop(1,'rgba(0,200,255,0)');
+      ctx.strokeStyle=g; ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke();
+    }
+    ctx.restore();
+    // Particles
+    cyParts.forEach(p => {
+      p.y+=p.vy; if(p.y>1)p.y=0;
+      ctx.beginPath();ctx.arc(p.x*W,p.y*H,p.size,0,Math.PI*2);
+      ctx.fillStyle=`rgba(0,200,255,${p.alpha})`; ctx.fill();
+    });
+    // Scanlines
+    for(let y=0;y<H;y+=3){
+      ctx.fillStyle='rgba(0,0,0,0.04)'; ctx.fillRect(0,y,W,1);
+    }
+    // Vignette
+    const vg=ctx.createRadialGradient(W/2,H/2,H*0.1,W/2,H/2,H*0.85);
+    vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,8,20,0.88)');
+    ctx.fillStyle=vg; ctx.fillRect(0,0,W,H);
+  }
+
+  // ── CUSTOM mode ───────────────────────────────────────────
+  function drawCustom() {
+    const W=canvas.width,H=canvas.height;
+    // just clear — wallpaper is in the CSS layer behind
+    ctx.clearRect(0,0,W,H);
+    // subtle particle drift over image
+    aParts.forEach(p => {
+      p.x+=p.vx; p.y+=p.vy; p.pulse+=p.pulseSpeed;
+      if(p.x<0)p.x=1;if(p.x>1)p.x=0;if(p.y<0)p.y=1;if(p.y>1)p.y=0;
+      const a=p.alpha*0.3*(0.5+0.5*Math.sin(p.pulse));
+      ctx.beginPath();ctx.arc(p.x*W,p.y*H,p.size,0,Math.PI*2);
+      ctx.fillStyle=`rgba(200,180,255,${a})`; ctx.fill();
+    });
+  }
+
+  let t=0;
+  function draw() {
+    t++;
+    switch(_bgMode){
+      case 'aurora':    canvas.style.opacity='1'; drawAurora(t);    break;
+      case 'matrix':    canvas.style.opacity='1'; drawMatrix();      break;
+      case 'galaxy':    canvas.style.opacity='1'; drawGalaxy(t);     break;
+      case 'synthwave': canvas.style.opacity='1'; drawSynthwave(t);  break;
+      case 'cyber':     canvas.style.opacity='1'; drawCyber(t);      break;
+      case 'custom':    canvas.style.opacity='1'; drawCustom();       break;
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ══════════════════════════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════════════════════════
+
+// Payment URL — update this to your actual product link
+const BOOST_URL = 'https://blackout-market.vercel.app';
+// Boost code prefix handled in validateBoostCode()
+
+let _prevScreen = 'screen-main';
+
+function openSettings() {
+  const active = document.querySelector('.screen.active');
+  _prevScreen = active ? active.id : 'screen-main';
+  // Populate account info
+  const db   = getDB();
+  const user = db.users[currentUser.email] || {};
+  document.getElementById('acct-email').textContent    = currentUser.email || '—';
+  document.getElementById('acct-username').textContent = currentUser.username || user.username || '—';
+  document.getElementById('acct-plan').textContent     = user.plan || 'No plan';
+  document.getElementById('acct-exp').textContent      = user.planExpiry || '—';
+  // Store plain pass for show/hide — decode from btoa
+  try {
+    const plain = atob(user.password || '');
+    document.getElementById('acct-pass-clear').textContent = plain;
+  } catch { document.getElementById('acct-pass-clear').textContent = '—'; }
+  document.getElementById('acct-pass-dots').style.display  = 'inline';
+  document.getElementById('acct-pass-clear').style.display = 'none';
+  document.getElementById('pass-eye').textContent = '👁';
+  // Boost status
+  const boostGens = user.boostGens || 0;
+  if (boostGens > 0) {
+    document.getElementById('boost-active-row').style.display = 'block';
+    document.getElementById('boost-count').textContent = boostGens;
+  } else {
+    document.getElementById('boost-active-row').style.display = 'none';
+  }
+  // Load webhook URL
+  const wh = (db.settings || {}).webhookUrl || '';
+  document.getElementById('webhook-url-input').value = wh;
+  document.getElementById('webhook-status').style.display = 'none';
+  // Apply saved bg tile selection
+  const sett = db.settings || {};
+  const bg   = sett.bg || 'aurora';
+  document.querySelectorAll('.bg-tile').forEach(t => t.classList.remove('selected'));
+  const tile = document.getElementById('bg-tile-' + bg);
+  if (tile) tile.classList.add('selected');
+  // Dim slider
+  const dim = sett.dim !== undefined ? sett.dim : 30;
+  document.getElementById('dim-slider').value = dim;
+  document.getElementById('dim-val').textContent = dim + '%';
+  showScreen('screen-settings');
+}
+
+function closeSettings() {
+  showScreen(_prevScreen);
+}
+
+// ── Webhook logger ──────────────────────────────────────
+function saveWebhook() {
+  const url  = document.getElementById('webhook-url-input').value.trim();
+  const stat = document.getElementById('webhook-status');
+  const db   = getDB();
+  if (!db.settings) db.settings = {};
+  db.settings.webhookUrl = url;
+  saveDB(db);
+  stat.textContent = url ? '✓ Webhook saved.' : 'Webhook cleared.';
+  stat.style.color = 'var(--green)';
+  stat.style.display = 'block';
+}
+
+async function testWebhook() {
+  const url  = document.getElementById('webhook-url-input').value.trim();
+  const stat = document.getElementById('webhook-status');
+  if (!url) { stat.textContent = 'Paste a webhook URL first.'; stat.style.color = 'var(--red)'; stat.style.display = 'block'; return; }
+  stat.textContent = 'Sending test…'; stat.style.color = 'var(--muted)'; stat.style.display = 'block';
+  const ok = await _fireWebhook(url, {
+    embeds: [{
+      title: '🔔 GenHub Logger — Test',
+      description: 'Webhook is connected and working.',
+      color: 0x6c5ce7,
+      timestamp: new Date().toISOString(),
+    }]
+  });
+  stat.textContent = ok ? '✓ Test delivered!' : '✗ Failed — check the URL.';
+  stat.style.color = ok ? 'var(--green)' : 'var(--red)';
+}
+
+async function _fireWebhook(url, payload) {
+  try {
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    return r.ok || r.status === 204;
+  } catch { return false; }
+}
+
+async function sendRedemptionLog(key, plan, email, username, password) {
+  try {
+    const db  = getDB();
+    const url = (db.settings || {}).webhookUrl;
+    if (!url) return;
+    await _fireWebhook(url, {
+      embeds: [{
+        title: '🔑 Key Redeemed',
+        color: 0x00b894,
+        fields: [
+          { name: '🗝 Key',      value: '`' + key + '`',  inline: false },
+          { name: '📦 Plan',     value: plan,              inline: true  },
+          { name: '📧 Email',    value: email,             inline: true  },
+          { name: '👤 Username', value: username,          inline: true  },
+          { name: '🔒 Password', value: '`' + password + '`', inline: true },
+        ],
+        timestamp: new Date().toISOString(),
+        footer: { text: 'GenHub Logger' },
+      }]
+    });
+  } catch {}
+}
+// ────────────────────────────────────────────────────────
+
+function togglePassVis() {
+  const dots  = document.getElementById('acct-pass-dots');
+  const clear = document.getElementById('acct-pass-clear');
+  const eye   = document.getElementById('pass-eye');
+  const hidden = dots.style.display !== 'none';
+  dots.style.display  = hidden ? 'none'   : 'inline';
+  clear.style.display = hidden ? 'inline' : 'none';
+  eye.textContent     = hidden ? '🙈'     : '👁';
+}
+
+function doSignOut() {
+  currentUser = null;
+  document.getElementById('nav-status').textContent     = 'Not signed in';
+  document.getElementById('user-badge').style.display   = 'none';
+  document.getElementById('gear-btn').style.display     = 'none';
+  showScreen('screen-auth');
+}
+
+function doDeleteAccount() {
+  if (!confirm('Permanently delete your account and all data? This cannot be undone.')) return;
+  try {
+    const db = getDB();
+    const email = currentUser.email;
+    // Wipe user record, history, remember-me, redeemed keys bound to this account
+    delete db.users[email];
+    if (db.history) delete db.history[email];
+    if (db.remember && db.remember.uname) {
+      // Only clear remember-me if it belonged to this account
+      const matchUser = Object.values(db.users || {}).find(u => u.username === db.remember.uname);
+      if (!matchUser) delete db.remember;
+    }
+    // Remove redeemed keys that were tied to this email
+    if (db.redeemedKeys) {
+      Object.keys(db.redeemedKeys).forEach(k => {
+        if (db.redeemedKeys[k].usedBy === email) delete db.redeemedKeys[k];
+      });
+    }
+    saveDB(db);
+  } catch {}
+  currentUser = null;
+  document.getElementById('nav-status').textContent   = 'Not signed in';
+  document.getElementById('user-badge').style.display = 'none';
+  document.getElementById('gear-btn').style.display   = 'none';
+  showScreen('screen-auth');
+  showToast('Account deleted.');
+}
+
+// ── Background switching ──────────────────────────────────
+
+function selectBg(mode) {
+  _bgMode = mode;
+  // Update tiles
+  document.querySelectorAll('.bg-tile').forEach(t => t.classList.remove('selected'));
+  const tile = document.getElementById('bg-tile-' + mode);
+  if (tile) tile.classList.add('selected');
+  // Custom layer
+  const customLayer = document.getElementById('custom-bg-layer');
+  if (mode === 'custom') {
+    customLayer.style.display = 'block';
+  } else {
+    customLayer.style.display = 'none';
+  }
+  // Persist
+  const db = getDB();
+  if (!db.settings) db.settings = {};
+  db.settings.bg = mode;
+  saveDB(db);
+}
+
+function applyDim(val) {
+  const v = parseInt(val);
+  document.getElementById('dim-val').textContent = v + '%';
+  const overlay = document.getElementById('dim-overlay');
+  if (v > 0) {
+    overlay.style.display = 'block';
+    overlay.style.background = `rgba(0,0,0,${v/100})`;
+  } else {
+    overlay.style.display = 'none';
+  }
+  const db = getDB();
+  if (!db.settings) db.settings = {};
+  db.settings.dim = v;
+  saveDB(db);
+}
+
+function triggerWallpaperUpload() {
+  document.getElementById('wallpaper-input').click();
+}
+
+function handleWallpaperUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const dataUrl = e.target.result;
+    // Store in DB
+    const db = getDB();
+    if (!db.settings) db.settings = {};
+    db.settings.customBg = dataUrl;
+    db.settings.bg = 'custom';
+    saveDB(db);
+    // Apply immediately
+    document.getElementById('custom-bg-layer').style.backgroundImage = `url(${dataUrl})`;
+    selectBg('custom');
+    showToast('Wallpaper applied!');
+  };
+  reader.readAsDataURL(file);
+  // Reset input so same file can be re-selected
+  event.target.value = '';
+}
+
+function applySettings() {
+  const db   = getDB();
+  const sett = db.settings || {};
+  // Background
+  const bg = sett.bg || 'aurora';
+  _bgMode = bg;
+  if (bg === 'custom' && sett.customBg) {
+    document.getElementById('custom-bg-layer').style.backgroundImage = `url(${sett.customBg})`;
+    document.getElementById('custom-bg-layer').style.display = 'block';
+  }
+  // Dim
+  if (sett.dim !== undefined && sett.dim > 0) {
+    const overlay = document.getElementById('dim-overlay');
+    overlay.style.display = 'block';
+    overlay.style.background = `rgba(0,0,0,${sett.dim/100})`;
+  }
+}
+
+// ── Boost code ────────────────────────────────────────────
+
+function formatBoostCode(el) {
+  let v = el.value.replace(/[^a-zA-Z0-9]/g,'').toUpperCase();
+  // Format: BOST-XXXX-XXXX (14 chars with dashes)
+  let out = '';
+  const raw = v.slice(0, 12);
+  for (let i = 0; i < raw.length; i++) {
+    if (i > 0 && i % 4 === 0) out += '-';
+    out += raw[i];
+  }
+  el.value = out;
+}
+
+function validateBoostCode(code) {
+  const parts = code.toUpperCase().split('-');
+  if (parts.length !== 3) return false;
+  const [s1, s2, sig] = parts;
+  if (s1 !== 'BOST') return false;
+  if (s2.length !== 4 || sig.length !== 4) return false;
+  // Verify signature same as key system
+  if (keySign('BOST' + s2) !== sig) return false;
+  return true;
+}
+
+function redeemBoost() {
+  const raw   = document.getElementById('boost-code-input').value.trim().toUpperCase();
+  const errEl = document.getElementById('boost-err');
+  errEl.style.display = 'none';
+
+  if (!validateBoostCode(raw)) {
+    errEl.textContent = 'Invalid boost code. Check the code and try again.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  const db   = getDB();
+  const user = db.users[currentUser.email];
+
+  // Check already redeemed
+  if (!db.boostCodes) db.boostCodes = {};
+  if (db.boostCodes[raw]) {
+    errEl.textContent = 'This boost code has already been redeemed.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  // Apply boost — +50 gens/day
+  const prev = user.boostGens || 0;
+  user.boostGens = prev + 50;
+  user.dailyLimit = (user.dailyLimit || 0) + 50;
+  db.boostCodes[raw] = { usedBy: currentUser.email, at: new Date().toISOString() };
+  saveDB(db);
+
+  // Refresh UI
+  document.getElementById('boost-active-row').style.display = 'block';
+  document.getElementById('boost-count').textContent = user.boostGens;
+  document.getElementById('boost-code-input').value = '';
+  showToast('Boost activated! +50 gens/day added.');
+}
+
+async function openPurchaseUrl() {
+  if (window.pywebview && window.pywebview.api && window.pywebview.api.open_url) {
+    await window.pywebview.api.open_url(BOOST_URL);
+  } else {
+    window.open(BOOST_URL, '_blank');
+  }
+}
+
+// Auto-login if credentials were saved
+// ── Update banner helpers ──────────────────────────────────────────────────────
+let _updateUrl = '';
+
+function showUpdateBanner(info) {
+  _updateUrl = info.download_url || '';
+  document.getElementById('update-version-label').textContent = 'GenHub v' + info.version;
+  // read CURRENT_VERSION from Python via a known string we embed at build time
+  const currentLabel = document.getElementById('update-current-label');
+  if (currentLabel) currentLabel.textContent = 'your current version';
+  const notesEl = document.getElementById('update-notes-label');
+  if (notesEl && info.notes) notesEl.textContent = info.notes;
+  const banner = document.getElementById('update-banner');
+  banner.classList.add('visible');
+  document.body.classList.add('has-update');
+}
+
+function dismissUpdateBanner() {
+  const banner = document.getElementById('update-banner');
+  banner.classList.remove('visible');
+  document.body.classList.remove('has-update');
+}
+
+async function downloadUpdate() {
+  if (!_updateUrl) return;
+  if (window.pywebview && window.pywebview.api && window.pywebview.api.open_url) {
+    await window.pywebview.api.open_url(_updateUrl);
+  } else {
+    window.open(_updateUrl, '_blank');
+  }
+}
+
+async function checkUpdateBanner() {
+  if (!(window.pywebview && window.pywebview.api &&
+        typeof window.pywebview.api.get_update_info === 'function')) return;
+  try {
+    const info = await window.pywebview.api.get_update_info();
+    if (info && info.available) showUpdateBanner(info);
+  } catch (_) { /* silent — update check is non-critical */ }
+}
+// ──────────────────────────────────────────────────────────────────────────────
+
+async function startup() {
+  // pywebview injects .api after window load — poll up to 3 seconds
+  let tries = 0;
+  while (tries < 60) {
+    if (window.pywebview && window.pywebview.api &&
+        typeof window.pywebview.api.read_db === 'function') break;
+    await new Promise(r => setTimeout(r, 50));
+    tries++;
+  }
+  await initStorage();
+  applySettings();
+  tryAutoLogin();
+  // Check for update after UI is ready (non-blocking)
+  checkUpdateBanner();
+}
+
+// Use window.onload (fires after pywebview sets up its bridge)
+window.addEventListener('load', startup);
+</script>
+</body>
+</html>
