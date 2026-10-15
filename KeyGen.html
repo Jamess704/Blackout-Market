@@ -373,12 +373,21 @@ const DEFAULT_PLANS = [
   },
   {
     id: 'lifetime',
-    name: 'Lifetime',
+    name: 'Basic Lifetime Key',
     emoji: '♾',
     durationDays: 36500,
     dailyLimit: 125,
     totalLimit: 999999,
     prefix: 'LIFE',
+  },
+  {
+    id: 'lifetime_premium',
+    name: 'Premium Lifetime Key',
+    emoji: '👑',
+    durationDays: 36500,
+    dailyLimit: 999999,
+    totalLimit: 999999,
+    prefix: 'PREM',
   },
 ];
 
@@ -693,12 +702,13 @@ function resetPlans() {
 // ══════════════════════════════════════════════════════════
 
 // Plan display order and labels
-const TIER_ORDER = ['day', 'week', 'month', 'lifetime'];
+const TIER_ORDER = ['day', 'week', 'month', 'lifetime', 'lifetime_premium'];
 const TIER_LABELS = {
-  day:      { label: 'Day Keys',      color: '#74b9ff' },
-  week:     { label: 'Week Keys',     color: '#a29bfe' },
-  month:    { label: 'Month Keys',    color: '#00b894' },
-  lifetime: { label: 'Lifetime Keys', color: '#fdcb6e' },
+  day:              { label: 'Day Keys',              color: '#74b9ff' },
+  week:             { label: 'Week Keys',             color: '#a29bfe' },
+  month:            { label: 'Month Keys',            color: '#00b894' },
+  lifetime:         { label: 'Basic Lifetime Keys',   color: '#fdcb6e' },
+  lifetime_premium: { label: 'Premium Lifetime Keys', color: '#e17055' },
 };
 
 function toggleFold(planId) {
