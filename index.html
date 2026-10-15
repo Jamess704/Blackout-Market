@@ -93,6 +93,7 @@
         .art-macho { --neon: #fdba74; --glow: rgba(249, 115, 22, 0.9); }
         .art-engine { --neon: #fb923c; --glow: rgba(234, 88, 12, 0.85); }
         .art-ham { --neon: #f9a8d4; --glow: rgba(219, 39, 119, 0.85); }
+        .art-genhub { --neon: #ff3333; --glow: rgba(220, 0, 0, 0.95); }
         .category-btn.active { border-color: #ff1a1a; box-shadow: 0 0 20px rgba(255,26,26,0.35); }
         .account-group { text-align: left; background: rgba(0,0,0,0.8); border: 1px solid rgba(69, 10, 10, 0.95); border-radius: 0.9rem; padding: 0.8rem 1rem; color: #e5e7eb; font-weight: 600; font-size: 0.9rem; white-space: nowrap; }
         .account-group.active { border-color: #ff1a1a; box-shadow: 0 0 20px rgba(255,26,26,0.35); color: #fff; }
@@ -163,6 +164,7 @@
                         <button type="button" onclick="openStoreCategory('fivem')" class="feature-tile rounded-3xl py-8 flex flex-col items-center gap-3 transition"><i class="fa-solid fa-campground text-3xl"></i><span>FiveM</span></button>
                         <button type="button" onclick="openStoreCategory('r6')" class="feature-tile rounded-3xl py-8 flex flex-col items-center gap-3 transition"><i class="fa-solid fa-crosshairs text-3xl"></i><span>Rainbow Six Siege</span></button>
                         <button type="button" onclick="openStoreCategory('spoofers')" class="feature-tile rounded-3xl py-8 flex flex-col items-center gap-3 transition"><i class="fa-solid fa-user-secret text-3xl"></i><span>Spoofers</span></button>
+                        <button type="button" onclick="openStoreCategory('genhub')" class="feature-tile rounded-3xl py-8 flex flex-col items-center gap-3 transition col-span-2"><i class="fa-solid fa-crown text-3xl"></i><span>GenHub Generator</span></button>
                     </div>
                 </div>
             </div>
@@ -191,11 +193,12 @@
             <div class="text-center mb-8">
                 <h2 id="store-heading" class="text-4xl font-bold text-white">Store</h2>
             </div>
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+            <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-10">
                 <button type="button" data-category="fivem" onclick="chooseCategory('fivem')" class="category-btn bg-black/80 border border-red-950 rounded-2xl p-5">FiveM</button>
                 <button type="button" data-category="accounts" onclick="chooseCategory('accounts')" class="category-btn bg-black/80 border border-red-950 rounded-2xl p-5">Accounts</button>
                 <button type="button" data-category="r6" onclick="chooseCategory('r6')" class="category-btn bg-black/80 border border-red-950 rounded-2xl p-5">R6 Siege</button>
                 <button type="button" data-category="spoofers" onclick="chooseCategory('spoofers')" class="category-btn bg-black/80 border border-red-950 rounded-2xl p-5">Spoofers</button>
+                <button type="button" data-category="genhub" onclick="chooseCategory('genhub')" class="category-btn bg-black/80 border border-red-950 rounded-2xl p-5">GenHub</button>
             </div>
             <div id="store-prompt" class="hidden text-center py-16">
                 <p class="text-gray-300 mb-6">Pick a category to see what's in stock.</p>
@@ -249,6 +252,7 @@
                 <button type="button" onclick="chooseCategory('fivem')" class="feature-tile rounded-3xl py-8 flex flex-col items-center gap-3 transition"><i class="fa-solid fa-campground text-4xl"></i><span>FiveM</span></button>
                 <button type="button" onclick="chooseCategory('r6')" class="feature-tile rounded-3xl py-8 flex flex-col items-center gap-3 transition"><i class="fa-solid fa-crosshairs text-4xl"></i><span>Rainbow Six Siege</span></button>
                 <button type="button" onclick="chooseCategory('spoofers')" class="feature-tile rounded-3xl py-8 flex flex-col items-center gap-3 transition"><i class="fa-solid fa-user-secret text-4xl"></i><span>Spoofers</span></button>
+                <button type="button" onclick="chooseCategory('genhub')" class="feature-tile rounded-3xl py-8 flex flex-col items-center gap-3 transition col-span-2"><i class="fa-solid fa-crown text-4xl"></i><span>GenHub Generator</span></button>
             </div>
         </div>
     </div>
@@ -348,7 +352,8 @@
                 { name: 'Black Knight + 50-250 [ MOST OG Outfits Included ]', price: '$100.00', status: 'Out of stock' }
             ] },
             account9: { category: 'accounts', group: 'tv', title: 'Disney+ Accounts', art: 'art-disney', icon: 'disney', label: 'Disney+', status: 'In stock', href: 'https://blackout-market-ot.mysellauth.com/product/disney-accounts', options: [{ name: 'Disney+ Accounts', price: '$5.50' }] },
-            account10: { category: 'accounts', group: 'tv', title: 'AMC+ Lifetime Accounts', art: 'art-amc', icon: 'amc', label: 'AMC+', status: 'In stock', href: 'https://blackout-market-ot.mysellauth.com/product/amc-lifetime', options: [{ name: 'AMC+ Lifetime Accounts', price: '$5.50' }] }
+            account10: { category: 'accounts', group: 'tv', title: 'AMC+ Lifetime Accounts', art: 'art-amc', icon: 'amc', label: 'AMC+', status: 'In stock', href: 'https://blackout-market-ot.mysellauth.com/product/amc-lifetime', options: [{ name: 'AMC+ Lifetime Accounts', price: '$5.50' }] },
+            genhub: { category: 'genhub', group: 'generator', title: 'GenHub Account Generator', art: 'art-genhub', icon: 'fa-solid fa-crown', label: 'GenHub', status: 'Active', href: 'https://blackout-market-ot.mysellauth.com/product/genhub-account-gen', options: [{ name: 'Day Key ( Daily Limit:  35 )', price: '$8.00' }, { name: 'Week Key ( Daily Limit: 50 )', price: '$15.00' }, { name: 'Month Key ( Daily Limit: 100 )', price: '$30.00' }, { name: 'LifeTime Basic ( Daily Limit: 150 )', price: '$50.00' }, { name: 'Lifetime Premium ( Daily Limit: 210 )', price: '$65.00' }] }
         };
         const productInfo = {
             r6: { summary: 'Rainbow Six access sold by length. Pick a plan, then continue on Discord and the key is sent in a ticket.', included: ['The access length you select', 'Key delivery through Discord'] },
@@ -365,7 +370,8 @@
             instagramFollowers: { summary: 'Real-looking Instagram followers delivered straight to your profile. Sold in packs of 100. The smallest order is 300 followers.', included: ['Followers delivered to a public Instagram profile', 'Delivery within 12 hours', 'Checkout through Discord'] },
             twitchFollowers: { summary: 'Real-looking Twitch followers delivered straight to your profile. Sold in packs of 100. The smallest order is 200 followers.', included: ['Followers delivered to a public Twitch profile', 'Delivery within 12 hours', 'Checkout through Discord'] },
             account2: { summary: 'A lifetime YouTube Premium account with full access. The login is yours after delivery, and you can change it whenever you want. Premium removes ads and keeps playback going in the background.', included: ['Lifetime YouTube Premium access', 'Full login you can change', 'Private account, ready to use', 'Checkout on SellAuth', '24-hour warranty if there is an issue with the account'] },
-            account8: { summary: 'Full access Fortnite accounts, sold by the listing you pick. Activation is usually a few minutes, and the login works on PC, PlayStation, Xbox, Switch, and mobile.', included: ['Ranked ready on the ranked listings. The account level meets the requirements to play Ranked', 'Full access. Email and password for Epic Games and the email login', 'You can change the email and password', 'Works worldwide on any server region', 'Instant delivery after checkout', 'Replacement if there is a login issue at the start'] }
+            account8: { summary: 'Full access Fortnite accounts, sold by the listing you pick. Activation is usually a few minutes, and the login works on PC, PlayStation, Xbox, Switch, and mobile.', included: ['Ranked ready on the ranked listings. The account level meets the requirements to play Ranked', 'Full access. Email and password for Epic Games and the email login', 'You can change the email and password', 'Works worldwide on any server region', 'Instant delivery after checkout', 'Replacement if there is a login issue at the start'] },
+            genhub: { summary: 'GenHub puts account generation in your hands. One key unlocks the desktop app and lets you generate accounts instantly for supported services. Choose your tier — Day, Week, Month, or Lifetime — and start generating the same day.', included: ['The key tier you select (Day, Week, Month, Lifetime Basic, or Lifetime Premium)', 'Key delivered instantly through SellAuth after checkout', 'Access to the GenHub desktop app', 'Account generation on demand for supported services'] }
         };
         const WEBMAIL = ['https://notletters.com/email/login', 'https://firstmail.ltd/en-US/webmail/login', 'https://id.rambler.ru/login-20/login'];
         const faDiscord = {
@@ -513,14 +519,15 @@
         }
         renderProducts();
         document.getElementById('mobile-menu-btn').addEventListener('click', () => document.getElementById('mobile-menu').classList.toggle('hidden'));
-        const categoryNames = { accounts: 'Accounts', fivem: 'FiveM', r6: 'R6 Siege', spoofers: 'Spoofers' };
+        const categoryNames = { accounts: 'Accounts', fivem: 'FiveM', r6: 'R6 Siege', spoofers: 'Spoofers', genhub: 'GenHub' };
         let activeCategory = null;
         let activeAccountGroup = 'all';
         const sideGroups = {
             accounts: [['all', 'All'], ['fivem', 'FiveM'], ['social', 'Social Media'], ['tv', 'TV / Entertainment'], ['gaming', 'Gaming'], ['creative', 'Creative'], ['other', 'Other']],
             fivem: [['all', 'All'], ['executors', 'Executors']],
             r6: [['all', 'All'], ['chair', 'Chair']],
-            spoofers: [['all', 'All']]
+            spoofers: [['all', 'All']],
+            genhub: [['all', 'All'], ['generator', 'Generator']]
         };
         function paintGroups(category) {
             const box = document.getElementById('account-groups');
