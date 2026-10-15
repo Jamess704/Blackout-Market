@@ -142,7 +142,14 @@
   }
   input[type=text]:focus, input[type=date]:focus { border-color: var(--accent); }
   .key-code-input { font-family: monospace; letter-spacing: 1px; width: 200px; }
-  .plan-input { width: 150px; }
+  .plan-input { width: 180px; }
+  select.plan-input {
+    background: rgba(8,8,18,0.55); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 9px; padding: 9px 14px; color: var(--text); font-size: 13px;
+    outline: none; transition: border .15s; cursor: pointer; appearance: none;
+    -webkit-appearance: none;
+  }
+  select.plan-input:focus { border-color: var(--accent); }
 
   /* ── TOAST ── */
   .toast {
@@ -194,7 +201,14 @@
     <div id="keys-list"></div>
     <div class="new-key-row">
       <input type="text" class="key-code-input" id="new-key-code" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19" oninput="fmtKey(this)">
-      <input type="text" class="plan-input" id="new-key-plan" placeholder="Plan name (e.g. Premium)">
+      <select class="plan-input" id="new-key-plan">
+        <option value="" disabled selected>Plan name</option>
+        <option value="1 Day">1 Day</option>
+        <option value="1 Week">1 Week</option>
+        <option value="1 Month">1 Month</option>
+        <option value="Basic Lifetime Key">Basic Lifetime Key</option>
+        <option value="Premium Lifetime Key">Premium Lifetime Key</option>
+      </select>
       <input type="text" id="new-key-expiry" placeholder="Expiry (e.g. Dec 31 2026)" style="width:170px">
       <button class="add-btn" onclick="addKey()">+ Add Key</button>
     </div>
@@ -214,10 +228,6 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════════════════════
-// SUPABASE — seller operations go through RPC functions
-// (publishable key + seller password checked server-side)
-// ══════════════════════════════════════════════════════════
 const SB_URL    = 'https://liaeducrofflulwkejug.supabase.co';
 const SB_PUB    = 'sb_publishable_bG0aYMf6HpNHcqhUTjfsZw_7wgORfyh';
 const SELLER_PW = 'BLACKOUT_SELLER_7x9K';
@@ -250,9 +260,6 @@ async function sbRpc(fn, args) {
   }
 }
 
-// ══════════════════════════════════════════════════════════
-// LOCAL DB — used only for the keys display section
-// ══════════════════════════════════════════════════════════
 const DB_KEY = 'genhub_db';
 
 const PRODUCTS = [
@@ -277,10 +284,8 @@ function saveDB(db) {
   localStorage.setItem(DB_KEY, JSON.stringify(db));
 }
 
-// ── Ensure accounts keys exist ────────────────────────────
 function ensureDB(db) {
   if (!db) {
-    // Initialize minimal DB if GenHub hasn't been opened yet
     db = { users: {}, keys: {}, accounts: {}, history: {} };
   }
   if (!db.accounts) db.accounts = {};
@@ -290,10 +295,6 @@ function ensureDB(db) {
   return db;
 }
 
-// ══════════════════════════════════════════════════════════
-// RENDER
-// ══════════════════════════════════════════════════════════
-
 function stockClass(n) {
   if (n === 0) return 'zero';
   if (n <= 5)  return 'low';
@@ -301,10 +302,8 @@ function stockClass(n) {
 }
 
 async function render() {
-  // Fetch all stock rows from Supabase
   const rows = await sbRpc('seller_get_all_stock', { pw: SELLER_PW }) || [];
 
-  // Group by product
   const stockMap = {};
   PRODUCTS.forEach(p => { stockMap[p.id] = { available: [], claimed: [] }; });
   rows.forEach(r => {
@@ -314,7 +313,6 @@ async function render() {
     }
   });
 
-  // Stats row
   const statsEl = document.getElementById('stats-row');
   statsEl.innerHTML = '';
   PRODUCTS.forEach(p => {
@@ -328,7 +326,6 @@ async function render() {
       </div>`;
   });
 
-  // Products
   const container = document.getElementById('products-container');
   container.innerHTML = '';
   PRODUCTS.forEach(p => {
@@ -383,7 +380,6 @@ async function render() {
     container.appendChild(block);
   });
 
-  // Keys section
   renderKeys(ensureDB(getDB()));
 }
 
@@ -409,10 +405,6 @@ function toggleBlock(id) {
   body.classList.toggle('open');
   chev.classList.toggle('open');
 }
-
-// ══════════════════════════════════════════════════════════
-// ACTIONS
-// ══════════════════════════════════════════════════════════
 
 async function addAccounts(productId) {
   const ta  = document.getElementById(`ta-${productId}`);
@@ -477,8 +469,6 @@ function fmtKey(el) {
   el.value = out;
 }
 
-// ── Danger zone ───────────────────────────────────────────
-
 async function clearAllAccounts() {
   if (!confirm('Clear ALL available accounts from every product? This cannot be undone.')) return;
   await sbRpc('seller_clear_stock', { pw: SELLER_PW });
@@ -504,10 +494,6 @@ function clearHistory() {
   showToast('History cleared');
 }
 
-// ══════════════════════════════════════════════════════════
-// UTILS
-// ══════════════════════════════════════════════════════════
-
 function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
@@ -519,8 +505,7 @@ function showToast(msg, isErr=false) {
   setTimeout(() => { t.className = 'toast' + (isErr ? ' err' : ''); }, 2500);
 }
 
-// ── Init ──────────────────────────────────────────────────
-render();  // async — loads stock from Supabase on open
+render();
 </script>
 </body>
 </html>
