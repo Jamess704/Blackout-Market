@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GenHub — Stock Manager</title>
+<style>
+  :root {
+    --bg: #05050a;
+    --surface: #111118;
+    --card: #16161f;
+    --border: #ffffff0f;
+    --border-hover: #ffffff1a;
+    --text: #f0f0f5;
+    --muted: #666680;
+    --accent: #6c5ce7;
+    --accent2: #a29bfe;
+    --green: #00b894;
+    --red: #e17055;
+    --yellow: #fdcb6e;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
+
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 32px; border-bottom: 1px solid var(--border);
+    background: rgba(10,10,18,0.9); position: sticky; top: 0; z-index: 100;
+    backdrop-filter: blur(14px);
+  }
+  .logo { font-size: 17px; font-weight: 700; color: var(--text); }
+  .logo span { color: var(--accent2); }
+  .badge { background: #e1705520; border: 1px solid #e1705540; color: var(--red); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; }
+
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 36px 24px; }
+
+  h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .sub { font-size: 14px; color: var(--muted); margin-bottom: 32px; }
+
+  /* ── STATS ROW ── */
+  .stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-bottom: 36px; }
+  .stat-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px; text-align: center;
+  }
+  .stat-icon { font-size: 22px; margin-bottom: 6px; }
+  .stat-name { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+  .stat-count { font-size: 20px; font-weight: 700; }
+  .stat-count.good { color: var(--green); }
+  .stat-count.low  { color: var(--yellow); }
+  .stat-count.zero { color: var(--red); }
+
+  /* ── PRODUCT SECTIONS ── */
+  .section-label {
+    font-size: 11px; font-weight: 600; letter-spacing: .08em;
+    color: var(--muted); text-transform: uppercase; margin-bottom: 12px; margin-top: 28px;
+  }
+
+  .product-block {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); margin-bottom: 14px; overflow: hidden;
+  }
+  .product-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px; cursor: pointer; user-select: none;
+  }
+  .product-header:hover { background: rgba(255,255,255,0.02); }
+  .product-left { display: flex; align-items: center; gap: 12px; }
+  .product-icon { font-size: 20px; }
+  .product-name { font-size: 14px; font-weight: 600; }
+  .product-right { display: flex; align-items: center; gap: 10px; }
+  .stock-pill {
+    font-size: 12px; font-weight: 600; padding: 3px 10px;
+    border-radius: 20px; border: 1px solid;
+  }
+  .stock-pill.good   { color: var(--green);  border-color: #00b89440; background: #00b89412; }
+  .stock-pill.low    { color: var(--yellow); border-color: #fdcb6e40; background: #fdcb6e12; }
+  .stock-pill.zero   { color: var(--red);    border-color: #e1705540; background: #e1705512; }
+  .chevron { color: var(--muted); font-size: 12px; transition: transform .2s; }
+  .chevron.open { transform: rotate(180deg); }
+
+  .product-body { display: none; border-top: 1px solid var(--border); padding: 18px; }
+  .product-body.open { display: block; }
+
+  .accounts-list {
+    background: rgba(8,8,18,0.55); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 9px; max-height: 220px; overflow-y: auto;
+    font-family: monospace; font-size: 12px; margin-bottom: 14px;
+  }
+  .accounts-list:empty::before { content: 'No accounts in stock.'; color: var(--muted); display: block; padding: 14px; }
+  .acc-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 14px; border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .acc-row:last-child { border-bottom: none; }
+  .acc-text { color: var(--text); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .del-btn {
+    background: none; border: none; color: var(--red); cursor: pointer;
+    font-size: 13px; padding: 2px 6px; border-radius: 4px; flex-shrink: 0;
+    opacity: 0.6;
+  }
+  .del-btn:hover { opacity: 1; background: #e1705515; }
+
+  .add-area { display: flex; gap: 10px; }
+  textarea {
+    flex: 1; background: rgba(8,8,18,0.55); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 9px; padding: 10px 14px; color: var(--text); font-size: 13px;
+    font-family: monospace; resize: vertical; min-height: 80px; outline: none;
+    transition: border .15s;
+  }
+  textarea:focus { border-color: var(--accent); }
+  textarea::placeholder { color: var(--muted); font-family: 'Segoe UI', sans-serif; font-size: 12px; }
+  .add-btn {
+    background: var(--accent); color: #fff; border: none;
+    border-radius: 9px; padding: 10px 18px; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: opacity .15s; white-space: nowrap; align-self: flex-end;
+  }
+  .add-btn:hover { opacity: .85; }
+
+  /* ── KEYS SECTION ── */
+  .keys-block {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px; margin-bottom: 14px;
+  }
+  .key-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px;
+  }
+  .key-row:last-child { border-bottom: none; }
+  .key-code { font-family: monospace; color: var(--accent2); }
+  .key-meta { font-size: 11px; color: var(--muted); }
+  .key-status { font-size: 11px; font-weight: 600; }
+  .key-status.used { color: var(--red); }
+  .key-status.free { color: var(--green); }
+
+  .new-key-row { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+  input[type=text], input[type=date] {
+    background: rgba(8,8,18,0.55); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 9px; padding: 9px 14px; color: var(--text); font-size: 13px;
+    outline: none; transition: border .15s;
+  }
+  input[type=text]:focus, input[type=date]:focus { border-color: var(--accent); }
+  .key-code-input { font-family: monospace; letter-spacing: 1px; width: 200px; }
+  .plan-input { width: 180px; }
+  select.plan-input {
+    background: rgba(8,8,18,0.55); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 9px; padding: 9px 14px; color: var(--text); font-size: 13px;
+    outline: none; transition: border .15s; cursor: pointer; appearance: none;
+    -webkit-appearance: none;
+  }
+  select.plan-input:focus { border-color: var(--accent); }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 28px; right: 28px;
+    background: var(--green); color: #fff;
+    border-radius: 10px; padding: 12px 18px; font-size: 13px; font-weight: 500;
+    z-index: 999; transform: translateY(80px); opacity: 0;
+    transition: all .25s; pointer-events: none;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.err { background: var(--red); }
+
+  /* ── DANGER ZONE ── */
+  .danger-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+  .danger-btn {
+    background: #e1705520; border: 1px solid #e1705540; color: var(--red);
+    border-radius: 8px; padding: 8px 16px; font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: all .15s;
+  }
+  .danger-btn:hover { background: #e1705535; }
+
+  .divider { height: 1px; background: var(--border); margin: 32px 0; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Gen<span>Hub</span> <span style="color:var(--muted);font-weight:400;font-size:13px">— Stock Manager</span></div>
+  <div class="badge">🔒 SELLER ONLY</div>
+</nav>
+
+<div class="wrap">
+  <h1>Stock Manager</h1>
+  <p class="sub">Add accounts, manage keys, and monitor stock levels. This panel is for your eyes only — do not share this file with buyers.</p>
+
+  <!-- STOCK OVERVIEW -->
+  <div class="section-label">Stock Overview</div>
+  <div class="stats" id="stats-row"></div>
+
+  <!-- ACCOUNTS -->
+  <div class="section-label">Accounts by Product</div>
+  <div id="products-container"></div>
+
+  <div class="divider"></div>
+
+  <!-- KEYS -->
+  <div class="section-label">Redeem Keys</div>
+  <div class="keys-block">
+    <div id="keys-list"></div>
+    <div class="new-key-row">
+      <input type="text" class="key-code-input" id="new-key-code" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19" oninput="fmtKey(this)">
+      <select class="plan-input" id="new-key-plan">
+        <option value="" disabled selected>Plan name</option>
+        <option value="1 Day">1 Day</option>
+        <option value="1 Week">1 Week</option>
+        <option value="1 Month">1 Month</option>
+        <option value="Basic Lifetime Key">Basic Lifetime Key</option>
+        <option value="Premium Lifetime Key">Premium Lifetime Key</option>
+      </select>
+      <input type="text" id="new-key-expiry" placeholder="Expiry (e.g. Dec 31 2026)" style="width:170px">
+      <button class="add-btn" onclick="addKey()">+ Add Key</button>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- DANGER ZONE -->
+  <div class="section-label">Danger Zone</div>
+  <div class="danger-row">
+    <button class="danger-btn" onclick="clearAllAccounts()">🗑 Clear All Accounts</button>
+    <button class="danger-btn" onclick="resetUsedKeys()">🔄 Reset Used Keys</button>
+    <button class="danger-btn" onclick="clearHistory()">📋 Clear Gen History</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SB_URL    = 'https://liaeducrofflulwkejug.supabase.co';
+const SB_PUB    = 'sb_publishable_bG0aYMf6HpNHcqhUTjfsZw_7wgORfyh';
+const SELLER_PW = 'BLACKOUT_SELLER_7x9K';
+
+async function sbRpc(fn, args) {
+  try {
+    const r = await fetch(`${SB_URL}/rest/v1/rpc/${fn}`, {
+      method: 'POST',
+      headers: {
+        'apikey': SB_PUB,
+        'Authorization': 'Bearer ' + SB_PUB,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(args),
+    });
+    if (!r.ok) {
+      const t = await r.text();
+      let msg = '' + r.status;
+      try { const j = JSON.parse(t); msg = j.message || j.hint || j.details || msg; } catch {}
+      window._sbLastError = r.status + ' — ' + msg;
+      console.error('SB RPC error', r.status, t);
+      return null;
+    }
+    const text = await r.text();
+    return text ? JSON.parse(text) : true;
+  } catch (e) {
+    window._sbLastError = e.message;
+    console.error('SB RPC error', e);
+    return null;
+  }
+}
+
+const DB_KEY = 'genhub_db';
+
+const PRODUCTS = [
+  { id: 'netflix',   name: 'Netflix',    icon: '🎬', color: '#E50914' },
+  { id: 'rockstar',  name: 'Rockstar',   icon: '🎮', color: '#fcaf17' },
+  { id: 'discord',   name: 'Discord',    icon: '💬', color: '#5865F2' },
+  { id: 'steam',     name: 'Steam',      icon: '🎯', color: '#66c0f4' },
+  { id: 'disney',    name: 'Disney+',    icon: '✨', color: '#113CCF' },
+  { id: 'hbo',       name: 'HBO Max',    icon: '👑', color: '#7B2D8B' },
+  { id: 'paramount', name: 'Paramount+', icon: '⭐', color: '#0064FF' },
+];
+
+function getDB() {
+  try {
+    const raw = localStorage.getItem(DB_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch { return null; }
+}
+
+function saveDB(db) {
+  localStorage.setItem(DB_KEY, JSON.stringify(db));
+}
+
+function ensureDB(db) {
+  if (!db) {
+    db = { users: {}, keys: {}, accounts: {}, history: {} };
+  }
+  if (!db.accounts) db.accounts = {};
+  PRODUCTS.forEach(p => { if (!db.accounts[p.id]) db.accounts[p.id] = []; });
+  if (!db.keys) db.keys = {};
+  if (!db.history) db.history = {};
+  return db;
+}
+
+function stockClass(n) {
+  if (n === 0) return 'zero';
+  if (n <= 5)  return 'low';
+  return 'good';
+}
+
+async function render() {
+  const rows = await sbRpc('seller_get_all_stock', { pw: SELLER_PW }) || [];
+
+  const stockMap = {};
+  PRODUCTS.forEach(p => { stockMap[p.id] = { available: [], claimed: [] }; });
+  rows.forEach(r => {
+    if (stockMap[r.product]) {
+      if (r.status === 'claimed') stockMap[r.product].claimed.push(r);
+      else                        stockMap[r.product].available.push(r);
+    }
+  });
+
+  const statsEl = document.getElementById('stats-row');
+  statsEl.innerHTML = '';
+  PRODUCTS.forEach(p => {
+    const n = stockMap[p.id].available.length;
+    const cls = stockClass(n);
+    statsEl.innerHTML += `
+      <div class="stat-card">
+        <div class="stat-icon">${p.icon}</div>
+        <div class="stat-name">${p.name}</div>
+        <div class="stat-count ${cls}">${n}</div>
+      </div>`;
+  });
+
+  const container = document.getElementById('products-container');
+  container.innerHTML = '';
+  PRODUCTS.forEach(p => {
+    const available = stockMap[p.id].available;
+    const claimed   = stockMap[p.id].claimed;
+    const n   = available.length;
+    const cls = stockClass(n);
+    const label = n === 0 ? '0 in stock' : n <= 5 ? `${n} — LOW` : `${n} in stock`;
+
+    const block = document.createElement('div');
+    block.className = 'product-block';
+    block.id = `block-${p.id}`;
+
+    const accRows = available.map(r => `
+      <div class="acc-row">
+        <span class="acc-text">${escHtml(r.account)}</span>
+        <button class="del-btn" title="Remove" onclick="removeAccount('${r.id}')">✕</button>
+      </div>`).join('');
+
+    const claimedSection = claimed.length ? `
+      <div style="font-size:11px;color:var(--muted);padding:10px 14px 4px;border-top:1px solid rgba(255,255,255,0.04)">
+        CLAIMED — ${claimed.length}
+      </div>
+      ${claimed.map(r => `
+      <div class="acc-row" style="opacity:0.45">
+        <span class="acc-text">${escHtml(r.account)}</span>
+        <span style="font-size:11px;color:var(--muted);flex-shrink:0">${escHtml(r.claimed_by||'')}</span>
+      </div>`).join('')}` : '';
+
+    block.innerHTML = `
+      <div class="product-header" onclick="toggleBlock('${p.id}')">
+        <div class="product-left">
+          <span class="product-icon">${p.icon}</span>
+          <span class="product-name">${p.name}</span>
+        </div>
+        <div class="product-right">
+          <span class="stock-pill ${cls}">${label}</span>
+          <span class="chevron" id="chev-${p.id}">▼</span>
+        </div>
+      </div>
+      <div class="product-body" id="body-${p.id}">
+        <div class="accounts-list" id="list-${p.id}">
+          ${accRows || '<div style="padding:14px;color:var(--muted)">No accounts in stock.</div>'}
+        </div>
+        ${claimedSection}
+        <div class="add-area" style="margin-top:14px">
+          <textarea id="ta-${p.id}" placeholder="Paste accounts here, one per line&#10;Format: email:password  or  email:password:extra"></textarea>
+          <button class="add-btn" onclick="addAccounts('${p.id}')">+ Add</button>
+        </div>
+      </div>`;
+
+    container.appendChild(block);
+  });
+
+  renderKeys(ensureDB(getDB()));
+}
+
+function renderKeys(db) {
+  const el = document.getElementById('keys-list');
+  const keys = Object.entries(db.keys || {});
+  if (!keys.length) {
+    el.innerHTML = '<div style="font-size:13px;color:var(--muted);padding:6px 0">No keys yet. Add one below.</div>';
+    return;
+  }
+  el.innerHTML = keys.map(([code, k]) => `
+    <div class="key-row">
+      <span class="key-code">${escHtml(code)}</span>
+      <span class="key-meta">${escHtml(k.plan || '')} · Expires ${escHtml(k.expiry || '—')}</span>
+      <span class="key-status ${k.used ? 'used' : 'free'}">${k.used ? '✕ Used' : '✓ Active'}</span>
+      <button class="del-btn" onclick="removeKey('${escHtml(code)}')">✕</button>
+    </div>`).join('');
+}
+
+function toggleBlock(id) {
+  const body = document.getElementById(`body-${id}`);
+  const chev = document.getElementById(`chev-${id}`);
+  body.classList.toggle('open');
+  chev.classList.toggle('open');
+}
+
+async function addAccounts(productId) {
+  const ta  = document.getElementById(`ta-${productId}`);
+  const raw = ta.value.trim();
+  if (!raw) return;
+
+  const lines = raw.split('\n').map(l => l.trim()).filter(l => l.includes(':'));
+  if (!lines.length) return;
+
+  const records = lines.map(account => ({ product: productId, account }));
+  const result  = await sbRpc('seller_add_stock', { records, pw: SELLER_PW });
+  if (result === null) { showToast('DB error: ' + (window._sbLastError || 'check connection'), true); return; }
+
+  ta.value = '';
+  await render();
+  showToast(`Added ${lines.length} account${lines.length !== 1 ? 's' : ''} to ${PRODUCTS.find(p=>p.id===productId)?.name}`);
+  const body = document.getElementById(`body-${productId}`);
+  const chev = document.getElementById(`chev-${productId}`);
+  if (!body.classList.contains('open')) { body.classList.add('open'); chev.classList.add('open'); }
+}
+
+async function removeAccount(id) {
+  await sbRpc('seller_delete_stock', { row_id: id, pw: SELLER_PW });
+  await render();
+  showToast('Account removed');
+}
+
+function addKey() {
+  const code   = document.getElementById('new-key-code').value.trim().toUpperCase();
+  const plan   = document.getElementById('new-key-plan').value.trim();
+  const expiry = document.getElementById('new-key-expiry').value.trim();
+  if (!code || !plan || !expiry) { showToast('Fill in key, plan, and expiry', true); return; }
+  if (code.replace(/-/g,'').length !== 16) { showToast('Key must be XXXX-XXXX-XXXX-XXXX format', true); return; }
+
+  const db = ensureDB(getDB());
+  if (db.keys[code]) { showToast('Key already exists', true); return; }
+  db.keys[code] = { plan, expiry, used: false, usedBy: null };
+  saveDB(db);
+  document.getElementById('new-key-code').value = '';
+  document.getElementById('new-key-plan').value = '';
+  document.getElementById('new-key-expiry').value = '';
+  render();
+  showToast('Key added: ' + code);
+}
+
+function removeKey(code) {
+  if (!confirm(`Remove key ${code}?`)) return;
+  const db = ensureDB(getDB());
+  delete db.keys[code];
+  saveDB(db);
+  render();
+  showToast('Key removed');
+}
+
+function fmtKey(el) {
+  let v = el.value.replace(/[^a-zA-Z0-9]/g,'').toUpperCase();
+  let out = '';
+  for (let i = 0; i < v.length && i < 16; i++) {
+    if (i > 0 && i % 4 === 0) out += '-';
+    out += v[i];
+  }
+  el.value = out;
+}
+
+async function clearAllAccounts() {
+  if (!confirm('Clear ALL available accounts from every product? This cannot be undone.')) return;
+  await sbRpc('seller_clear_stock', { pw: SELLER_PW });
+  await render();
+  showToast('All available accounts cleared');
+}
+
+function resetUsedKeys() {
+  if (!confirm('Mark all used keys as active again?')) return;
+  const db = ensureDB(getDB());
+  Object.keys(db.keys).forEach(k => { db.keys[k].used = false; db.keys[k].usedBy = null; });
+  saveDB(db);
+  render();
+  showToast('All keys reset to active');
+}
+
+function clearHistory() {
+  if (!confirm('Clear all generation history?')) return;
+  const db = ensureDB(getDB());
+  db.history = {};
+  saveDB(db);
+  render();
+  showToast('History cleared');
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showToast(msg, isErr=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isErr ? ' err' : '');
+  setTimeout(() => { t.className = 'toast' + (isErr ? ' err' : ''); }, 2500);
+}
+
+render();
+</script>
+</body>
+</html>

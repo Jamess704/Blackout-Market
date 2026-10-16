@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GenHub — Key Generator</title>
+<style>
+  :root {
+    --bg: #05050a;
+    --surface: #111118;
+    --card: #16161f;
+    --border: #ffffff0f;
+    --border-hover: #ffffff1a;
+    --text: #f0f0f5;
+    --muted: #666680;
+    --accent: #6c5ce7;
+    --accent2: #a29bfe;
+    --green: #00b894;
+    --red: #e17055;
+    --yellow: #fdcb6e;
+    --blue: #74b9ff;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
+
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 32px; border-bottom: 1px solid var(--border);
+    background: rgba(10,10,18,0.9); position: sticky; top: 0; z-index: 100;
+    backdrop-filter: blur(14px);
+  }
+  .logo { font-size: 17px; font-weight: 700; color: var(--text); }
+  .logo span { color: var(--accent2); }
+  .badge { background: #6c5ce720; border: 1px solid #6c5ce740; color: var(--accent2); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; }
+
+  .wrap { max-width: 1020px; margin: 0 auto; padding: 36px 24px; }
+  h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .sub { font-size: 14px; color: var(--muted); margin-bottom: 36px; }
+
+  .section-label {
+    font-size: 11px; font-weight: 600; letter-spacing: .08em;
+    color: var(--muted); text-transform: uppercase; margin-bottom: 14px; margin-top: 32px;
+  }
+
+  /* ── PLAN CARDS ── */
+  .plans-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin-bottom: 8px; }
+  .plan-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px; cursor: pointer;
+    transition: border .15s, background .15s;
+    position: relative;
+  }
+  .plan-card:hover { border-color: var(--border-hover); }
+  .plan-card.selected { border-color: var(--accent) !important; background: rgba(108,92,231,0.08); }
+  .plan-card .check {
+    position: absolute; top: 12px; right: 12px;
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 2px solid var(--border); display: flex; align-items: center; justify-content: center;
+    font-size: 10px; transition: all .15s;
+  }
+  .plan-card.selected .check { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .plan-emoji { font-size: 24px; margin-bottom: 10px; }
+  .plan-name { font-size: 15px; font-weight: 700; margin-bottom: 3px; }
+  .plan-duration { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+  .plan-limits { display: flex; flex-direction: column; gap: 5px; }
+  .limit-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+  .limit-label { color: var(--muted); }
+  .limit-val { color: var(--text); font-weight: 500; }
+
+  /* ── GENERATOR CONTROLS ── */
+  .gen-box {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px; margin-bottom: 14px;
+  }
+  .controls-row { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 20px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-size: 12px; color: var(--muted); }
+  input[type=number], input[type=text], select {
+    background: rgba(8,8,18,0.55); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 9px; padding: 9px 14px; color: var(--text); font-size: 13px;
+    outline: none; transition: border .15s;
+  }
+  input[type=number]:focus, input[type=text]:focus, select:focus { border-color: var(--accent); }
+  select option { background: #16161f; }
+  .qty-input { width: 90px; }
+  .prefix-input { width: 160px; font-family: monospace; letter-spacing: 1px; }
+
+  .gen-btn {
+    background: var(--accent); color: #fff; border: none;
+    border-radius: 9px; padding: 10px 24px; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: opacity .15s; white-space: nowrap;
+  }
+  .gen-btn:hover { opacity: .85; }
+
+  /* ── OUTPUT ── */
+  .output-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .output-meta { font-size: 13px; color: var(--muted); }
+  .output-actions { display: flex; gap: 8px; }
+  .action-btn {
+    background: rgba(108,92,231,0.15); border: 1px solid rgba(108,92,231,0.3);
+    color: var(--accent2); border-radius: 7px; padding: 6px 14px;
+    font-size: 12px; font-weight: 600; cursor: pointer; transition: all .15s;
+  }
+  .action-btn:hover { background: rgba(108,92,231,0.25); }
+  .action-btn.danger { background: rgba(225,112,85,0.1); border-color: rgba(225,112,85,0.3); color: var(--red); }
+  .action-btn.danger:hover { background: rgba(225,112,85,0.2); }
+
+  .keys-output {
+    background: rgba(8,8,18,0.6); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px; max-height: 320px; overflow-y: auto; font-family: monospace;
+    font-size: 12px;
+  }
+  .key-out-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 9px 14px; border-bottom: 1px solid rgba(255,255,255,0.04);
+    gap: 10px;
+  }
+  .key-out-row:last-child { border-bottom: none; }
+  .key-out-code { color: var(--accent2); flex: 1; }
+  .key-out-plan { font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .key-out-limits { font-size: 11px; color: var(--green); white-space: nowrap; }
+  .copy-key-btn {
+    background: none; border: 1px solid var(--border); color: var(--muted);
+    border-radius: 5px; padding: 3px 8px; font-size: 10px; cursor: pointer;
+    transition: all .15s; font-family: 'Segoe UI', sans-serif;
+  }
+  .copy-key-btn:hover { border-color: var(--accent); color: var(--accent2); }
+  .empty-output { padding: 28px; text-align: center; color: var(--muted); font-family: 'Segoe UI', sans-serif; font-size: 13px; }
+
+  /* ── PLAN EDITOR ── */
+  .plan-editor {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+  }
+  .plan-editor-row {
+    display: grid;
+    grid-template-columns: 1fr 100px 110px 110px 110px 80px;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+  }
+  .plan-editor-row:last-child { border-bottom: none; }
+  .plan-editor-row.header { background: rgba(255,255,255,0.02); }
+  .pe-cell { padding: 10px 14px; font-size: 12px; }
+  .pe-cell.head { color: var(--muted); font-weight: 600; letter-spacing: .05em; text-transform: uppercase; font-size: 10px; }
+  .pe-cell input {
+    width: 100%; background: transparent; border: none; border-bottom: 1px solid transparent;
+    color: var(--text); font-size: 13px; padding: 2px 0; outline: none;
+    transition: border .15s;
+  }
+  .pe-cell input:focus { border-bottom-color: var(--accent); }
+  .pe-cell input.mono { font-family: monospace; }
+  .plan-name-badge { display: flex; align-items: center; gap: 8px; }
+  .save-plans-btn {
+    margin-top: 12px; background: var(--green); color: #fff; border: none;
+    border-radius: 9px; padding: 9px 20px; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: opacity .15s;
+  }
+  .save-plans-btn:hover { opacity: .85; }
+
+  /* ── ALL GENERATED KEYS — FOLD SECTIONS ── */
+  .hist-table {
+    background: rgba(8,8,18,0.55); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px; overflow: hidden;
+  }
+  .hist-row {
+    display: grid; grid-template-columns: 1fr 110px 90px 100px 80px 70px;
+    gap: 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+    align-items: center; font-size: 12px;
+  }
+  .hist-row:last-child { border-bottom: none; }
+  .hist-row.head { background: rgba(255,255,255,0.02); font-size: 10px; font-weight: 600; letter-spacing: .05em; }
+  .hc { padding: 9px 12px; }
+  .hc.muted { color: var(--muted); }
+  .hc.code { font-family: monospace; color: var(--accent2); }
+  .hc.used { color: var(--red); }
+  .hc.active { color: var(--green); }
+  .hc.exp { color: var(--yellow); }
+
+  /* ── FOLD SECTION SHELL ── */
+  .fold-section { margin-bottom: 10px; }
+
+  .fold-header {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 16px; cursor: pointer;
+    transition: border-color .15s, background .15s; user-select: none;
+  }
+  .fold-header:hover { border-color: var(--border-hover); background: rgba(255,255,255,0.025); }
+  .fold-section.open .fold-header {
+    border-radius: 10px 10px 0 0;
+    border-bottom-color: rgba(255,255,255,0.03);
+  }
+
+  .fold-plan-emoji { font-size: 18px; line-height: 1; }
+  .fold-plan-name  { font-size: 14px; font-weight: 600; flex: 1; }
+  .fold-count {
+    font-size: 11px; font-weight: 600; border-radius: 5px; padding: 3px 9px;
+    background: rgba(108,92,231,0.15); border: 1px solid rgba(108,92,231,0.25);
+    color: var(--accent2);
+  }
+  .fold-count.zero {
+    background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.08);
+    color: var(--muted);
+  }
+  .fold-chevron {
+    font-size: 11px; color: var(--muted);
+    transition: transform .22s ease; display: inline-block;
+  }
+  .fold-section.open .fold-chevron { transform: rotate(180deg); }
+
+  .fold-body {
+    max-height: 0; overflow: hidden;
+    transition: max-height .3s ease;
+  }
+  .fold-section.open .fold-body { max-height: 9999px; }
+
+  .fold-body-inner {
+    background: rgba(8,8,18,0.55);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-top: none; border-radius: 0 0 10px 10px; overflow: hidden;
+  }
+  .fold-empty {
+    padding: 20px; text-align: center; color: var(--muted); font-size: 13px;
+  }
+
+  .divider { height: 1px; background: var(--border); margin: 36px 0; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 28px; right: 28px;
+    background: var(--green); color: #fff;
+    border-radius: 10px; padding: 12px 18px; font-size: 13px; font-weight: 500;
+    z-index: 999; transform: translateY(80px); opacity: 0;
+    transition: all .25s; pointer-events: none;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.err { background: var(--red); }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Gen<span>Hub</span> <span style="color:var(--muted);font-weight:400;font-size:13px">— Key Generator</span></div>
+  <div class="badge">🔑 SELLER ONLY</div>
+</nav>
+
+<div class="wrap">
+  <h1>Key Generator</h1>
+  <p class="sub">Generate redeem keys for buyers. Set plan durations, daily gen limits, and total account limits per tier.</p>
+
+  <!-- PLAN SELECTOR -->
+  <div class="section-label">Select Plan to Generate</div>
+  <div class="plans-grid" id="plans-grid"></div>
+
+  <!-- GENERATOR -->
+  <div class="section-label">Generate Keys</div>
+  <div class="gen-box">
+    <div class="controls-row">
+      <div class="field">
+        <label>Quantity</label>
+        <input type="number" class="qty-input" id="qty" value="5" min="1" max="500">
+      </div>
+      <div class="field">
+        <label>Key Prefix (optional)</label>
+        <input type="text" class="prefix-input" id="prefix" placeholder="e.g. BLACKOUT" maxlength="10" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
+      </div>
+      <button class="gen-btn" onclick="generateKeys()">⚡ Generate Keys</button>
+    </div>
+
+    <div class="output-header">
+      <span class="output-meta" id="output-meta">No keys generated yet.</span>
+      <div class="output-actions">
+        <button class="action-btn" onclick="copyAllKeys()">📋 Copy All</button>
+        <button class="action-btn" onclick="exportTxt()">⬇ Export .txt</button>
+        <button class="action-btn" onclick="addToGenHub()">➕ Add to GenHub</button>
+        <button class="action-btn danger" onclick="clearOutput()">✕ Clear</button>
+      </div>
+    </div>
+    <div class="keys-output" id="keys-output">
+      <div class="empty-output">Select a plan above and hit Generate Keys.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- PLAN EDITOR -->
+  <div class="section-label">Plan Settings — Edit Limits</div>
+  <div class="plan-editor" id="plan-editor"></div>
+  <div style="display:flex;gap:10px;align-items:center">
+    <button class="save-plans-btn" onclick="savePlans()" style="flex:1">✓ Save Plan Settings</button>
+    <button class="save-plans-btn" onclick="resetPlans()" style="flex:0 0 auto;background:rgba(225,112,85,0.12);border-color:rgba(225,112,85,0.3);color:#e17055" title="Restore factory defaults">↺ Reset Defaults</button>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ALL KEYS HISTORY — collapsible by tier -->
+  <div class="section-label">All Generated Keys</div>
+  <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:14px">
+    <button class="action-btn" onclick="exportAllTxt()">⬇ Export All</button>
+    <button class="action-btn danger" onclick="clearAllKeys()">🗑 Clear All Keys</button>
+  </div>
+  <div id="hist-container"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// STORAGE
+// ══════════════════════════════════════════════════════════
+const KG_KEY   = 'keygen_db';    // key generator's own store
+const GH_KEY   = 'genhub_db';    // shared with GenHub buyer app
+const FOLD_KEY = 'keygen_fold';  // fold/collapse state per tier
+
+// ── Must match GenHub.html exactly ─────────────────────────
+const GH_SECRET = 'GH_BLACKOUT_7x9K';
+const KV_CHARS  = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+
+function keySign(payload) {
+  let h = 2166136261;
+  const src = GH_SECRET + payload;
+  for (let i = 0; i < src.length; i++) {
+    h ^= src.charCodeAt(i);
+    h  = Math.imul(h, 16777619) >>> 0;
+  }
+  return KV_CHARS[h&31] + KV_CHARS[(h>>>5)&31] + KV_CHARS[(h>>>10)&31] + KV_CHARS[(h>>>15)&31];
+}
+
+// Encodes daily limit as ONE char + version sentinel
+// s2[0] = limit char: index 0-30 → (index+1)*5 gens/day; index 31 → unlimited
+// s2[1] = 'V' (version marker so GenHub can reject old-format keys)
+function encodeDailyLimit(n) {
+  if (n >= 999999) return KV_CHARS[31] + 'V'; // unlimited
+  const idx = Math.min(30, Math.max(0, Math.round(n / 5) - 1));
+  return KV_CHARS[idx] + 'V'; // 'V' = version 2 marker
+}
+// ───────────────────────────────────────────────────────────
+
+const DEFAULT_PLANS = [
+  {
+    id: 'day',
+    name: '1 Day',
+    emoji: '⚡',
+    durationDays: 1,
+    dailyLimit: 20,
+    totalLimit: 20,
+    prefix: 'DAYZ',
+  },
+  {
+    id: 'week',
+    name: '1 Week',
+    emoji: '📅',
+    durationDays: 7,
+    dailyLimit: 35,
+    totalLimit: 245,
+    prefix: 'WEEK',
+  },
+  {
+    id: 'month',
+    name: '1 Month',
+    emoji: '🗓',
+    durationDays: 30,
+    dailyLimit: 65,
+    totalLimit: 1950,
+    prefix: 'MNTH',
+  },
+  {
+    id: 'lifetime',
+    name: 'Basic Lifetime Key',
+    emoji: '♾',
+    durationDays: 36500,
+    dailyLimit: 125,
+    totalLimit: 999999,
+    prefix: 'LIFE',
+  },
+  {
+    id: 'lifetime_premium',
+    name: 'Premium Lifetime Key',
+    emoji: '👑',
+    durationDays: 36500,
+    dailyLimit: 999999,
+    totalLimit: 999999,
+    prefix: 'PREM',
+  },
+];
+
+function getKG() {
+  try { return JSON.parse(localStorage.getItem(KG_KEY)) || { plans: DEFAULT_PLANS, keys: [] }; }
+  catch { return { plans: DEFAULT_PLANS, keys: [] }; }
+}
+function saveKG(db) { localStorage.setItem(KG_KEY, JSON.stringify(db)); }
+
+function getGH() {
+  try { return JSON.parse(localStorage.getItem(GH_KEY)) || null; }
+  catch { return null; }
+}
+function saveGH(db) { localStorage.setItem(GH_KEY, JSON.stringify(db)); }
+
+// fold state: { day: false, week: false, month: false, lifetime: false }
+// false = collapsed (default), true = open
+function getFoldState() {
+  try { return JSON.parse(localStorage.getItem(FOLD_KEY)) || {}; }
+  catch { return {}; }
+}
+function saveFoldState(state) {
+  try { localStorage.setItem(FOLD_KEY, JSON.stringify(state)); } catch {}
+}
+
+// ══════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════
+let selectedPlanId = 'week';
+let lastGenerated  = [];   // [{code, plan, meta}]
+
+// ══════════════════════════════════════════════════════════
+// KEY GENERATION
+// ══════════════════════════════════════════════════════════
+function randSegment() {
+  let s = '';
+  for (let i = 0; i < 4; i++) s += KV_CHARS[Math.floor(Math.random() * KV_CHARS.length)];
+  return s;
+}
+
+// plan: plan object with dailyLimit + prefix
+// overridePrefix: optional 4-char string from the UI prefix field
+function makeKey(plan, overridePrefix) {
+  // Seg1 = 4-char tier identifier (DAYZ / WEEK / MNTH / LIFE)
+  const seg1 = ((overridePrefix || plan.prefix).toUpperCase() + 'ZZZZ').substring(0, 4);
+  // Seg2 = encoded daily limit (char 0) + 3 random chars
+  const seg2 = encodeDailyLimit(plan.dailyLimit) + randSegment().substring(2); // limit+version + 2 random
+  const seg3 = randSegment();
+  // Seg4 = cryptographic signature — validates the whole key in GenHub
+  const sig  = keySign(seg1 + seg2 + seg3);
+  return `${seg1}-${seg2}-${seg3}-${sig}`;
+}
+
+function expiryDate(durationDays) {
+  const d = new Date();
+  d.setDate(d.getDate() + durationDays);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function generateKeys() {
+  const db      = getKG();
+  const plan    = db.plans.find(p => p.id === selectedPlanId);
+  if (!plan) { showToast('Select a plan first', true); return; }
+
+  const qty     = Math.min(Math.max(parseInt(document.getElementById('qty').value) || 1, 1), 500);
+  const prefix  = document.getElementById('prefix').value.trim() || plan.prefix;
+  const expiry  = expiryDate(plan.durationDays);
+
+  // Check for existing codes to avoid duplicates
+  const existingCodes = new Set(db.keys.map(k => k.code));
+
+  const newKeys = [];
+  let attempts  = 0;
+  while (newKeys.length < qty && attempts < qty * 10) {
+    attempts++;
+    const code = makeKey(plan, prefix);
+    if (!existingCodes.has(code)) {
+      existingCodes.add(code);
+      const entry = {
+        code,
+        planId:      plan.id,
+        planName:    plan.name,
+        durationDays: plan.durationDays,
+        dailyLimit:  plan.dailyLimit,
+        totalLimit:  plan.totalLimit,
+        expiry,
+        generated:   new Date().toLocaleString(),
+        used:        false,
+        usedBy:      null,
+      };
+      newKeys.push(entry);
+      db.keys.push(entry);
+    }
+  }
+
+  saveKG(db);
+  lastGenerated = newKeys;
+  renderOutput();
+
+  // Auto-open the section for the plan we just generated into
+  const foldState = getFoldState();
+  foldState[selectedPlanId] = true;
+  saveFoldState(foldState);
+
+  renderHistory();
+  showToast(`Generated ${newKeys.length} ${plan.name} key${newKeys.length !== 1 ? 's' : ''}`);
+}
+
+// ══════════════════════════════════════════════════════════
+// OUTPUT PANEL
+// ══════════════════════════════════════════════════════════
+function renderOutput() {
+  const el   = document.getElementById('keys-output');
+  const meta = document.getElementById('output-meta');
+
+  if (!lastGenerated.length) {
+    el.innerHTML   = '<div class="empty-output">Select a plan above and hit Generate Keys.</div>';
+    meta.textContent = 'No keys generated yet.';
+    return;
+  }
+
+  meta.textContent = `${lastGenerated.length} key${lastGenerated.length !== 1 ? 's' : ''} — ${lastGenerated[0].planName} · Expires ${lastGenerated[0].expiry}`;
+
+  el.innerHTML = lastGenerated.map((k, i) => `
+    <div class="key-out-row">
+      <span class="key-out-code">${k.code}</span>
+      <span class="key-out-plan">${k.planName}</span>
+      <span class="key-out-limits">${k.dailyLimit}/day · ${k.totalLimit === 999999 ? '∞ total' : k.totalLimit + ' total'}</span>
+      <button class="copy-key-btn" onclick="copySingle('${k.code}')">Copy</button>
+    </div>`).join('');
+}
+
+function copyAllKeys() {
+  if (!lastGenerated.length) return;
+  const txt = lastGenerated.map(k => k.code).join('\n');
+  navigator.clipboard.writeText(txt).catch(() => {});
+  showToast(`Copied ${lastGenerated.length} keys`);
+}
+
+function copySingle(code) {
+  navigator.clipboard.writeText(code).catch(() => {});
+  showToast('Copied: ' + code);
+}
+
+function exportTxt() {
+  if (!lastGenerated.length) return;
+  const plan = lastGenerated[0];
+  let txt = `GenHub Keys — ${plan.planName}\n`;
+  txt += `Generated: ${new Date().toLocaleString()}\n`;
+  txt += `Expires: ${plan.expiry} · Daily limit: ${plan.dailyLimit} · Total: ${plan.totalLimit === 999999 ? 'Unlimited' : plan.totalLimit}\n`;
+  txt += `${'─'.repeat(50)}\n`;
+  txt += lastGenerated.map(k => k.code).join('\n');
+  download(`GenHub_${plan.planId}_keys_${Date.now()}.txt`, txt);
+}
+
+function exportAllTxt() {
+  const db = getKG();
+  if (!db.keys.length) { showToast('No keys to export', true); return; }
+  let txt = `GenHub — All Keys\nExported: ${new Date().toLocaleString()}\n${'─'.repeat(60)}\n`;
+  db.keys.forEach(k => {
+    txt += `${k.code}  |  ${k.planName.padEnd(10)}  |  Exp: ${k.expiry}  |  ${k.used ? 'USED by ' + k.usedBy : 'ACTIVE'}\n`;
+  });
+  download(`GenHub_AllKeys_${Date.now()}.txt`, txt);
+}
+
+function download(filename, text) {
+  const a   = document.createElement('a');
+  a.href    = 'data:text/plain;charset=utf-8,' + encodeURIComponent(text);
+  a.download = filename;
+  a.click();
+}
+
+function clearOutput() {
+  lastGenerated = [];
+  renderOutput();
+}
+
+// ══════════════════════════════════════════════════════════
+// ADD TO GENHUB
+// Push generated keys directly into the buyer app's localStorage
+// ══════════════════════════════════════════════════════════
+function addToGenHub() {
+  if (!lastGenerated.length) { showToast('Generate keys first', true); return; }
+
+  let gh = getGH();
+  if (!gh) {
+    gh = { users: {}, keys: {}, accounts: { netflix:[], rockstar:[], discord:[], steam:[], disney:[], hbo:[], paramount:[] }, history: {} };
+  }
+  if (!gh.keys) gh.keys = {};
+
+  let added = 0;
+  lastGenerated.forEach(k => {
+    if (!gh.keys[k.code]) {
+      gh.keys[k.code] = {
+        plan:       k.planName,
+        expiry:     k.expiry,
+        durationDays: k.durationDays,
+        dailyLimit: k.dailyLimit,
+        totalLimit: k.totalLimit,
+        used:       false,
+        usedBy:     null,
+      };
+      added++;
+    }
+  });
+
+  saveGH(gh);
+  showToast(`✓ Added ${added} key${added !== 1 ? 's' : ''} to GenHub`);
+}
+
+// ══════════════════════════════════════════════════════════
+// PLAN CARDS
+// ══════════════════════════════════════════════════════════
+function renderPlanCards() {
+  const db   = getKG();
+  const grid = document.getElementById('plans-grid');
+  grid.innerHTML = '';
+
+  db.plans.forEach(plan => {
+    const card = document.createElement('div');
+    card.className = 'plan-card' + (plan.id === selectedPlanId ? ' selected' : '');
+    card.onclick   = () => selectPlan(plan.id);
+    card.innerHTML = `
+      <div class="check">${plan.id === selectedPlanId ? '✓' : ''}</div>
+      <div class="plan-emoji">${plan.emoji}</div>
+      <div class="plan-name">${plan.name}</div>
+      <div class="plan-duration">${plan.durationDays >= 36500 ? 'Never expires' : plan.durationDays + ' day' + (plan.durationDays !== 1 ? 's' : '') + ' access'}</div>
+      <div class="plan-limits">
+        <div class="limit-row">
+          <span class="limit-label">Daily gens</span>
+          <span class="limit-val">${plan.dailyLimit}</span>
+        </div>
+        <div class="limit-row">
+          <span class="limit-label">Total gens</span>
+          <span class="limit-val">${plan.totalLimit >= 999999 ? 'Unlimited' : plan.totalLimit}</span>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function selectPlan(id) {
+  selectedPlanId = id;
+  renderPlanCards();
+}
+
+// ══════════════════════════════════════════════════════════
+// PLAN EDITOR
+// ══════════════════════════════════════════════════════════
+function renderPlanEditor() {
+  const db = getKG();
+  const el = document.getElementById('plan-editor');
+
+  el.innerHTML = `
+    <div class="plan-editor-row header">
+      <div class="pe-cell head">Plan</div>
+      <div class="pe-cell head">Duration (days)</div>
+      <div class="pe-cell head">Daily Limit</div>
+      <div class="pe-cell head">Total Limit</div>
+      <div class="pe-cell head">Key Prefix</div>
+      <div class="pe-cell head">Emoji</div>
+    </div>` +
+    db.plans.map(p => `
+    <div class="plan-editor-row">
+      <div class="pe-cell">
+        <div class="plan-name-badge">
+          <input type="text" value="${escHtml(p.name)}" data-id="${p.id}" data-field="name" style="font-weight:600">
+        </div>
+      </div>
+      <div class="pe-cell"><input type="number" value="${p.durationDays}" data-id="${p.id}" data-field="durationDays" min="1"></div>
+      <div class="pe-cell"><input type="number" value="${p.dailyLimit}"   data-id="${p.id}" data-field="dailyLimit"   min="1"></div>
+      <div class="pe-cell"><input type="number" value="${p.totalLimit === 999999 ? 999999 : p.totalLimit}"  data-id="${p.id}" data-field="totalLimit"   min="1" title="Use 999999 for unlimited"></div>
+      <div class="pe-cell"><input type="text"   value="${escHtml(p.prefix)}" data-id="${p.id}" data-field="prefix" class="mono" maxlength="8" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')"></div>
+      <div class="pe-cell"><input type="text"   value="${escHtml(p.emoji)}" data-id="${p.id}" data-field="emoji" style="width:50px"></div>
+    </div>`).join('');
+}
+
+function savePlans() {
+  const db     = getKG();
+  const inputs = document.querySelectorAll('.plan-editor input[data-id]');
+
+  inputs.forEach(inp => {
+    const plan  = db.plans.find(p => p.id === inp.dataset.id);
+    if (!plan) return;
+    const field = inp.dataset.field;
+    const val   = inp.value.trim();
+    if (['durationDays','dailyLimit','totalLimit'].includes(field)) {
+      plan[field] = parseInt(val) || plan[field];
+    } else {
+      plan[field] = val || plan[field];
+    }
+  });
+
+  saveKG(db);
+  renderPlanCards();
+  renderPlanEditor();
+  showToast('Plan settings saved');
+}
+
+function resetPlans() {
+  if (!confirm('Reset all plan limits to factory defaults?')) return;
+  const db = getKG();
+  db.plans = JSON.parse(JSON.stringify(DEFAULT_PLANS));
+  saveKG(db);
+  renderPlanCards();
+  renderPlanEditor();
+  showToast('Plans reset to defaults');
+}
+
+// ══════════════════════════════════════════════════════════
+// HISTORY — COLLAPSIBLE TIER SECTIONS
+// ══════════════════════════════════════════════════════════
+
+// Plan display order and labels
+const TIER_ORDER = ['day', 'week', 'month', 'lifetime', 'lifetime_premium'];
+const TIER_LABELS = {
+  day:              { label: 'Day Keys',              color: '#74b9ff' },
+  week:             { label: 'Week Keys',             color: '#a29bfe' },
+  month:            { label: 'Month Keys',            color: '#00b894' },
+  lifetime:         { label: 'Basic Lifetime Keys',   color: '#fdcb6e' },
+  lifetime_premium: { label: 'Premium Lifetime Keys', color: '#e17055' },
+};
+
+function toggleFold(planId) {
+  const state = getFoldState();
+  state[planId] = !state[planId];
+  saveFoldState(state);
+
+  const section = document.getElementById('fold-' + planId);
+  if (!section) return;
+  if (state[planId]) {
+    section.classList.add('open');
+  } else {
+    section.classList.remove('open');
+  }
+}
+
+function buildKeyRow(k) {
+  return `
+    <div class="hist-row">
+      <div class="hc code">${escHtml(k.code)}</div>
+      <div class="hc">${escHtml(k.planName)}</div>
+      <div class="hc" style="color:var(--green)">${k.dailyLimit}/day · ${k.totalLimit >= 999999 ? '∞' : k.totalLimit}</div>
+      <div class="hc" style="color:var(--muted)">${escHtml(k.expiry)}</div>
+      <div class="hc ${k.used ? 'used' : 'active'}">${k.used ? '✕ Used' : '✓ Active'}</div>
+      <div class="hc">
+        <button class="copy-key-btn" onclick="copySingle('${escHtml(k.code)}')">Copy</button>
+      </div>
+    </div>`;
+}
+
+function renderHistory() {
+  const db        = getKG();
+  const container = document.getElementById('hist-container');
+  const foldState = getFoldState();
+
+  // Group keys by planId, newest first within each group
+  const groups = {};
+  TIER_ORDER.forEach(id => { groups[id] = []; });
+
+  db.keys.forEach(k => {
+    const id = k.planId || 'day';
+    if (!groups[id]) groups[id] = [];
+    groups[id].push(k);
+  });
+
+  // Reverse each group so newest keys appear first
+  TIER_ORDER.forEach(id => { groups[id].reverse(); });
+
+  // If no keys at all, show a single empty state
+  const totalKeys = db.keys.length;
+  if (!totalKeys) {
+    container.innerHTML = `<div style="padding:24px;text-align:center;color:var(--muted);font-size:13px;background:rgba(8,8,18,0.4);border:1px solid rgba(255,255,255,0.06);border-radius:10px">No keys generated yet.</div>`;
+    return;
+  }
+
+  container.innerHTML = TIER_ORDER.map(planId => {
+    const keys   = groups[planId] || [];
+    const count  = keys.length;
+    const isOpen = !!foldState[planId];
+
+    // Find the plan def to get emoji + current name
+    const dbPlan = db.plans.find(p => p.id === planId);
+    const emoji  = dbPlan ? dbPlan.emoji : '🔑';
+    const tierInfo = TIER_LABELS[planId] || { label: planId + ' Keys', color: 'var(--accent2)' };
+
+    const tableRows = count
+      ? `<div class="hist-row head">
+           <div class="hc muted">Key Code</div>
+           <div class="hc muted">Plan</div>
+           <div class="hc muted">Daily / Total</div>
+           <div class="hc muted">Expires</div>
+           <div class="hc muted">Status</div>
+           <div class="hc muted">Actions</div>
+         </div>` + keys.map(buildKeyRow).join('')
+      : `<div class="fold-empty">No ${tierInfo.label.toLowerCase()} generated yet.</div>`;
+
+    return `
+      <div class="fold-section${isOpen ? ' open' : ''}" id="fold-${planId}">
+        <div class="fold-header" onclick="toggleFold('${planId}')">
+          <span class="fold-plan-emoji">${emoji}</span>
+          <span class="fold-plan-name" style="color:${tierInfo.color}">${tierInfo.label}</span>
+          <span class="fold-count${count === 0 ? ' zero' : ''}">${count} key${count !== 1 ? 's' : ''}</span>
+          <span class="fold-chevron">▼</span>
+        </div>
+        <div class="fold-body">
+          <div class="fold-body-inner">${tableRows}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function clearAllKeys() {
+  if (!confirm('Delete ALL generated keys from history? This does not remove them from GenHub.')) return;
+  const db = getKG();
+  db.keys  = [];
+  saveKG(db);
+  lastGenerated = [];
+  renderOutput();
+  renderHistory();
+  showToast('All keys cleared from history');
+}
+
+// ══════════════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════════════
+function escHtml(s) {
+  return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showToast(msg, isErr=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isErr ? ' err' : '');
+  setTimeout(() => { t.className = 'toast' + (isErr ? ' err' : ''); }, 2500);
+}
+
+// ══════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════
+function init() {
+  // Seed default plans if none exist
+  const db = getKG();
+  if (!db.plans || !db.plans.length) {
+    db.plans = DEFAULT_PLANS;
+    saveKG(db);
+  }
+  renderPlanCards();
+  renderPlanEditor();
+  renderOutput();
+  renderHistory();
+}
+
+init();
+</script>
+</body>
+</html>
