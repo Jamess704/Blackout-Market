@@ -1,0 +1,1794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GenHub</title>
+<style>
+  :root {
+    --bg: #0d0d12;
+    --sidebar: #111118;
+    --surface: #16161f;
+    --card: #1a1a26;
+    --border: rgba(255,255,255,0.07);
+    --border-hover: rgba(255,255,255,0.14);
+    --text: #f0f0f5;
+    --muted: #5a5a78;
+    --muted2: #8888a8;
+    --accent: #6c5ce7;
+    --accent2: #a29bfe;
+    --green: #00b894;
+    --red: #e17055;
+    --radius: 10px;
+    --font: 'Segoe UI', system-ui, sans-serif;
+    --sidebar-w: 200px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: var(--font); min-height: 100vh;
+    display: flex; overflow-x: hidden;
+  }
+
+  /* ── ANIMATED BG ── */
+  #bg-canvas {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 0; pointer-events: none; opacity: 0.6;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-w); min-height: 100vh;
+    background: var(--sidebar);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    position: fixed; top: 0; left: 0; z-index: 50;
+    flex-shrink: 0;
+  }
+  .sidebar-logo {
+    padding: 22px 20px 18px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .logo-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 800; color: #fff; flex-shrink: 0;
+  }
+  .logo-text { font-size: 15px; font-weight: 700; letter-spacing: -0.3px; }
+  .logo-text span { color: var(--accent2); }
+  .sidebar-nav { padding: 14px 10px; flex: 1; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; border-radius: 8px;
+    font-size: 13px; font-weight: 500; color: var(--muted2);
+    cursor: pointer; transition: all .15s; user-select: none;
+    border: none; background: none; width: 100%; text-align: left;
+  }
+  .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+  .nav-item.active { background: rgba(108,92,231,0.15); color: var(--accent2); }
+  .nav-item-icon { font-size: 15px; width: 18px; text-align: center; }
+  .sidebar-footer {
+    padding: 14px 10px;
+    border-top: 1px solid var(--border);
+  }
+  .user-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; border-radius: 8px;
+    cursor: pointer; transition: background .15s;
+  }
+  .user-row:hover { background: rgba(255,255,255,0.05); }
+  .user-avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .user-info { flex: 1; min-width: 0; }
+  .user-name { font-size: 12px; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .user-role { font-size: 11px; color: var(--muted); }
+  .logout-btn {
+    background: none; border: none; color: var(--muted); cursor: pointer;
+    font-size: 13px; padding: 4px; border-radius: 5px; transition: color .15s; flex-shrink: 0;
+  }
+  .logout-btn:hover { color: var(--red); }
+
+  /* ── MAIN CONTENT ── */
+  .main {
+    margin-left: var(--sidebar-w); flex: 1;
+    position: relative; z-index: 1;
+    min-height: 100vh;
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── AUTH SCREEN ── */
+  .auth-wrap {
+    min-height: 100vh; display: flex;
+    align-items: center; justify-content: center; padding: 40px 20px;
+  }
+  .auth-card {
+    background: rgba(20,20,30,0.85); backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border); border-radius: 18px;
+    padding: 40px; width: 100%; max-width: 400px;
+  }
+  .auth-card h2 { font-size: 20px; font-weight: 700; margin-bottom: 5px; }
+  .auth-card p { font-size: 13px; color: var(--muted); margin-bottom: 26px; }
+  .tabs { display: flex; gap: 4px; margin-bottom: 22px; background: rgba(8,8,18,0.6); padding: 4px; border-radius: 9px; border: 1px solid rgba(255,255,255,0.06); }
+  .tab {
+    flex: 1; padding: 8px; border: none; background: transparent;
+    color: var(--muted); font-size: 13px; font-weight: 500;
+    border-radius: 6px; cursor: pointer; transition: all .15s;
+  }
+  .tab.active { background: var(--accent); color: #fff; }
+  label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 5px; margin-top: 12px; }
+  input[type=text], input[type=password], input[type=email] {
+    width: 100%; background: rgba(8,8,18,0.55); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px; padding: 10px 13px; color: var(--text); font-size: 13px;
+    outline: none; transition: border .15s;
+  }
+  input:focus { border-color: var(--accent); }
+  .btn {
+    width: 100%; margin-top: 18px; padding: 11px;
+    background: var(--accent); color: #fff; border: none;
+    border-radius: 9px; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: opacity .15s;
+  }
+  .btn:hover { opacity: .85; }
+  .err { font-size: 12px; color: var(--red); margin-top: 7px; display: none; }
+
+  /* ── DASHBOARD ── */
+  .dash-wrap { max-width: 860px; margin: 0 auto; padding: 36px 28px 60px; }
+  .dash-header { margin-bottom: 28px; }
+  .dash-greeting { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .dash-sub { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+  .status-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--green); display: inline-block; flex-shrink: 0;
+  }
+  .status-dot.inactive { background: var(--red); }
+
+  /* Plan bar */
+  .plan-bar {
+    background: rgba(16,16,26,0.8); backdrop-filter: blur(18px);
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px 20px; margin-bottom: 16px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+  .plan-bar-left { display: flex; align-items: center; gap: 12px; }
+  .plan-icon {
+    width: 36px; height: 36px; border-radius: 9px;
+    background: rgba(108,92,231,0.15); border: 1px solid rgba(108,92,231,0.25);
+    display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0;
+  }
+  .plan-name { font-size: 14px; font-weight: 600; }
+  .plan-detail { font-size: 12px; color: var(--muted); margin-top: 1px; }
+  .plan-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+  .plan-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: rgba(108,92,231,0.1); border: 1px solid rgba(108,92,231,0.2);
+    color: var(--accent2); border-radius: 20px; padding: 4px 12px;
+    font-size: 11px; font-weight: 600; white-space: nowrap;
+  }
+  .plan-pill.green { background: rgba(0,184,148,0.1); border-color: rgba(0,184,148,0.25); color: var(--green); }
+
+  /* Redeem row */
+  .redeem-row {
+    background: rgba(16,16,26,0.8); backdrop-filter: blur(18px);
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px 20px; margin-bottom: 16px;
+  }
+  .redeem-row-title { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+  .redeem-row-sub { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+  .redeem-input-row { display: flex; gap: 10px; }
+  .key-input {
+    flex: 1; background: rgba(8,8,18,0.55); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px; padding: 10px 14px; color: var(--text); font-size: 13px;
+    font-family: monospace; letter-spacing: 1px; outline: none; transition: border .15s;
+  }
+  .key-input:focus { border-color: var(--accent); }
+  .key-input::placeholder { letter-spacing: 0; font-family: var(--font); color: var(--muted); font-size: 12px; }
+  .redeem-btn {
+    padding: 10px 22px; background: var(--accent); color: #fff; border: none;
+    border-radius: 8px; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: opacity .15s; white-space: nowrap;
+  }
+  .redeem-btn:hover { opacity: .85; }
+
+  /* Generator section */
+  .gen-card {
+    background: rgba(16,16,26,0.8); backdrop-filter: blur(18px);
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px 20px; margin-bottom: 16px;
+  }
+  .gen-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .gen-card-icon {
+    width: 36px; height: 36px; border-radius: 9px;
+    background: rgba(108,92,231,0.15); border: 1px solid rgba(108,92,231,0.25);
+    display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
+  }
+  .gen-card-title { font-size: 14px; font-weight: 600; }
+  .gen-card-sub { font-size: 12px; color: var(--muted); margin-top: 1px; }
+  .daily-bar {
+    font-size: 12px; color: var(--muted); padding: 10px 0 16px;
+    border-bottom: 1px solid var(--border); margin-bottom: 16px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .daily-bar strong { color: var(--accent2); }
+
+  /* Product grid */
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+  }
+  .product-card {
+    background: rgba(12,12,20,0.7); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 10px;
+    text-align: center; cursor: pointer;
+    transition: border .15s, transform .12s, background .15s;
+    position: relative; overflow: hidden;
+  }
+  .product-card:hover:not(.zero) {
+    border-color: rgba(108,92,231,0.4) !important;
+    background: rgba(22,22,36,0.9) !important;
+    transform: translateY(-2px);
+  }
+  .product-card.zero { opacity: .4; cursor: not-allowed; }
+  .product-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 9px; font-size: 22px;
+  }
+  .product-name { font-size: 12px; font-weight: 600; margin-bottom: 3px; }
+  .product-stock { font-size: 11px; }
+  .product-stock.has-stock { color: var(--green); }
+  .product-stock.no-stock { color: var(--red); }
+
+  /* History section */
+  .history-card {
+    background: rgba(16,16,26,0.8); backdrop-filter: blur(18px);
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px 20px;
+  }
+  .history-card-header {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;
+  }
+  .history-card-title { display: flex; align-items: center; gap: 12px; }
+  .history-card-icon {
+    width: 36px; height: 36px; border-radius: 9px;
+    background: rgba(108,92,231,0.15); border: 1px solid rgba(108,92,231,0.25);
+    display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
+  }
+  .history-card-text .title { font-size: 14px; font-weight: 600; }
+  .history-card-text .sub { font-size: 12px; color: var(--muted); }
+  .history-actions { display: flex; gap: 8px; }
+  .hist-action-btn {
+    padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 500;
+    cursor: pointer; transition: all .15s; white-space: nowrap;
+  }
+  .hist-copy-all {
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+    color: var(--muted2);
+  }
+  .hist-copy-all:hover { color: var(--text); background: rgba(255,255,255,0.09); }
+  .hist-download {
+    background: rgba(108,92,231,0.12); border: 1px solid rgba(108,92,231,0.25);
+    color: var(--accent2);
+  }
+  .hist-download:hover { background: rgba(108,92,231,0.22); }
+  .history-notice {
+    font-size: 11px; color: var(--muted); margin-bottom: 14px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .history-notice strong { color: var(--muted2); }
+  .history-filter-row { display: flex; gap: 8px; margin-bottom: 14px; }
+  .history-filter-row select {
+    background: rgba(8,8,18,0.55); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px; padding: 8px 10px; color: var(--muted2); font-size: 12px;
+    outline: none; cursor: pointer; width: 130px;
+  }
+  .history-filter-row select:focus { border-color: var(--accent); }
+  .history-filter-row input[type=text] {
+    flex: 1; padding: 8px 12px; font-size: 12px;
+  }
+  .history-wrap { margin-top: 0; }
+  .history-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 11px 14px; background: rgba(10,10,18,0.6);
+    border: 1px solid var(--border); border-radius: 9px; margin-bottom: 7px;
+    font-size: 12px; gap: 12px;
+  }
+  .history-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+  .history-icon {
+    width: 30px; height: 30px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .history-name { font-weight: 600; font-size: 12px; }
+  .history-time { font-size: 11px; color: var(--muted); }
+  .history-preview { font-size: 11px; color: var(--muted2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 300px; }
+  .history-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .view-btn {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--muted); border-radius: 7px; padding: 5px 12px;
+    font-size: 11px; cursor: pointer; white-space: nowrap;
+  }
+  .view-btn:hover { color: var(--text); border-color: var(--border-hover); }
+  .hist-count { font-size: 11px; color: var(--muted); padding: 6px 0; }
+
+  /* ── MODAL ── */
+  .modal-bg {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,8,0.7); backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px); z-index: 200;
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-bg.open { display: flex; }
+  .modal {
+    background: rgba(18,18,28,0.96); border: 1px solid var(--border);
+    border-radius: 16px; padding: 28px; width: 100%; max-width: 420px;
+    backdrop-filter: blur(20px);
+  }
+  .modal h3 { font-size: 17px; font-weight: 700; margin-bottom: 5px; }
+  .modal p { font-size: 12px; color: var(--muted); margin-bottom: 18px; }
+  .account-box {
+    background: rgba(8,8,18,0.6); border: 1px solid var(--border);
+    border-radius: 9px; padding: 14px; margin-bottom: 14px;
+  }
+  .account-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .account-row:last-child { margin-bottom: 0; }
+  .account-label { font-size: 11px; color: var(--muted); }
+  .account-val { font-size: 12px; font-family: monospace; color: var(--text); word-break: break-all; }
+  .copy-btn {
+    background: var(--accent); color: #fff; border: none;
+    border-radius: 6px; padding: 4px 9px; font-size: 11px;
+    cursor: pointer; transition: opacity .15s; flex-shrink: 0; margin-left: 8px;
+  }
+  .copy-btn:hover { opacity: .8; }
+  .modal-close {
+    width: 100%; padding: 10px; background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border); color: var(--muted);
+    border-radius: 9px; font-size: 13px; cursor: pointer; margin-top: 8px;
+  }
+  .modal-close:hover { color: var(--text); }
+  .gen-spinner { display: none; text-align: center; padding: 20px 0; color: var(--muted); font-size: 13px; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: var(--green); color: #fff;
+    border-radius: 9px; padding: 11px 16px; font-size: 13px; font-weight: 500;
+    z-index: 999; transform: translateY(60px); opacity: 0;
+    transition: all .22s; pointer-events: none;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.err-toast { background: var(--red); }
+
+  /* ── SETTINGS SCREEN ── */
+  .settings-wrap { max-width: 620px; margin: 0 auto; padding: 36px 28px 60px; }
+  .settings-title { font-size: 22px; font-weight: 700; margin-bottom: 28px; }
+  .settings-section {
+    background: rgba(16,16,26,0.8); backdrop-filter: blur(18px);
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px; margin-bottom: 14px;
+  }
+  .settings-section-title {
+    font-size: 11px; font-weight: 600; letter-spacing: .1em;
+    color: var(--muted); text-transform: uppercase; margin-bottom: 16px;
+  }
+  .acct-info-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .acct-info-row:last-of-type { border-bottom: none; }
+  .acct-info-label { font-size: 12px; color: var(--muted); }
+  .acct-info-val { font-size: 13px; font-family: monospace; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .eye-btn {
+    background: none; border: none; color: var(--muted); cursor: pointer;
+    font-size: 14px; padding: 2px 4px; border-radius: 5px; transition: color .15s;
+  }
+  .eye-btn:hover { color: var(--accent2); }
+  .settings-btn-row { display: flex; gap: 8px; margin-top: 14px; }
+  .danger-btn {
+    padding: 9px 16px; background: rgba(225,112,85,0.08);
+    border: 1px solid rgba(225,112,85,0.25); color: var(--red);
+    border-radius: 8px; font-size: 12px; cursor: pointer; transition: all .15s;
+  }
+  .danger-btn:hover { background: rgba(225,112,85,0.15); }
+  .secondary-btn {
+    padding: 9px 16px; background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border); color: var(--muted2);
+    border-radius: 8px; font-size: 12px; cursor: pointer; transition: all .15s;
+  }
+  .secondary-btn:hover { color: var(--text); background: rgba(255,255,255,0.09); }
+
+  /* upgrade / boost */
+  .upgrade-card {
+    background: linear-gradient(135deg, rgba(108,92,231,0.12), rgba(162,155,254,0.07));
+    border: 1px solid rgba(108,92,231,0.25); border-radius: 10px;
+    padding: 16px; margin-bottom: 14px;
+  }
+  .upgrade-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .upgrade-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(108,92,231,0.18); border: 1px solid rgba(108,92,231,0.3);
+    color: var(--accent2); border-radius: 20px; padding: 3px 11px; font-size: 11px; font-weight: 600;
+  }
+  .upgrade-price { font-size: 18px; font-weight: 700; }
+  .upgrade-desc { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+  .purchase-btn {
+    width: 100%; padding: 11px; background: var(--accent); color: #fff;
+    border: none; border-radius: 9px; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: opacity .15s;
+  }
+  .purchase-btn:hover { opacity: .85; }
+  .boost-active-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(0,184,148,0.12); border: 1px solid rgba(0,184,148,0.28);
+    color: var(--green); border-radius: 20px; padding: 3px 11px; font-size: 11px; font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .boost-redeem-row { display: flex; gap: 8px; margin-top: 10px; }
+  .boost-redeem-row input {
+    flex: 1; background: rgba(8,8,18,0.55); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px; padding: 9px 12px; color: var(--text); font-size: 13px;
+    font-family: monospace; outline: none; letter-spacing: 1px;
+  }
+  .boost-redeem-row input:focus { border-color: var(--accent); }
+  .boost-redeem-btn {
+    padding: 9px 16px; background: rgba(108,92,231,0.15);
+    border: 1px solid rgba(108,92,231,0.28); color: var(--accent2);
+    border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap;
+    transition: all .15s;
+  }
+  .boost-redeem-btn:hover { background: rgba(108,92,231,0.25); }
+  .boost-err { font-size: 12px; color: var(--red); margin-top: 5px; display: none; }
+
+  /* webhook logger */
+  .webhook-row { display: flex; gap: 8px; align-items: center; }
+  .webhook-row input {
+    flex: 1; background: rgba(8,8,18,0.55); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px; padding: 9px 12px; color: var(--text); font-size: 12px; outline: none;
+  }
+  .webhook-row input:focus { border-color: var(--accent); }
+  .wh-save-btn {
+    padding: 9px 14px; border-radius: 8px; border: 1px solid rgba(108,92,231,0.35);
+    background: rgba(108,92,231,0.15); color: var(--accent2); font-size: 12px; cursor: pointer; transition: all .15s;
+  }
+  .wh-save-btn:hover { background: rgba(108,92,231,0.25); }
+  .wh-test-btn {
+    padding: 9px 14px; border-radius: 8px; border: 1px solid var(--border);
+    background: rgba(255,255,255,0.05); color: var(--muted); font-size: 12px; cursor: pointer; transition: all .15s;
+  }
+  .wh-test-btn:hover { color: var(--text); }
+
+  /* ── UPDATE BANNER ── */
+  #update-banner {
+    display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+    background: linear-gradient(135deg, #1a1040, #0d0d1a);
+    border-bottom: 1px solid rgba(108,92,231,0.4);
+    padding: 10px 24px; align-items: center; justify-content: space-between; gap: 12px;
+    box-shadow: 0 2px 18px rgba(108,92,231,0.2);
+  }
+  #update-banner.visible { display: flex; }
+  .update-text { font-size: 13px; color: #c8c8e8; line-height: 1.4; }
+  .update-text strong { color: var(--accent2); }
+  .update-actions { display: flex; align-items: center; gap: 8px; }
+  .update-dl-btn {
+    background: var(--accent); color: #fff; border: none; border-radius: 7px;
+    padding: 7px 14px; font-size: 12px; font-weight: 600; cursor: pointer;
+  }
+  .update-dismiss {
+    background: none; border: none; color: var(--muted);
+    font-size: 18px; cursor: pointer; padding: 2px 6px; border-radius: 5px; line-height: 1;
+  }
+  .update-dismiss:hover { color: var(--text); }
+
+  /* section label */
+  .section-label {
+    font-size: 11px; font-weight: 600; letter-spacing: .08em;
+    color: var(--muted); text-transform: uppercase; margin-bottom: 10px; margin-top: 20px;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    :root { --sidebar-w: 0px; }
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .dash-wrap, .settings-wrap { padding: 20px 16px 60px; }
+    .product-grid { grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); }
+    .history-preview { display: none; }
+    .plan-pills { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ANIMATED BACKGROUND -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- UPDATE BANNER -->
+<div id="update-banner" role="alert">
+  <div class="update-text">
+    🚀 <strong id="update-version-label">New version available</strong>
+    <div style="font-size:11px;color:var(--muted)" id="update-notes-label"></div>
+  </div>
+  <div class="update-actions">
+    <button class="update-dl-btn" onclick="downloadUpdate()">Download</button>
+    <button class="update-dismiss" onclick="dismissUpdateBanner()">×</button>
+  </div>
+</div>
+
+<!-- SIDEBAR (hidden on auth screen) -->
+<div class="sidebar" id="sidebar" style="display:none">
+  <div class="sidebar-logo">
+    <div class="logo-icon">G</div>
+    <div class="logo-text">Gen<span>Hub</span></div>
+  </div>
+  <div class="sidebar-nav">
+    <button class="nav-item active" id="nav-dashboard" onclick="navTo('dashboard')">
+      <span class="nav-item-icon">⊞</span> Dashboard
+    </button>
+    <button class="nav-item" id="nav-settings" onclick="navTo('settings')">
+      <span class="nav-item-icon">⚙</span> Settings
+    </button>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-row" onclick="navTo('settings')">
+      <div class="user-avatar" id="sidebar-avatar">?</div>
+      <div class="user-info">
+        <div class="user-name" id="sidebar-username">—</div>
+        <div class="user-role" id="sidebar-plan">No plan</div>
+      </div>
+      <button class="logout-btn" title="Sign out" onclick="event.stopPropagation();doSignOut()">↩</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main" id="main-area">
+
+  <!-- ══ AUTH SCREEN ══ -->
+  <div class="screen active" id="screen-auth">
+    <div class="auth-wrap">
+      <div class="auth-card">
+        <h2>Welcome to GenHub</h2>
+        <p>Sign in or create an account to access your generator.</p>
+        <div class="tabs">
+          <button class="tab active" onclick="switchTab('login')">Sign In</button>
+          <button class="tab" onclick="switchTab('register')">Register</button>
+        </div>
+        <div id="form-login">
+          <label>Username</label>
+          <input type="text" id="login-email" placeholder="cooluser99" autocomplete="username">
+          <label>Password</label>
+          <input type="password" id="login-pass" placeholder="••••••••">
+          <div class="err" id="login-err">Invalid username or password.</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:12px;margin-bottom:2px">
+            <input type="checkbox" id="remember-me" style="width:14px;height:14px;accent-color:var(--accent);cursor:pointer">
+            <label for="remember-me" style="margin:0;font-size:12px;color:var(--muted);cursor:pointer;user-select:none">Remember me</label>
+          </div>
+          <button class="btn" onclick="doLogin()">Sign In</button>
+        </div>
+        <div id="form-register" style="display:none">
+          <label>Email</label>
+          <input type="email" id="reg-email" placeholder="you@example.com">
+          <label>Username</label>
+          <input type="text" id="reg-user" placeholder="cooluser99">
+          <label>Password</label>
+          <input type="password" id="reg-pass" placeholder="Min. 6 characters">
+          <div class="err" id="reg-err">Please fill all fields.</div>
+          <button class="btn" onclick="doRegister()">Create Account</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ DASHBOARD ══ -->
+  <div class="screen" id="screen-main">
+    <div class="dash-wrap">
+      <div class="dash-header">
+        <div class="dash-greeting">Welcome back, <span id="dash-username">—</span></div>
+        <div class="dash-sub">
+          <span class="status-dot" id="status-dot"></span>
+          <span id="dash-plan-sub">No active licenses</span>
+        </div>
+      </div>
+
+      <!-- Plan bar -->
+      <div class="plan-bar" id="plan-bar" style="display:none">
+        <div class="plan-bar-left">
+          <div class="plan-icon">🔑</div>
+          <div>
+            <div class="plan-name" id="plan-name">—</div>
+            <div class="plan-detail" id="plan-detail">—</div>
+          </div>
+        </div>
+        <div class="plan-pills">
+          <div class="plan-pill green" id="pill-today">0 today</div>
+          <div class="plan-pill" id="pill-daily">Unlimited</div>
+          <div class="plan-pill" id="pill-exp">—</div>
+        </div>
+      </div>
+
+      <!-- Add another gen / redeem -->
+      <div class="redeem-row">
+        <div class="redeem-row-title">Add Another Gen</div>
+        <div class="redeem-row-sub">Gen keys and product license keys both work here.</div>
+        <div class="redeem-input-row">
+          <input type="text" class="key-input" id="key-input" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19" oninput="formatKey(this)">
+          <button class="redeem-btn" onclick="doRedeem()">Redeem</button>
+        </div>
+        <div class="err" id="key-err" style="display:none;margin-top:6px">Invalid or already used key.</div>
+      </div>
+
+      <!-- Generator -->
+      <div class="gen-card">
+        <div class="gen-card-header">
+          <div class="gen-card-icon">⊞</div>
+          <div>
+            <div class="gen-card-title">Generator</div>
+            <div class="gen-card-sub" id="gen-card-plan-sub">Select a product to generate an account instantly.</div>
+          </div>
+        </div>
+        <div class="daily-bar" id="daily-bar">Daily: loading...</div>
+        <div class="product-grid" id="product-grid"></div>
+      </div>
+
+      <!-- History -->
+      <div class="history-card">
+        <div class="history-card-header">
+          <div class="history-card-title">
+            <div class="history-card-icon">🕐</div>
+            <div class="history-card-text">
+              <div class="title">Generation History</div>
+              <div class="sub">Your last 100 generated accounts</div>
+            </div>
+          </div>
+          <div class="history-actions">
+            <button class="hist-action-btn hist-copy-all" onclick="copyAllHistory()">Copy all</button>
+            <button class="hist-action-btn hist-download" onclick="downloadHistory()">Download</button>
+          </div>
+        </div>
+        <div class="history-notice">
+          History is automatically kept to 100 entries. <strong>Download or copy anything you want to keep.</strong>
+        </div>
+        <div class="history-filter-row">
+          <select id="hist-filter-type" onchange="filterHistory()">
+            <option value="">All types</option>
+          </select>
+          <input type="text" id="hist-filter-search" placeholder="Search..." oninput="filterHistory()" style="font-size:12px">
+        </div>
+        <div class="hist-count" id="hist-count"></div>
+        <div class="history-wrap" id="history-wrap">
+          <div style="font-size:13px;color:var(--muted)">No generations yet.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SETTINGS ══ -->
+  <div class="screen" id="screen-settings">
+    <div class="settings-wrap">
+      <div class="settings-title">Settings</div>
+
+      <!-- Account -->
+      <div class="settings-section">
+        <div class="settings-section-title">Account</div>
+        <div class="acct-info-row">
+          <span class="acct-info-label">Email</span>
+          <span class="acct-info-val" id="acct-email">—</span>
+        </div>
+        <div class="acct-info-row">
+          <span class="acct-info-label">Username</span>
+          <span class="acct-info-val" id="acct-username">—</span>
+        </div>
+        <div class="acct-info-row">
+          <span class="acct-info-label">Password</span>
+          <span class="acct-info-val">
+            <span id="acct-pass-dots">••••••••</span>
+            <span id="acct-pass-clear" style="display:none"></span>
+            <button class="eye-btn" id="pass-eye" onclick="togglePassVis()">👁</button>
+          </span>
+        </div>
+        <div class="acct-info-row">
+          <span class="acct-info-label">Plan</span>
+          <span class="acct-info-val" id="acct-plan">—</span>
+        </div>
+        <div class="acct-info-row" style="border-bottom:none">
+          <span class="acct-info-label">Expires</span>
+          <span class="acct-info-val" id="acct-exp">—</span>
+        </div>
+        <div class="settings-btn-row">
+          <button class="secondary-btn" onclick="doSignOut()">Sign Out</button>
+          <button class="danger-btn" onclick="doDeleteAccount()">🗑 Delete Account</button>
+        </div>
+      </div>
+
+      <!-- Redemption Logger -->
+      <div class="settings-section">
+        <div class="settings-section-title">Redemption Logger</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Paste a Discord webhook URL to receive a log entry every time a buyer redeems a key.</div>
+        <div class="webhook-row">
+          <input id="webhook-url-input" type="text" placeholder="https://discord.com/api/webhooks/..." autocomplete="off">
+          <button class="wh-save-btn" onclick="saveWebhook()">Save</button>
+          <button class="wh-test-btn" onclick="testWebhook()">Test</button>
+        </div>
+        <div id="webhook-status" style="font-size:12px;margin-top:7px;display:none"></div>
+      </div>
+
+      <!-- Upgrade -->
+      <div class="settings-section">
+        <div class="settings-section-title">Upgrade</div>
+        <div class="upgrade-card">
+          <div class="upgrade-card-top">
+            <div class="upgrade-badge">⚡ +50 Daily Gens</div>
+            <div class="upgrade-price">$10.99</div>
+          </div>
+          <div class="upgrade-desc">Permanently adds 50 extra generations per day for the lifetime of your key. Purchase, then redeem your boost code below.</div>
+          <div id="boost-active-row" style="display:none;margin-bottom:10px">
+            <span class="boost-active-badge">✓ Boost Active — +<span id="boost-count">50</span> gens/day</span>
+          </div>
+          <button class="purchase-btn" onclick="window.open('https://blackout-market.vercel.app','_blank')">Purchase — $10.99</button>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Already purchased? Enter your boost code:</div>
+        <div class="boost-redeem-row">
+          <input type="text" id="boost-code-input" placeholder="BOST-XXXX-XXXX" maxlength="14" oninput="formatBoostCode(this)">
+          <button class="boost-redeem-btn" onclick="redeemBoost()">Redeem</button>
+        </div>
+        <div class="boost-err" id="boost-err">Invalid or already used boost code.</div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal-bg" onclick="closeModal(event)">
+  <div class="modal">
+    <h3 id="modal-title">Account Generated</h3>
+    <p id="modal-sub">Your account details are below. Save them somewhere safe.</p>
+    <div class="gen-spinner" id="gen-spinner">Generating account<span id="dots">...</span></div>
+    <div id="modal-content">
+      <div class="account-box" id="account-fields-box"></div>
+      <button class="btn" onclick="copyAll()" style="margin-bottom:8px">📋 Copy All</button>
+      <button class="modal-close" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// CONSTANTS
+// ══════════════════════════════════════════════════════════
+const GH_SECRET  = 'GH_BLACKOUT_7x9K';
+const KV_CHARS   = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+const SB_URL     = 'https://liaeducrofflulwkejug.supabase.co';
+const SB_PUB     = 'sb_publishable_bG0aYMf6HpNHcqhUTjfsZw_7wgORfyh';
+const BOOST_URL  = 'https://blackout-market.vercel.app';
+
+const TIER_MAP = {
+  DAYZ: { name: 'Day Pass',         days: 1,   dailyLimit: 5,      totalLimit: 999999 },
+  WEEK: { name: 'Weekly',           days: 7,   dailyLimit: 20,     totalLimit: 999999 },
+  MNTH: { name: 'Monthly',          days: 30,  dailyLimit: 50,     totalLimit: 999999 },
+  LIFE: { name: 'Lifetime',         days: null,dailyLimit: 999999, totalLimit: 999999 },
+  PREM: { name: 'Lifetime Premium', days: null,dailyLimit: 999999, totalLimit: 999999 },
+};
+
+const PRODUCT_DAILY_CAPS = { disney: 3, hbo: 3, discord: 10 };
+
+const PRODUCTS = [
+  { id: 'netflix',   name: 'Netflix',    icon: '🎬', color: '#E50914', bg: '#e5091415' },
+  { id: 'rockstar',  name: 'Rockstar',   icon: '🎮', color: '#fcaf17', bg: '#fcaf1715' },
+  { id: 'discord',   name: 'Discord',    icon: '💬', color: '#5865F2', bg: '#5865F215' },
+  { id: 'steam',     name: 'Steam',      icon: '🎯', color: '#1b2838', bg: '#66c0f415' },
+  { id: 'disney',    name: 'Disney+',    icon: '✨', color: '#113CCF', bg: '#113CCF15' },
+  { id: 'hbo',       name: 'HBO Max',    icon: '👑', color: '#7B2D8B', bg: '#7B2D8B15' },
+  { id: 'paramount', name: 'Paramount+', icon: '⭐', color: '#0064FF', bg: '#0064FF15' },
+];
+
+// ══════════════════════════════════════════════════════════
+// SUPABASE HELPERS
+// ══════════════════════════════════════════════════════════
+const _sb_headers = {
+  'apikey': SB_PUB,
+  'Authorization': 'Bearer ' + SB_PUB,
+  'Content-Type': 'application/json',
+};
+
+async function sbGet(table, query = '') {
+  try {
+    const r = await fetch(`${SB_URL}/rest/v1/${table}?${query}`, { headers: _sb_headers });
+    return r.ok ? r.json() : null;
+  } catch { return null; }
+}
+async function sbRpc(fn, body) {
+  try {
+    const r = await fetch(`${SB_URL}/rest/v1/rpc/${fn}`, {
+      method: 'POST', headers: _sb_headers, body: JSON.stringify(body),
+    });
+    if (!r.ok) return null;
+    const d = await r.json();
+    return typeof d === 'string' ? d : (d && d.account ? d.account : null);
+  } catch { return null; }
+}
+
+// ══════════════════════════════════════════════════════════
+// KEY SYSTEM
+// ══════════════════════════════════════════════════════════
+function keySign(s) {
+  let h = 2166136261 >>> 0;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619) >>> 0;
+  }
+  h ^= (h >>> 16); h = Math.imul(h, 0x45d9f3b) >>> 0;
+  h ^= (h >>> 16); h = Math.imul(h, GH_SECRET.length + 7) >>> 0;
+  h ^= (h >>> 16); h >>>= 0;
+  let out = '';
+  for (let i = 0; i < 4; i++) { out += KV_CHARS[h % KV_CHARS.length]; h = Math.floor(h / KV_CHARS.length); }
+  return out;
+}
+
+function validateKeyCode(raw) {
+  const parts = raw.toUpperCase().split('-');
+  if (parts.length !== 4) return null;
+  const [seg1, seg2, seg3, sig] = parts;
+  if (seg1.length !== 4 || seg2.length !== 4 || seg3.length !== 4 || sig.length !== 4) return null;
+  if (keySign(seg1 + seg2 + seg3) !== sig) return null;
+  const tierCode = seg2[1] === 'V' ? seg1 : null;
+  if (!tierCode || !TIER_MAP[tierCode]) return null;
+  const tier = TIER_MAP[tierCode];
+  const dailyLimitChar = seg2[0];
+  const limitIdx = KV_CHARS.indexOf(dailyLimitChar);
+  const dailyLimit = limitIdx === 0 ? 999999 : limitIdx;
+  const expiry = tier.days
+    ? new Date(Date.now() + tier.days * 864e5).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    : 'Never';
+  return { name: tier.name, expiry, dailyLimit, totalLimit: tier.totalLimit };
+}
+
+function getHWID() {
+  try {
+    let id = localStorage.getItem('gh_hwid');
+    if (!id) {
+      id = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now().toString(36);
+      localStorage.setItem('gh_hwid', id);
+    }
+    return id;
+  } catch { return 'browser'; }
+}
+
+// ══════════════════════════════════════════════════════════
+// DB — localStorage only
+// ══════════════════════════════════════════════════════════
+const DB_KEY = 'gh_db_v3';
+let _dbCache = null;
+
+function getDB() {
+  if (_dbCache) return _dbCache;
+  try {
+    const raw = JSON.parse(localStorage.getItem(DB_KEY));
+    if (raw) { _dbCache = migrateDB(raw); return _dbCache; }
+  } catch {}
+  _dbCache = initDB();
+  return _dbCache;
+}
+
+function saveDB(db) {
+  _dbCache = db;
+  try { localStorage.setItem(DB_KEY, JSON.stringify(db)); } catch {}
+}
+
+function initStorage() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(DB_KEY));
+    _dbCache = raw ? migrateDB(raw) : initDB();
+  } catch { _dbCache = initDB(); }
+}
+
+function initDB() {
+  return {
+    users: {}, redeemedKeys: {},
+    accounts: { netflix:[], rockstar:[], discord:[], steam:[], disney:[], hbo:[], paramount:[] },
+    history: {},
+  };
+}
+
+function migrateDB(db) {
+  if (!db.redeemedKeys) {
+    db.redeemedKeys = {};
+    if (db.keys) {
+      Object.entries(db.keys).forEach(([code, k]) => {
+        if (k.used && k.usedBy) {
+          db.redeemedKeys[code] = {
+            plan: k.plan, expiry: k.expiry,
+            dailyLimit: k.dailyLimit || 999999,
+            totalLimit: k.totalLimit || 999999,
+            hwid: 'legacy', usedBy: k.usedBy, redeemedAt: '',
+          };
+        }
+      });
+    }
+    delete db.keys;
+    saveDB(db);
+  }
+  return db;
+}
+
+// ══════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════
+let currentUser = null;
+let currentProduct = null;
+
+// ══════════════════════════════════════════════════════════
+// NAV
+// ══════════════════════════════════════════════════════════
+function navTo(page) {
+  if (page === 'dashboard') {
+    showScreen('screen-main');
+    document.getElementById('nav-dashboard').classList.add('active');
+    document.getElementById('nav-settings').classList.remove('active');
+  } else {
+    openSettings();
+    document.getElementById('nav-settings').classList.add('active');
+    document.getElementById('nav-dashboard').classList.remove('active');
+  }
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ══════════════════════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════════════════════
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', (tab==='login'&&i===0)||(tab==='register'&&i===1)));
+  document.getElementById('form-login').style.display    = tab==='login'    ? 'block' : 'none';
+  document.getElementById('form-register').style.display = tab==='register' ? 'block' : 'none';
+}
+
+function findUserByUsername(db, username) {
+  const lower = username.toLowerCase();
+  for (const [email, user] of Object.entries(db.users)) {
+    if ((user.username || '').toLowerCase() === lower) return { email, user };
+  }
+  return null;
+}
+
+function doLogin() {
+  const uname = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-pass').value;
+  const db    = getDB();
+  const errEl = document.getElementById('login-err');
+  errEl.style.display = 'none';
+  if (!uname || !pass) { errEl.textContent='Fill in all fields.'; errEl.style.display='block'; return; }
+  const found = findUserByUsername(db, uname);
+  if (!found || found.user.password !== btoa(pass)) { errEl.style.display='block'; return; }
+  const { email, user } = found;
+  const remember = document.getElementById('remember-me').checked;
+  try {
+    const dbNow = getDB();
+    if (remember) dbNow.remember = { uname, pass };
+    else delete dbNow.remember;
+    saveDB(dbNow);
+  } catch {}
+  currentUser = { email, ...user };
+  afterLogin();
+}
+
+function tryAutoLogin() {
+  try {
+    const db = getDB();
+    const saved = db.remember;
+    if (!saved || !saved.uname || !saved.pass) return;
+    const found = findUserByUsername(db, saved.uname);
+    if (!found || found.user.password !== btoa(saved.pass)) { delete db.remember; saveDB(db); return; }
+    document.getElementById('login-email').value   = saved.uname;
+    document.getElementById('login-pass').value    = saved.pass;
+    document.getElementById('remember-me').checked = true;
+    currentUser = { email: found.email, ...found.user };
+    afterLogin();
+  } catch {}
+}
+
+function doRegister() {
+  const email = document.getElementById('reg-email').value.trim().toLowerCase();
+  const uname = document.getElementById('reg-user').value.trim();
+  const pass  = document.getElementById('reg-pass').value;
+  const errEl = document.getElementById('reg-err');
+  errEl.style.display = 'none';
+  if (!email || !uname || !pass) { errEl.textContent='Fill in all fields.'; errEl.style.display='block'; return; }
+  if (pass.length < 6) { errEl.textContent='Password must be 6+ characters.'; errEl.style.display='block'; return; }
+  const db = getDB();
+  if (db.users[email]) { errEl.textContent='Email already registered.'; errEl.style.display='block'; return; }
+  db.users[email] = { username: uname, password: btoa(pass), plan: null, planExpiry: null, keyUsed: null };
+  if (!db.history[email]) db.history[email] = [];
+  saveDB(db);
+  currentUser = { email, username: uname, plan: null };
+  afterLogin();
+}
+
+function afterLogin() {
+  // Show sidebar
+  document.getElementById('sidebar').style.display = 'flex';
+  // Update sidebar user row
+  const initial = (currentUser.username || currentUser.email || '?')[0].toUpperCase();
+  document.getElementById('sidebar-avatar').textContent = initial;
+  document.getElementById('sidebar-username').textContent = currentUser.username || currentUser.email;
+  const db = getDB();
+  const user = db.users[currentUser.email] || {};
+  document.getElementById('sidebar-plan').textContent = user.plan || 'No plan';
+
+  if (!currentUser.plan) {
+    // Show dashboard but with redeem highlighted — no plan yet
+    showGenScreen();
+  } else {
+    showGenScreen();
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// KEY REDEMPTION (from dashboard redeem row)
+// ══════════════════════════════════════════════════════════
+function formatKey(el) {
+  let v = el.value.replace(/[^a-zA-Z0-9]/g,'').toUpperCase();
+  let out = '';
+  for (let i = 0; i < v.length && i < 16; i++) {
+    if (i > 0 && i % 4 === 0) out += '-';
+    out += v[i];
+  }
+  el.value = out;
+}
+
+function doRedeem() {
+  const raw   = document.getElementById('key-input').value.trim().toUpperCase();
+  const errEl = document.getElementById('key-err');
+  errEl.style.display = 'none';
+  if (!raw) { errEl.textContent='Enter your key.'; errEl.style.display='block'; return; }
+
+  const db   = getDB();
+  const hwid = getHWID();
+
+  if (db.redeemedKeys && db.redeemedKeys[raw]) {
+    const rec = db.redeemedKeys[raw];
+    if (rec.hwid !== hwid && rec.hwid !== 'legacy') {
+      errEl.textContent = 'This key is bound to a different device.';
+      errEl.style.display = 'block'; return;
+    }
+    if (rec.usedBy && rec.usedBy !== currentUser.email) {
+      errEl.textContent = 'Key already in use by another account.';
+      errEl.style.display = 'block'; return;
+    }
+    applyKey(db, raw, rec.plan, rec.expiry, rec.dailyLimit, rec.totalLimit);
+    showToast('Key restored! Welcome back to ' + rec.plan);
+    document.getElementById('key-input').value = '';
+    refreshGenScreen();
+    return;
+  }
+
+  const tier = validateKeyCode(raw);
+  if (!tier) { errEl.textContent='Invalid key. Double-check and try again.'; errEl.style.display='block'; return; }
+
+  if (!db.redeemedKeys) db.redeemedKeys = {};
+  db.redeemedKeys[raw] = {
+    plan: tier.name, expiry: tier.expiry,
+    dailyLimit: tier.dailyLimit, totalLimit: tier.totalLimit,
+    hwid, usedBy: currentUser.email,
+    redeemedAt: new Date().toISOString(),
+  };
+  applyKey(db, raw, tier.name, tier.expiry, tier.dailyLimit, tier.totalLimit);
+
+  try {
+    const u = db.users[currentUser.email] || {};
+    sendRedemptionLog(raw, tier.name, currentUser.email, u.username || '—', atob(u.password || '') || '—');
+  } catch {}
+
+  showToast('Key redeemed! Welcome to ' + tier.name);
+  document.getElementById('key-input').value = '';
+  refreshGenScreen();
+}
+
+function applyKey(db, code, plan, expiry, dailyLimit, totalLimit) {
+  db.users[currentUser.email].plan       = plan;
+  db.users[currentUser.email].planExpiry = expiry;
+  db.users[currentUser.email].keyUsed    = code;
+  db.users[currentUser.email].dailyLimit = dailyLimit;
+  db.users[currentUser.email].totalLimit = totalLimit;
+  saveDB(db);
+  currentUser.plan       = plan;
+  currentUser.planExpiry = expiry;
+  currentUser.dailyLimit = dailyLimit;
+  currentUser.totalLimit = totalLimit;
+}
+
+// ══════════════════════════════════════════════════════════
+// GEN SCREEN
+// ══════════════════════════════════════════════════════════
+function showGenScreen() {
+  showScreen('screen-main');
+  document.getElementById('nav-dashboard').classList.add('active');
+  document.getElementById('nav-settings').classList.remove('active');
+  refreshGenScreen();
+  renderHistory();
+  populateHistoryFilter();
+}
+
+function refreshGenScreen() {
+  const db   = getDB();
+  const user = db.users[currentUser.email] || {};
+
+  // Header
+  document.getElementById('dash-username').textContent = currentUser.username || currentUser.email;
+
+  const hasPlan = !!user.plan;
+  const statusDot = document.getElementById('status-dot');
+  statusDot.className = 'status-dot' + (hasPlan ? '' : ' inactive');
+  document.getElementById('dash-plan-sub').textContent = hasPlan
+    ? user.plan + ' · expires ' + (user.planExpiry || '—')
+    : 'No active licenses';
+
+  // Plan bar
+  document.getElementById('plan-bar').style.display = hasPlan ? 'flex' : 'none';
+  if (hasPlan) {
+    document.getElementById('plan-name').textContent   = user.plan;
+    document.getElementById('plan-detail').textContent = 'expires ' + (user.planExpiry || '—');
+    const dailyLimit = user.dailyLimit ?? 999999;
+    const todayStr   = new Date().toDateString();
+    const userHist   = db.history[currentUser.email] || [];
+    const todayCount = userHist.filter(h => {
+      try { return new Date(h.time).toDateString() === todayStr; } catch { return false; }
+    }).length;
+    document.getElementById('pill-today').textContent  = todayCount + ' today';
+    document.getElementById('pill-daily').textContent  = dailyLimit >= 999999 ? 'Unlimited' : dailyLimit + '/day';
+    document.getElementById('pill-exp').textContent    = user.planExpiry || '—';
+  }
+
+  // Gen card sub
+  document.getElementById('gen-card-plan-sub').textContent = hasPlan
+    ? user.plan + ' · expires ' + (user.planExpiry || '—')
+    : 'Redeem a key above to unlock the generator.';
+
+  // Daily bar
+  renderDailyBar();
+
+  // Sidebar user
+  document.getElementById('sidebar-plan').textContent = user.plan || 'No plan';
+
+  renderGrid();
+}
+
+function renderDailyBar() {
+  const db       = getDB();
+  const user     = db.users[currentUser.email] || {};
+  const userHist = db.history[currentUser.email] || [];
+  const todayStr = new Date().toDateString();
+  const el       = document.getElementById('daily-bar');
+
+  if (!user.plan) { el.textContent = 'Redeem a key to start generating.'; return; }
+
+  const dailyLimit = user.dailyLimit ?? 999999;
+  const todayCount = userHist.filter(h => {
+    try { return new Date(h.time).toDateString() === todayStr; } catch { return false; }
+  }).length;
+
+  // Per-product counts today
+  const parts = PRODUCTS.map(p => {
+    const cnt = userHist.filter(h => {
+      try { return h.product === p.id && new Date(h.time).toDateString() === todayStr; } catch { return false; }
+    }).length;
+    if (cnt === 0 && !PRODUCT_DAILY_CAPS[p.id]) return null;
+    const cap = PRODUCT_DAILY_CAPS[p.id];
+    return cap ? `${p.name}: ${cnt}/${cap}` : `${p.name}: ${cnt}`;
+  }).filter(Boolean);
+
+  const limitStr = dailyLimit >= 999999 ? 'Unlimited' : `${todayCount}/${dailyLimit}`;
+  el.innerHTML = `Daily: <strong>${limitStr}</strong>${parts.length ? ' · ' + parts.join(' · ') : ''} &nbsp;·&nbsp; Resets at midnight`;
+}
+
+async function renderGrid() {
+  const grid = document.getElementById('product-grid');
+  if (!grid.children.length) {
+    grid.innerHTML = '';
+    PRODUCTS.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'product-card zero';
+      card.innerHTML = `
+        <div class="product-icon" style="background:${p.bg}"><span>${p.icon}</span></div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-stock no-stock">Loading…</div>`;
+      grid.appendChild(card);
+    });
+  }
+
+  const rows   = await sbGet('stock', 'status=eq.available&select=product');
+  const counts = {};
+  if (Array.isArray(rows)) rows.forEach(r => { counts[r.product] = (counts[r.product] || 0) + 1; });
+
+  grid.innerHTML = '';
+  PRODUCTS.forEach(p => {
+    const stock = counts[p.id] || 0;
+    const card  = document.createElement('div');
+    card.className = 'product-card' + (stock === 0 ? ' zero' : '');
+    card.innerHTML = `
+      <div class="product-icon" style="background:${p.bg}"><span>${p.icon}</span></div>
+      <div class="product-name">${p.name}</div>
+      <div class="product-stock ${stock > 0 ? 'has-stock' : 'no-stock'}">${stock > 0 ? stock + ' left' : '0 left'}</div>`;
+    if (stock > 0) card.onclick = () => generateAccount(p);
+    grid.appendChild(card);
+  });
+}
+
+// ══════════════════════════════════════════════════════════
+// HISTORY
+// ══════════════════════════════════════════════════════════
+function populateHistoryFilter() {
+  const sel = document.getElementById('hist-filter-type');
+  sel.innerHTML = '<option value="">All types</option>';
+  PRODUCTS.forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p.id; opt.textContent = p.name;
+    sel.appendChild(opt);
+  });
+}
+
+function renderHistory(db) {
+  if (!db) db = getDB();
+  const wrap = document.getElementById('history-wrap');
+  const hist = (db.history[currentUser.email] || []).slice().reverse();
+
+  // Apply filter
+  const typeFilter = (document.getElementById('hist-filter-type') || {}).value || '';
+  const search     = ((document.getElementById('hist-filter-search') || {}).value || '').toLowerCase();
+  const filtered   = hist.filter(h => {
+    if (typeFilter && h.product !== typeFilter) return false;
+    if (search) {
+      const raw = h.rawStr || '';
+      const prod = (PRODUCTS.find(x=>x.id===h.product)||{}).name || h.product || '';
+      if (!raw.toLowerCase().includes(search) && !prod.toLowerCase().includes(search)) return false;
+    }
+    return true;
+  });
+
+  document.getElementById('hist-count').textContent = filtered.length + ' accounts';
+
+  if (!filtered.length) {
+    wrap.innerHTML = '<div style="font-size:13px;color:var(--muted)">No generations yet.</div>';
+    return;
+  }
+  wrap.innerHTML = '';
+  filtered.slice(0, 100).forEach(h => {
+    const p   = PRODUCTS.find(x=>x.id===h.product);
+    const div = document.createElement('div');
+    div.className = 'history-item';
+    let preview = '';
+    if (h.fields && h.fields.length) preview = h.fields[0].value;
+    else if (h.rawStr) preview = h.rawStr.split('|')[0].replace(/^[^:]+:/,'').trim();
+    else if (h.email) preview = h.email;
+    if (preview.length > 48) preview = preview.slice(0,48) + '…';
+
+    // Format time nicely
+    let timeStr = '';
+    try {
+      const d = new Date(h.time);
+      timeStr = d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) + ', ' +
+                d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+    } catch { timeStr = h.time; }
+
+    div.innerHTML = `
+      <div class="history-left">
+        <div class="history-icon" style="background:${p?p.bg:'rgba(108,92,231,0.12)'}"><span>${p?p.icon:'📦'}</span></div>
+        <div>
+          <div class="history-name">${p?p.name:h.product}</div>
+          <div class="history-time">${timeStr}</div>
+        </div>
+      </div>
+      <div class="history-preview">${escHtml(preview)}</div>
+      <div class="history-right">
+        <button class="view-btn" onclick='showSaved(${JSON.stringify(h)})'>Copy</button>
+      </div>`;
+    wrap.appendChild(div);
+  });
+}
+
+function filterHistory() {
+  renderHistory();
+}
+
+// ══════════════════════════════════════════════════════════
+// GENERATION
+// ══════════════════════════════════════════════════════════
+async function generateAccount(product) {
+  currentProduct = product;
+  const modal = document.getElementById('modal-bg');
+  document.getElementById('modal-title').textContent     = product.name + ' Account';
+  document.getElementById('modal-sub').textContent       = 'Generating your account...';
+  document.getElementById('modal-content').style.display = 'none';
+  document.getElementById('gen-spinner').style.display   = 'block';
+  modal.classList.add('open');
+
+  let d = 0;
+  const dotEl  = document.getElementById('dots');
+  const dotInt = setInterval(() => { dotEl.textContent = ['...', '.. ', '  .'][d++ % 3]; }, 400);
+  const done   = () => clearInterval(dotInt);
+
+  const db      = getDB();
+  const userRec = db.users[currentUser.email] || {};
+  const dailyLim   = userRec.dailyLimit ?? 999999;
+  const totalLim   = userRec.totalLimit ?? 999999;
+  const hwid       = getHWID();
+
+  if (!userRec.plan) {
+    done(); showToast('Redeem a key first.', true); closeModal(); return;
+  }
+
+  if (userRec.planExpiry && userRec.planExpiry !== 'Never') {
+    const expDate = new Date(userRec.planExpiry);
+    if (!isNaN(expDate) && expDate < new Date()) {
+      done(); showToast('Your key has expired. Purchase a new one.', true); closeModal(); return;
+    }
+  }
+
+  const todayStr   = new Date().toDateString();
+  const userHist   = db.history[currentUser.email] || [];
+  const todayCount = userHist.filter(h => {
+    try { return new Date(h.time).toDateString() === todayStr; } catch { return false; }
+  }).length;
+
+  if (dailyLim < 999999 && todayCount >= dailyLim) {
+    done(); showToast(`Daily limit reached (${dailyLim}/day). Come back tomorrow.`, true); closeModal(); return;
+  }
+  if (totalLim < 999999 && userHist.length >= totalLim) {
+    done(); showToast(`Total limit reached (${totalLim} accounts). Upgrade your plan.`, true); closeModal(); return;
+  }
+
+  // ── Per-product daily caps ────────────────────────────────────
+  const productCap = PRODUCT_DAILY_CAPS[product.id];
+  if (productCap !== undefined) {
+    const productTodayCount = userHist.filter(h => {
+      try { return h.product === product.id && new Date(h.time).toDateString() === todayStr; } catch { return false; }
+    }).length;
+    if (productTodayCount >= productCap) {
+      done(); showToast(`Daily limit reached for ${product.name} (${productCap}/day). Come back tomorrow.`, true); closeModal(); return;
+    }
+  }
+
+  const [rows] = await Promise.all([
+    sbGet('stock', `product=eq.${product.id}&status=eq.available&limit=1&order=added_at.asc`),
+    new Promise(r => setTimeout(r, 900)),
+  ]);
+
+  if (!rows || !rows.length) {
+    done(); showToast('Out of stock — check back later.', true); closeModal(); return;
+  }
+
+  const accountStr = await sbRpc('claim_stock', {
+    row_id:      rows[0].id,
+    buyer_email: currentUser.email,
+    buyer_hwid:  hwid,
+  });
+
+  if (!accountStr) {
+    done(); showToast('Account just taken — try again.', true); closeModal(); return;
+  }
+
+  const fields = parseAccountStr(accountStr);
+  generatedAccount = { fields, rawStr: accountStr, product: product.id };
+
+  if (!db.history[currentUser.email]) db.history[currentUser.email] = [];
+  db.history[currentUser.email].push({
+    product: product.id, rawStr: accountStr, fields,
+    time: new Date().toISOString(),
+  });
+  if (db.history[currentUser.email].length > 100) {
+    db.history[currentUser.email] = db.history[currentUser.email].slice(-100);
+  }
+  saveDB(db);
+  done();
+
+  fillModal(fields);
+  document.getElementById('modal-sub').textContent       = 'Save these credentials now — they won\'t be shown again.';
+  document.getElementById('gen-spinner').style.display   = 'none';
+  document.getElementById('modal-content').style.display = 'block';
+  renderGrid();
+  renderHistory(db);
+  renderDailyBar();
+  refreshGenScreen();
+}
+
+let generatedAccount = null;
+
+function parseAccountStr(raw) {
+  if (!raw) return [{ label: 'Account', value: '—' }];
+  const trimmed = raw.trim();
+  if (trimmed.includes('|')) {
+    return trimmed.split('|').map(part => {
+      const colon = part.indexOf(':');
+      if (colon === -1) return { label: 'Info', value: part.trim() };
+      return { label: part.slice(0, colon).trim(), value: part.slice(colon + 1).trim() };
+    }).filter(f => f.value);
+  }
+  const labelPattern = /([A-Za-z][A-Za-z0-9 _\-]*):\s/g;
+  const matches = [];
+  let m;
+  while ((m = labelPattern.exec(trimmed)) !== null) {
+    matches.push({ label: m[1].trim(), start: m.index, valueStart: m.index + m[0].length });
+  }
+  if (matches.length >= 2) {
+    return matches.map((match, i) => {
+      const end = i + 1 < matches.length ? matches[i + 1].start : trimmed.length;
+      return { label: match.label, value: trimmed.slice(match.valueStart, end).trim() };
+    }).filter(f => f.value);
+  }
+  const firstColon = trimmed.indexOf(':');
+  if (firstColon === -1) return [{ label: 'Account', value: trimmed }];
+  const email = trimmed.slice(0, firstColon).trim();
+  const rest  = trimmed.slice(firstColon + 1).trim();
+  const secondColon = rest.indexOf(':');
+  const result = [{ label: 'Email', value: email }];
+  if (secondColon === -1) { result.push({ label: 'Password', value: rest }); }
+  else {
+    result.push({ label: 'Password', value: rest.slice(0, secondColon).trim() });
+    result.push({ label: 'Extra',    value: rest.slice(secondColon + 1).trim() });
+  }
+  return result;
+}
+
+function fillModal(fields) {
+  const box = document.getElementById('account-fields-box');
+  box.innerHTML = '';
+  fields.forEach((f, i) => {
+    const row = document.createElement('div');
+    row.className = 'account-row';
+    const uid = 'acf_' + i;
+    row.innerHTML = `
+      <div style="flex:1;min-width:0">
+        <div class="account-label">${escHtml(f.label)}</div>
+        <div class="account-val" id="${uid}">${escHtml(f.value)}</div>
+      </div>
+      <button class="copy-btn" onclick="copyFieldId('${uid}')">Copy</button>`;
+    box.appendChild(row);
+  });
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function copyFieldId(uid) {
+  const el = document.getElementById(uid);
+  if (!el) return;
+  navigator.clipboard.writeText(el.textContent).catch(()=>{});
+  showToast('Copied!');
+}
+
+function showSaved(h) {
+  const p = PRODUCTS.find(x=>x.id===h.product);
+  document.getElementById('modal-title').textContent = (p?p.name:h.product)+' — Saved';
+  let timeStr = '';
+  try { timeStr = new Date(h.time).toLocaleString(); } catch { timeStr = h.time; }
+  document.getElementById('modal-sub').textContent   = 'Generated on '+timeStr;
+  document.getElementById('gen-spinner').style.display   = 'none';
+  document.getElementById('modal-content').style.display = 'block';
+  let fields;
+  if (h.fields) { fields = h.fields; }
+  else {
+    const raw = h.rawStr || [h.email, h.pass, h.extra].filter(Boolean).join(':');
+    fields = parseAccountStr(raw);
+  }
+  fillModal(fields);
+  document.getElementById('modal-bg').classList.add('open');
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modal-bg')) return;
+  document.getElementById('modal-bg').classList.remove('open');
+}
+
+function copyAll() {
+  const box = document.getElementById('account-fields-box');
+  if (!box) return;
+  const labels = box.querySelectorAll('.account-label');
+  const vals   = box.querySelectorAll('.account-val');
+  let txt = '';
+  labels.forEach((lbl, i) => { txt += `${lbl.textContent}: ${vals[i] ? vals[i].textContent : ''}\n`; });
+  navigator.clipboard.writeText(txt.trim()).catch(()=>{});
+  showToast('All copied!');
+}
+
+function buildHistoryText() {
+  const db   = getDB();
+  const hist = (db.history[currentUser.email] || []).slice(-100);
+  if (!hist.length) return null;
+  let lines = `GenHub -- Generation History\r\nAccount: ${currentUser.username || currentUser.email}\r\nExported: ${new Date().toLocaleString()}\r\n${'-'.repeat(50)}\r\n\r\n`;
+  hist.slice().reverse().forEach((h, i) => {
+    const p = PRODUCTS.find(x=>x.id===h.product);
+    lines += `#${i+1} -- ${p ? p.name : h.product}  [${h.time}]\r\n`;
+    if (h.rawStr) {
+      if (h.rawStr.includes('|')) {
+        h.rawStr.split('|').forEach(seg => { const s = seg.trim(); if (s) lines += `  ${s}\r\n`; });
+      } else { lines += `  ${h.rawStr}\r\n`; }
+    } else if (h.fields) { h.fields.forEach(f => lines += `  ${f.label}: ${f.value}\r\n`); }
+    else { if (h.email) lines += `  Email: ${h.email}\r\n`; if (h.pass) lines += `  Password: ${h.pass}\r\n`; }
+    lines += '\r\n';
+  });
+  return lines;
+}
+
+function copyAllHistory() {
+  const text = buildHistoryText();
+  if (!text) { showToast('No history to copy.', true); return; }
+  navigator.clipboard.writeText(text).catch(()=>{});
+  showToast('History copied!');
+}
+
+function downloadHistory() {
+  const db   = getDB();
+  const hist = db.history[currentUser.email] || [];
+  if (!hist.length) { showToast('No history to download.', true); return; }
+  const content  = buildHistoryText();
+  const filename = `GenHub_History_${new Date().toISOString().slice(0,10)}.txt`;
+  const blob = new Blob([content], { type: 'text/plain' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+  showToast('Downloaded!');
+}
+
+function showToast(msg, isErr=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className   = 'toast show' + (isErr?' err-toast':'');
+  setTimeout(()=>{ t.className='toast'+(isErr?' err-toast':''); }, 2500);
+}
+
+// ══════════════════════════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════════════════════════
+function openSettings() {
+  const db   = getDB();
+  const user = db.users[currentUser.email] || {};
+  document.getElementById('acct-email').textContent    = currentUser.email || '—';
+  document.getElementById('acct-username').textContent = currentUser.username || user.username || '—';
+  document.getElementById('acct-plan').textContent     = user.plan || 'No plan';
+  document.getElementById('acct-exp').textContent      = user.planExpiry || '—';
+  try {
+    const plain = atob(user.password || '');
+    document.getElementById('acct-pass-clear').textContent = plain;
+  } catch { document.getElementById('acct-pass-clear').textContent = '—'; }
+  document.getElementById('acct-pass-dots').style.display  = 'inline';
+  document.getElementById('acct-pass-clear').style.display = 'none';
+  document.getElementById('pass-eye').textContent = '👁';
+  const boostGens = user.boostGens || 0;
+  if (boostGens > 0) {
+    document.getElementById('boost-active-row').style.display = 'block';
+    document.getElementById('boost-count').textContent = boostGens;
+  } else {
+    document.getElementById('boost-active-row').style.display = 'none';
+  }
+  const wh = (db.settings || {}).webhookUrl || '';
+  document.getElementById('webhook-url-input').value = wh;
+  document.getElementById('webhook-status').style.display = 'none';
+  showScreen('screen-settings');
+}
+
+function togglePassVis() {
+  const dots  = document.getElementById('acct-pass-dots');
+  const clear = document.getElementById('acct-pass-clear');
+  const eye   = document.getElementById('pass-eye');
+  const hidden = dots.style.display !== 'none';
+  dots.style.display  = hidden ? 'none'   : 'inline';
+  clear.style.display = hidden ? 'inline' : 'none';
+  eye.textContent     = hidden ? '🙈'     : '👁';
+}
+
+function doSignOut() {
+  currentUser = null;
+  document.getElementById('sidebar').style.display = 'none';
+  showScreen('screen-auth');
+}
+
+function doDeleteAccount() {
+  if (!confirm('Permanently delete your account and all data? This cannot be undone.')) return;
+  try {
+    const db    = getDB();
+    const email = currentUser.email;
+    delete db.users[email];
+    if (db.history) delete db.history[email];
+    if (db.remember && db.remember.uname) {
+      const matchUser = Object.values(db.users || {}).find(u => u.username === db.remember.uname);
+      if (!matchUser) delete db.remember;
+    }
+    if (db.redeemedKeys) {
+      Object.keys(db.redeemedKeys).forEach(k => {
+        if (db.redeemedKeys[k].usedBy === email) delete db.redeemedKeys[k];
+      });
+    }
+    saveDB(db);
+  } catch {}
+  currentUser = null;
+  document.getElementById('sidebar').style.display = 'none';
+  showScreen('screen-auth');
+  showToast('Account deleted.');
+}
+
+// ── Webhook ──────────────────────────────────────────────
+function saveWebhook() {
+  const url  = document.getElementById('webhook-url-input').value.trim();
+  const stat = document.getElementById('webhook-status');
+  const db   = getDB();
+  if (!db.settings) db.settings = {};
+  db.settings.webhookUrl = url;
+  saveDB(db);
+  stat.textContent = url ? '✓ Webhook saved.' : 'Webhook cleared.';
+  stat.style.color = 'var(--green)';
+  stat.style.display = 'block';
+}
+
+async function testWebhook() {
+  const url  = document.getElementById('webhook-url-input').value.trim();
+  const stat = document.getElementById('webhook-status');
+  if (!url) { stat.textContent = 'Paste a webhook URL first.'; stat.style.color='var(--red)'; stat.style.display='block'; return; }
+  stat.textContent = 'Sending test…'; stat.style.color='var(--muted)'; stat.style.display='block';
+  const ok = await _fireWebhook(url, { embeds: [{ title: '🔔 GenHub Logger — Test', description: 'Webhook is connected and working.', color: 0x6c5ce7, timestamp: new Date().toISOString() }] });
+  stat.textContent = ok ? '✓ Test delivered!' : '✗ Failed — check the URL.';
+  stat.style.color = ok ? 'var(--green)' : 'var(--red)';
+}
+
+async function _fireWebhook(url, payload) {
+  try {
+    const r = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+    return r.ok || r.status === 204;
+  } catch { return false; }
+}
+
+async function sendRedemptionLog(key, plan, email, username, password) {
+  try {
+    const db  = getDB();
+    const url = (db.settings || {}).webhookUrl;
+    if (!url) return;
+    await _fireWebhook(url, { embeds: [{ title: '🔑 Key Redeemed', color: 0x00b894, fields: [
+      { name: '🗝 Key', value: '`' + key + '`', inline: false },
+      { name: '📦 Plan', value: plan, inline: true },
+      { name: '📧 Email', value: email, inline: true },
+      { name: '👤 Username', value: username, inline: true },
+      { name: '🔒 Password', value: '`' + password + '`', inline: true },
+    ], timestamp: new Date().toISOString(), footer: { text: 'GenHub Logger' } }] });
+  } catch {}
+}
+
+// ── Boost ─────────────────────────────────────────────────
+function formatBoostCode(el) {
+  let v = el.value.replace(/[^a-zA-Z0-9]/g,'').toUpperCase();
+  let out = '';
+  const raw = v.slice(0, 12);
+  for (let i = 0; i < raw.length; i++) {
+    if (i > 0 && i % 4 === 0) out += '-';
+    out += raw[i];
+  }
+  el.value = out;
+}
+
+function validateBoostCode(code) {
+  const parts = code.toUpperCase().split('-');
+  if (parts.length !== 3) return false;
+  const [s1, s2, sig] = parts;
+  if (s1 !== 'BOST') return false;
+  if (s2.length !== 4 || sig.length !== 4) return false;
+  if (keySign('BOST' + s2) !== sig) return false;
+  return true;
+}
+
+function redeemBoost() {
+  const raw   = document.getElementById('boost-code-input').value.trim().toUpperCase();
+  const errEl = document.getElementById('boost-err');
+  errEl.style.display = 'none';
+  if (!validateBoostCode(raw)) { errEl.textContent='Invalid boost code.'; errEl.style.display='block'; return; }
+  const db   = getDB();
+  const user = db.users[currentUser.email];
+  if (!db.boostCodes) db.boostCodes = {};
+  if (db.boostCodes[raw]) { errEl.textContent='This boost code has already been redeemed.'; errEl.style.display='block'; return; }
+  user.boostGens  = (user.boostGens || 0) + 50;
+  user.dailyLimit = (user.dailyLimit || 0) + 50;
+  db.boostCodes[raw] = { usedBy: currentUser.email, at: new Date().toISOString() };
+  saveDB(db);
+  document.getElementById('boost-active-row').style.display = 'block';
+  document.getElementById('boost-count').textContent = user.boostGens;
+  document.getElementById('boost-code-input').value = '';
+  showToast('Boost activated! +50 gens/day added.');
+}
+
+// ── Update banner ─────────────────────────────────────────
+let _updateUrl = '';
+function showUpdateBanner(info) {
+  _updateUrl = info.download_url || '';
+  document.getElementById('update-version-label').textContent = 'GenHub v' + info.version + ' is available';
+  if (info.notes) document.getElementById('update-notes-label').textContent = info.notes;
+  document.getElementById('update-banner').classList.add('visible');
+}
+function dismissUpdateBanner() { document.getElementById('update-banner').classList.remove('visible'); }
+function downloadUpdate() { if (_updateUrl) window.open(_updateUrl, '_blank'); }
+
+// ══════════════════════════════════════════════════════════
+// ANIMATED BACKGROUND
+// ══════════════════════════════════════════════════════════
+let _bgMode = 'aurora';
+(function() {
+  const canvas = document.getElementById('bg-canvas');
+  const ctx    = canvas.getContext('2d');
+  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const aOrbs = [
+    { x:0.15, y:0.25, r:0.38, color:[80,40,180],  speed:0.00018, angle:0   },
+    { x:0.75, y:0.15, r:0.32, color:[40,20,140],  speed:0.00014, angle:2.1 },
+    { x:0.55, y:0.72, r:0.42, color:[60,0,160],   speed:0.00011, angle:4.2 },
+    { x:0.88, y:0.65, r:0.28, color:[30,60,200],  speed:0.00020, angle:1.0 },
+    { x:0.30, y:0.80, r:0.25, color:[100,20,160], speed:0.00016, angle:3.3 },
+  ];
+  const aParts = Array.from({length:90}, () => ({
+    x:Math.random(), y:Math.random(),
+    vx:(Math.random()-.5)*.00012, vy:(Math.random()-.5)*.00012,
+    size:Math.random()*1.4+.4, alpha:Math.random()*.5+.1,
+    pulse:Math.random()*Math.PI*2, pulseSpeed:Math.random()*.008+.003,
+  }));
+
+  function drawAurora(t) {
+    const W=canvas.width, H=canvas.height;
+    ctx.fillStyle='#05050a'; ctx.fillRect(0,0,W,H);
+    ctx.save(); ctx.strokeStyle='rgba(100,80,220,0.02)'; ctx.lineWidth=0.5;
+    for(let x=0;x<W;x+=80){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<H;y+=80){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    ctx.restore();
+    aOrbs.forEach(o => {
+      o.angle+=o.speed;
+      const px=(o.x+Math.cos(o.angle)*.12)*W, py=(o.y+Math.sin(o.angle*1.3)*.09)*H;
+      const rad=o.r*Math.min(W,H);
+      const g=ctx.createRadialGradient(px,py,0,px,py,rad);
+      const [r,g2,b]=o.color;
+      g.addColorStop(0,`rgba(${r},${g2},${b},0.12)`);
+      g.addColorStop(.4,`rgba(${r},${g2},${b},0.05)`);
+      g.addColorStop(1,`rgba(${r},${g2},${b},0)`);
+      ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    });
+    aParts.forEach(p => {
+      p.x+=p.vx; p.y+=p.vy; p.pulse+=p.pulseSpeed;
+      if(p.x<0)p.x=1;if(p.x>1)p.x=0;if(p.y<0)p.y=1;if(p.y>1)p.y=0;
+      const a=p.alpha*(.6+.4*Math.sin(p.pulse));
+      ctx.beginPath();ctx.arc(p.x*W,p.y*H,p.size,0,Math.PI*2);
+      ctx.fillStyle=`rgba(140,120,230,${a})`; ctx.fill();
+    });
+    const vg=ctx.createRadialGradient(W/2,H/2,H*.1,W/2,H/2,H*.85);
+    vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,8,0.8)');
+    ctx.fillStyle=vg; ctx.fillRect(0,0,W,H);
+  }
+
+  let t=0;
+  function draw() { t++; drawAurora(t); requestAnimationFrame(draw); }
+  draw();
+})();
+
+// ══════════════════════════════════════════════════════════
+// STARTUP
+// ══════════════════════════════════════════════════════════
+window.addEventListener('load', () => {
+  initStorage();
+  tryAutoLogin();
+});
+</script>
+</body>
+</html>
