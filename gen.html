@@ -1375,26 +1375,28 @@ async function generateAccount(product) {
     done(); showToast(`Total limit reached (${totalLim} accounts). Upgrade your plan.`, true); closeModal(); return;
   }
 
-  // ── Per-product daily caps (server-enforced — cannot be bypassed by clearing localStorage) ──
+  // ── Per-product daily caps (read from Supabase product_caps table) ──
   try {
-    const capRes = await fetch('/api/check-cap', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ email: currentUser.email, product: product.id }),
-    });
-    if (capRes.ok) {
-      const capData = await capRes.json();
-      if (capData.allowed === false) {
-        done();
-        showToast(`Daily limit reached for ${product.name} (${capData.cap}/day). Come back tomorrow.`, true);
-        closeModal();
-        return;
+    const capsRows = await sbGet('product_caps', `product=eq.${product.id}&select=cap`);
+    if (capsRows && capsRows.length > 0) {
+      const productCap = parseInt(capsRows[0].cap) || 0;
+      if (productCap > 0) {
+        // Count how many times this user generated this product today (UTC)
+        const todayUTC = new Date().toISOString().split('T')[0];
+        const userHistory = (db.history[currentUser.email] || []);
+        const todayCount = userHistory.filter(h =>
+          h.product === product.id && h.time && h.time.startsWith(todayUTC)
+        ).length;
+        if (todayCount >= productCap) {
+          done();
+          showToast(`Daily limit reached for ${product.name} (${productCap}/day). Come back tomorrow.`, true);
+          closeModal();
+          return;
+        }
       }
     }
-    // If the request fails or errors, fall through and allow generation
-    // (fail-open: don't punish users for server hiccups)
   } catch {
-    // Network error — allow generation
+    // Network error — allow generation (fail-open)
   }
 
   const [rows] = await Promise.all([

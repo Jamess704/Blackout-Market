@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blackout — Cap Manager</title>
+<style>
+  :root {
+    --bg: #0d0d12; --surface: #16161f; --card: #1a1a26;
+    --border: rgba(255,255,255,0.08); --text: #f0f0f5;
+    --muted: #5a5a78; --accent: #6c5ce7; --accent2: #a29bfe;
+    --green: #00b894; --red: #e17055; --radius: 10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 36px; width: 100%; max-width: 480px;
+  }
+  h1 { font-size: 1.3rem; font-weight: 700; margin-bottom: 6px; }
+  .sub { color: var(--muted); font-size: 0.85rem; margin-bottom: 28px; }
+
+  /* login */
+  #login-view input {
+    width: 100%; background: var(--card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px 14px; color: var(--text);
+    font-size: 0.95rem; outline: none; margin-bottom: 14px;
+  }
+  #login-view input:focus { border-color: var(--accent); }
+
+  /* caps grid */
+  .product-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 0; border-bottom: 1px solid var(--border);
+  }
+  .product-row:last-child { border-bottom: none; }
+  .product-icon { font-size: 1.4rem; width: 32px; text-align: center; }
+  .product-name { flex: 1; font-size: 0.95rem; }
+  .cap-input {
+    width: 80px; background: var(--card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 10px; color: var(--text);
+    font-size: 0.95rem; text-align: center; outline: none;
+  }
+  .cap-input:focus { border-color: var(--accent); }
+  .cap-label { font-size: 0.75rem; color: var(--muted); width: 60px; text-align: right; }
+
+  /* buttons */
+  .btn {
+    width: 100%; padding: 13px; border: none; border-radius: 8px;
+    font-size: 0.95rem; font-weight: 600; cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-save { background: var(--green); color: #fff; margin-top: 24px; }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  .status {
+    margin-top: 14px; padding: 11px 14px; border-radius: 8px;
+    font-size: 0.85rem; text-align: center; display: none;
+  }
+  .status.ok  { background: #00b89422; color: var(--green); display: block; }
+  .status.err { background: #e1705522; color: var(--red);   display: block; }
+
+  .hint { font-size: 0.78rem; color: var(--muted); margin-top: 10px; text-align: center; }
+  #caps-view { display: none; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>⚙️ Cap Manager</h1>
+  <p class="sub">Set daily generation limits per product</p>
+
+  <!-- LOGIN -->
+  <div id="login-view">
+    <input type="password" id="pass-input" placeholder="Admin password" autocomplete="current-password">
+    <button class="btn btn-primary" onclick="login()">Unlock</button>
+    <div id="login-status" class="status"></div>
+  </div>
+
+  <!-- CAPS EDITOR -->
+  <div id="caps-view">
+    <div id="products-list"></div>
+    <button class="btn btn-save" id="save-btn" onclick="saveCaps()">Save & Apply</button>
+    <p class="hint">0 = unlimited. Changes take effect immediately on next generation.</p>
+    <div id="save-status" class="status"></div>
+  </div>
+</div>
+
+<script>
+const API = '/api';
+const PRODUCTS = [
+  { id: 'netflix',   name: 'Netflix',    icon: '🎬' },
+  { id: 'discord',   name: 'Discord',    icon: '💬' },
+  { id: 'disney',    name: 'Disney+',    icon: '✨' },
+  { id: 'hbo',       name: 'HBO Max',    icon: '👑' },
+  { id: 'paramount', name: 'Paramount+', icon: '⭐' },
+  { id: 'rockstar',  name: 'Rockstar',   icon: '🎮' },
+  { id: 'steam',     name: 'Steam',      icon: '🎯' },
+];
+
+const SB_URL = 'https://liaeducrofflulwkejug.supabase.co';
+const SB_PUB = 'sb_publishable_bG0aYMf6HpNHcqhUTjfsZw_7wgORfyh';
+
+let adminPass = '';
+
+async function login() {
+  const pass = document.getElementById('pass-input').value.trim();
+  if (!pass) return;
+  adminPass = pass;
+
+  // Load current caps from Supabase
+  try {
+    const r = await fetch(`${SB_URL}/rest/v1/product_caps?select=product,cap`, {
+      headers: { 'apikey': SB_PUB, 'Authorization': 'Bearer ' + SB_PUB }
+    });
+    if (!r.ok) throw new Error('DB error');
+    const rows = await r.json();
+    const capMap = {};
+    rows.forEach(row => capMap[row.product] = row.cap);
+    renderCaps(capMap);
+    document.getElementById('login-view').style.display = 'none';
+    document.getElementById('caps-view').style.display = 'block';
+  } catch (e) {
+    showStatus('login-status', 'Could not load caps — check connection', false);
+  }
+}
+
+function renderCaps(capMap) {
+  const list = document.getElementById('products-list');
+  list.innerHTML = '';
+  PRODUCTS.forEach(p => {
+    const val = capMap[p.id] !== undefined ? capMap[p.id] : 0;
+    const row = document.createElement('div');
+    row.className = 'product-row';
+    row.innerHTML = `
+      <span class="product-icon">${p.icon}</span>
+      <span class="product-name">${p.name}</span>
+      <input class="cap-input" type="number" min="0" max="9999" value="${val}" id="cap-${p.id}">
+      <span class="cap-label">/day</span>
+    `;
+    list.appendChild(row);
+  });
+}
+
+async function saveCaps() {
+  const btn = document.getElementById('save-btn');
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+
+  const caps = {};
+  PRODUCTS.forEach(p => {
+    const el = document.getElementById('cap-' + p.id);
+    caps[p.id] = parseInt(el.value) || 0;
+  });
+
+  try {
+    const r = await fetch(`${API}/set-caps`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: adminPass, caps }),
+    });
+    const data = await r.json();
+    if (r.ok && data.ok) {
+      showStatus('save-status', `✓ Caps saved — ${data.updated} products updated`, true);
+    } else {
+      showStatus('save-status', data.error || 'Save failed', false);
+    }
+  } catch {
+    showStatus('save-status', 'Network error — try again', false);
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Save & Apply';
+}
+
+function showStatus(id, msg, ok) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.className = 'status ' + (ok ? 'ok' : 'err');
+  setTimeout(() => el.className = 'status', 4000);
+}
+
+// Enter key on password field
+document.getElementById('pass-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') login();
+});
+</script>
+</body>
+</html>
