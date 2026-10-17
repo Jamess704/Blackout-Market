@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>GenHub — Limits Manager</title>
+<style>
+:root {
+  --bg: #0a0a0f;
+  --surface: #12121a;
+  --card: #1a1a26;
+  --border: #2a2a3a;
+  --fg: #e8e8f0;
+  --muted: #666680;
+  --accent: #6c5ce7;
+  --accent-dim: #6c5ce720;
+  --green: #00b894;
+  --red: #e84393;
+  --yellow: #fdcb6e;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--fg); min-height: 100vh; }
+
+/* ── Header ── */
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  -webkit-app-region: drag;
+  user-select: none;
+}
+.header-icon { font-size: 22px; }
+.header-title { font-size: 15px; font-weight: 700; letter-spacing: -.3px; }
+.header-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.header-spacer { flex: 1; }
+.header-badge {
+  font-size: 10px; font-weight: 600;
+  background: var(--accent-dim); color: var(--accent);
+  padding: 3px 8px; border-radius: 20px;
+  border: 1px solid #6c5ce740;
+  -webkit-app-region: no-drag;
+}
+
+/* ── Main ── */
+.main { padding: 24px; max-width: 680px; margin: 0 auto; }
+
+/* ── Path bar ── */
+.path-bar {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.path-label { font-size: 11px; color: var(--muted); white-space: nowrap; }
+.path-value {
+  flex: 1;
+  font-size: 11px;
+  color: var(--fg);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: 'Consolas', 'Courier New', monospace;
+  opacity: .7;
+}
+.path-value.none { color: var(--muted); font-family: inherit; font-style: italic; opacity: 1; }
+.btn-browse {
+  background: var(--accent); color: #fff;
+  border: none; border-radius: 7px;
+  padding: 6px 14px; font-size: 12px; font-weight: 600;
+  cursor: pointer; white-space: nowrap;
+  transition: opacity .15s;
+}
+.btn-browse:hover { opacity: .85; }
+
+/* ── Section label ── */
+.section-label {
+  font-size: 11px; font-weight: 600;
+  color: var(--muted); text-transform: uppercase;
+  letter-spacing: .8px; margin-bottom: 12px;
+}
+
+/* ── Product rows ── */
+.product-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+
+.product-row {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: border-color .15s;
+}
+.product-row:hover { border-color: #3a3a50; }
+
+.product-icon { font-size: 20px; width: 28px; text-align: center; }
+.product-name { font-size: 13px; font-weight: 600; flex: 1; }
+
+.limit-group { display: flex; align-items: center; gap: 8px; }
+.limit-label { font-size: 11px; color: var(--muted); white-space: nowrap; }
+
+.limit-input {
+  width: 72px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--fg);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 10px;
+  text-align: center;
+  outline: none;
+  transition: border-color .15s;
+}
+.limit-input:focus { border-color: var(--accent); }
+.limit-input::placeholder { color: var(--muted); font-weight: 400; }
+
+.unlimited-badge {
+  font-size: 10px;
+  color: var(--green);
+  background: #00b89415;
+  border: 1px solid #00b89430;
+  border-radius: 20px;
+  padding: 2px 8px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.limited-badge {
+  font-size: 10px;
+  color: var(--yellow);
+  background: #fdcb6e15;
+  border: 1px solid #fdcb6e30;
+  border-radius: 20px;
+  padding: 2px 8px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* ── Footer ── */
+.footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-save {
+  flex: 1;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 13px 0;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.btn-save:hover { opacity: .88; }
+.btn-save:active { opacity: .75; }
+.btn-save:disabled { opacity: .35; cursor: not-allowed; }
+
+.status-msg {
+  font-size: 12px;
+  color: var(--green);
+  display: none;
+  white-space: nowrap;
+}
+.status-msg.error { color: var(--red); }
+
+/* ── Info box ── */
+.info-box {
+  background: var(--accent-dim);
+  border: 1px solid #6c5ce740;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.info-box strong { color: var(--fg); }
+
+/* ── Toast ── */
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 20px;
+  font-size: 13px; font-weight: 600;
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+  pointer-events: none; white-space: nowrap;
+  box-shadow: 0 8px 32px #00000060;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.ok { color: var(--green); border-color: #00b89440; }
+.toast.err { color: var(--red); border-color: #e8439340; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-icon">🎛️</div>
+  <div>
+    <div class="header-title">Limits Manager</div>
+    <div class="header-sub">Set daily gen caps per product</div>
+  </div>
+  <div class="header-spacer"></div>
+  <div class="header-badge">SELLER TOOL</div>
+</div>
+
+<div class="main">
+
+  <div class="path-bar">
+    <span class="path-label">product_limits.json</span>
+    <span class="path-value none" id="path-display">No file selected — click Browse</span>
+    <button class="btn-browse" onclick="browsePath()">Browse</button>
+  </div>
+
+  <div class="info-box">
+    <strong>How it works:</strong> Set a daily cap per product. Leave blank (or 0) for unlimited.
+    After saving, push your repo in GitHub Desktop — buyers pick up the new limits automatically on next launch.
+  </div>
+
+  <div class="section-label">Products</div>
+
+  <div class="product-list" id="product-list">
+    <!-- rows injected by JS -->
+  </div>
+
+  <div class="footer">
+    <button class="btn-save" id="btn-save" onclick="saveLimits()" disabled>Save &amp; Write File</button>
+    <span class="status-msg" id="status-msg"></span>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Products (mirror GenHub.html) ──────────────────────────
+const PRODUCTS = [
+  { id: 'netflix',   name: 'Netflix',    icon: '🎬' },
+  { id: 'rockstar',  name: 'Rockstar',   icon: '🎮' },
+  { id: 'discord',   name: 'Discord',    icon: '💬' },
+  { id: 'steam',     name: 'Steam',      icon: '🎯' },
+  { id: 'disney',    name: 'Disney+',    icon: '✨' },
+  { id: 'hbo',       name: 'HBO Max',    icon: '👑' },
+  { id: 'paramount', name: 'Paramount+', icon: '⭐' },
+];
+
+let currentPath = '';
+let currentLimits = {};
+
+// ── API helpers ──────────────────────────────────────────────
+function api() { return window.pywebview && window.pywebview.api ? window.pywebview.api : null; }
+
+// ── Build product rows ───────────────────────────────────────
+function buildRows() {
+  const list = document.getElementById('product-list');
+  list.innerHTML = '';
+  PRODUCTS.forEach(p => {
+    const val = currentLimits[p.id];
+    const hasLimit = val !== undefined && val !== null && val !== '';
+    const row = document.createElement('div');
+    row.className = 'product-row';
+    row.innerHTML = `
+      <span class="product-icon">${p.icon}</span>
+      <span class="product-name">${p.name}</span>
+      <div class="limit-group">
+        <span class="limit-label">Daily cap</span>
+        <input
+          class="limit-input"
+          type="number" min="0" step="1"
+          placeholder="∞"
+          id="input-${p.id}"
+          value="${hasLimit ? val : ''}"
+          oninput="onInputChange('${p.id}')"
+        >
+        <span class="${hasLimit ? 'limited-badge' : 'unlimited-badge'}" id="badge-${p.id}">
+          ${hasLimit ? val + '/day' : 'unlimited'}
+        </span>
+      </div>
+    `;
+    list.appendChild(row);
+  });
+}
+
+function onInputChange(id) {
+  const inp = document.getElementById('input-' + id);
+  const badge = document.getElementById('badge-' + id);
+  const v = inp.value.trim();
+  if (v === '' || parseInt(v) === 0) {
+    badge.className = 'unlimited-badge';
+    badge.textContent = 'unlimited';
+  } else {
+    badge.className = 'limited-badge';
+    badge.textContent = v + '/day';
+  }
+}
+
+// ── Browse for file ──────────────────────────────────────────
+async function browsePath() {
+  const a = api();
+  if (!a) { showToast('No API — run via GenHub.exe --limits', true); return; }
+  try {
+    const p = await a.browse_limits_file();
+    if (!p) return;
+    currentPath = p;
+    document.getElementById('path-display').textContent = p;
+    document.getElementById('path-display').classList.remove('none');
+    await a.save_limits_path(p);
+    await loadLimits();
+    document.getElementById('btn-save').disabled = false;
+  } catch(e) { showToast('Browse failed: ' + e, true); }
+}
+
+// ── Load existing limits from file ───────────────────────────
+async function loadLimits() {
+  const a = api();
+  if (!a || !currentPath) return;
+  try {
+    const raw = await a.read_limits_file(currentPath);
+    currentLimits = raw ? JSON.parse(raw) : {};
+  } catch { currentLimits = {}; }
+  buildRows();
+}
+
+// ── Save limits back to file ─────────────────────────────────
+async function saveLimits() {
+  const a = api();
+  if (!a || !currentPath) { showToast('Select a file first', true); return; }
+
+  const result = {};
+  PRODUCTS.forEach(p => {
+    const inp = document.getElementById('input-' + p.id);
+    const v = inp.value.trim();
+    if (v !== '' && parseInt(v) > 0) result[p.id] = parseInt(v);
+    // blank or 0 → omit (unlimited)
+  });
+
+  const json = JSON.stringify(result, null, 2);
+  try {
+    const res = await a.write_limits_file(currentPath, json);
+    if (res && res.ok) {
+      currentLimits = result;
+      buildRows();
+      showToast('Saved ✓  Now push in GitHub Desktop', false);
+    } else {
+      showToast('Write failed: ' + (res ? res.error : 'unknown'), true);
+    }
+  } catch(e) { showToast('Error: ' + e, true); }
+}
+
+// ── Toast ────────────────────────────────────────────────────
+let _toastTimer = null;
+function showToast(msg, err) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast ' + (err ? 'err' : 'ok');
+  clearTimeout(_toastTimer);
+  requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('show')));
+  _toastTimer = setTimeout(() => el.classList.remove('show'), 3200);
+}
+
+// ── Startup ──────────────────────────────────────────────────
+async function startup() {
+  // Wait for pywebview API
+  let tries = 0;
+  while (tries < 60) {
+    if (window.pywebview && window.pywebview.api &&
+        typeof window.pywebview.api.read_limits_file === 'function') break;
+    await new Promise(r => setTimeout(r, 50));
+    tries++;
+  }
+
+  const a = api();
+  if (!a) { buildRows(); return; }
+
+  // Try to restore previously saved path
+  try {
+    const saved = await a.read_saved_limits_path();
+    if (saved) {
+      currentPath = saved;
+      document.getElementById('path-display').textContent = saved;
+      document.getElementById('path-display').classList.remove('none');
+      document.getElementById('btn-save').disabled = false;
+      await loadLimits();
+      return;
+    }
+  } catch {}
+
+  buildRows();
+}
+
+window.addEventListener('load', startup);
+</script>
+</body>
+</html>
