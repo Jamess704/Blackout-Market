@@ -1,18 +1,42 @@
 // language: JavaScript (Node.js), file: api/check-cap.js, target: Vercel Edge runtime
 // Uses SUPABASE_SERVICE_KEY env var (never in gen.html) to enforce per-service daily gen caps.
+// Reads caps from product_limits.json in the repo (same file LimitsManager.html edits).
 // Calls the increment_service_cap() Postgres function — atomic increment + check in one round-trip.
 // POST { email, product } → { allowed: bool, count: int, cap: int | null }
 
-const SB_URL = 'https://liaeducrofflulwkejug.supabase.co';
+const SB_URL       = 'https://liaeducrofflulwkejug.supabase.co';
+const LIMITS_URL   = 'https://raw.githubusercontent.com/Jamess704/Blackout-Market/main/product_limits.json';
 
-// Server-side caps. Unlisted products = uncapped (Rockstar, Steam).
-const SERVER_CAPS = {
+// Fallback caps if product_limits.json can't be fetched.
+// 0 = unlimited. These match the defaults LimitsManager shows on first load.
+const FALLBACK_CAPS = {
   disney:    3,
   discord:   7,
   netflix:   10,
   paramount: 3,
   hbo:       3,
 };
+
+// Cache the limits for the lifetime of this edge function instance (~seconds).
+let _cachedLimits = null;
+
+async function getLimits() {
+  if (_cachedLimits) return _cachedLimits;
+  try {
+    const res = await fetch(LIMITS_URL, { cache: 'no-store' });
+    if (res.ok) {
+      const json = await res.json();
+      // product_limits.json format: { "disney": 3, "netflix": 10, ... }
+      // 0 or missing = unlimited (cap === null)
+      _cachedLimits = json;
+      return _cachedLimits;
+    }
+  } catch (e) {
+    console.error('[check-cap] failed to fetch product_limits.json:', e);
+  }
+  _cachedLimits = FALLBACK_CAPS;
+  return _cachedLimits;
+}
 
 export default async function handler(req) {
   const origin = req.headers.get('origin') || '';
@@ -53,18 +77,22 @@ export default async function handler(req) {
     });
   }
 
-  // Unlisted = uncapped (Rockstar, Steam). No DB call needed.
-  const cap = SERVER_CAPS[product];
-  if (cap === undefined) {
+  // Load caps from product_limits.json (falls back to FALLBACK_CAPS on error)
+  const limits = await getLimits();
+  const capVal = limits[product];
+
+  // 0 or undefined = unlimited — no DB call needed
+  if (!capVal) {
     return new Response(JSON.stringify({ allowed: true, count: 0, cap: null }), {
       status: 200, headers: corsHeaders,
     });
   }
 
+  const cap = capVal; // positive integer
+
   const serviceKey = process.env.SUPABASE_SERVICE_KEY;
   if (!serviceKey) {
     console.error('[check-cap] SUPABASE_SERVICE_KEY not configured');
-    // Fail open — don't lock users out if env var is accidentally missing
     return new Response(JSON.stringify({ allowed: true, count: 0, cap }), {
       status: 200, headers: corsHeaders,
     });
@@ -73,9 +101,6 @@ export default async function handler(req) {
   const today = new Date().toISOString().split('T')[0]; // UTC YYYY-MM-DD
 
   try {
-    // Single atomic RPC: increments count and returns the new value.
-    // If new count > cap, it means this generation should be denied AND the increment
-    // should not have happened — but we let it stay (cap+1 max) since it auto-resets at midnight.
     const rpcRes = await fetch(
       `${SB_URL}/rest/v1/rpc/increment_service_cap`,
       {
@@ -97,7 +122,6 @@ export default async function handler(req) {
     if (!rpcRes.ok) {
       const errText = await rpcRes.text();
       console.error('[check-cap] RPC error:', rpcRes.status, errText);
-      // Fail open on server error
       return new Response(JSON.stringify({ allowed: true, count: 0, cap }), {
         status: 200, headers: corsHeaders,
       });
