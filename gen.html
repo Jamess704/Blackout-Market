@@ -786,7 +786,9 @@ const TIER_MAP = {
   PREM: { name: 'Lifetime Premium', days: null,dailyLimit: 999999, totalLimit: 999999 },
 };
 
-const PRODUCT_DAILY_CAPS = { disney: 3, hbo: 3, discord: 10 };
+// Per-service caps are now enforced server-side via /api/check-cap
+// Do NOT add caps here — they are bypassable from the client.
+// Edit SERVER_CAPS in api/check-cap.js to change limits.
 
 const PRODUCTS = [
   { id: 'netflix',   name: 'Netflix',    icon: '🎬', color: '#E50914', bg: '#e5091415' },
@@ -1206,13 +1208,14 @@ function renderDailyBar() {
     try { return new Date(h.time).toDateString() === todayStr; } catch { return false; }
   }).length;
 
-  // Per-product counts today
+  // Per-product counts today (display only — enforcement is server-side)
+  const DISPLAY_CAPS = { disney: 3, discord: 7, netflix: 10, paramount: 3, hbo: 3 };
   const parts = PRODUCTS.map(p => {
     const cnt = userHist.filter(h => {
       try { return h.product === p.id && new Date(h.time).toDateString() === todayStr; } catch { return false; }
     }).length;
-    if (cnt === 0 && !PRODUCT_DAILY_CAPS[p.id]) return null;
-    const cap = PRODUCT_DAILY_CAPS[p.id];
+    if (cnt === 0 && !DISPLAY_CAPS[p.id]) return null;
+    const cap = DISPLAY_CAPS[p.id];
     return cap ? `${p.name}: ${cnt}/${cap}` : `${p.name}: ${cnt}`;
   }).filter(Boolean);
 
@@ -1376,15 +1379,26 @@ async function generateAccount(product) {
     done(); showToast(`Total limit reached (${totalLim} accounts). Upgrade your plan.`, true); closeModal(); return;
   }
 
-  // ── Per-product daily caps ────────────────────────────────────
-  const productCap = PRODUCT_DAILY_CAPS[product.id];
-  if (productCap !== undefined) {
-    const productTodayCount = userHist.filter(h => {
-      try { return h.product === product.id && new Date(h.time).toDateString() === todayStr; } catch { return false; }
-    }).length;
-    if (productTodayCount >= productCap) {
-      done(); showToast(`Daily limit reached for ${product.name} (${productCap}/day). Come back tomorrow.`, true); closeModal(); return;
+  // ── Per-product daily caps (server-enforced — cannot be bypassed by clearing localStorage) ──
+  try {
+    const capRes = await fetch('/api/check-cap', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ email: currentUser.email, product: product.id }),
+    });
+    if (capRes.ok) {
+      const capData = await capRes.json();
+      if (capData.allowed === false) {
+        done();
+        showToast(`Daily limit reached for ${product.name} (${capData.cap}/day). Come back tomorrow.`, true);
+        closeModal();
+        return;
+      }
     }
+    // If the request fails or errors, fall through and allow generation
+    // (fail-open: don't punish users for server hiccups)
+  } catch {
+    // Network error — allow generation
   }
 
   const [rows] = await Promise.all([
