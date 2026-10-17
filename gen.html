@@ -576,6 +576,8 @@
           <button class="btn" onclick="doLogin()">Sign In</button>
         </div>
         <div id="form-register" style="display:none">
+          <label>License Key</label>
+          <input type="text" id="reg-key" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19" oninput="formatKey(this)">
           <label>Email</label>
           <input type="email" id="reg-email" placeholder="you@example.com">
           <label>Username</label>
@@ -1005,19 +1007,39 @@ function tryAutoLogin() {
 }
 
 function doRegister() {
-  const email = document.getElementById('reg-email').value.trim().toLowerCase();
-  const uname = document.getElementById('reg-user').value.trim();
-  const pass  = document.getElementById('reg-pass').value;
-  const errEl = document.getElementById('reg-err');
+  const keyRaw = document.getElementById('reg-key').value.trim().toUpperCase();
+  const email  = document.getElementById('reg-email').value.trim().toLowerCase();
+  const uname  = document.getElementById('reg-user').value.trim();
+  const pass   = document.getElementById('reg-pass').value;
+  const errEl  = document.getElementById('reg-err');
   errEl.style.display = 'none';
-  if (!email || !uname || !pass) { errEl.textContent='Fill in all fields.'; errEl.style.display='block'; return; }
+  if (!keyRaw || !email || !uname || !pass) { errEl.textContent='Fill in all fields.'; errEl.style.display='block'; return; }
   if (pass.length < 6) { errEl.textContent='Password must be 6+ characters.'; errEl.style.display='block'; return; }
+
+  // Validate key before creating account
+  const keyResult = validateKeyCode(keyRaw);
+  if (!keyResult) { errEl.textContent='Invalid license key.'; errEl.style.display='block'; return; }
+
   const db = getDB();
   if (db.users[email]) { errEl.textContent='Email already registered.'; errEl.style.display='block'; return; }
-  db.users[email] = { username: uname, password: btoa(pass), plan: null, planExpiry: null, keyUsed: null };
+
+  // Check key not already used
+  const usedKeys = db.usedKeys || {};
+  if (usedKeys[keyRaw]) { errEl.textContent='Key already redeemed.'; errEl.style.display='block'; return; }
+
+  // Mark key used and create account with plan
+  db.usedKeys = db.usedKeys || {};
+  db.usedKeys[keyRaw] = email;
+  db.users[email] = {
+    username: uname,
+    password: btoa(pass),
+    plan: keyResult.name,
+    planExpiry: keyResult.expiry,
+    keyUsed: keyRaw
+  };
   if (!db.history[email]) db.history[email] = [];
   saveDB(db);
-  currentUser = { email, username: uname, plan: null };
+  currentUser = { email, username: uname, plan: keyResult.name };
   afterLogin();
 }
 
