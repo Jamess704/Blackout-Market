@@ -132,7 +132,6 @@
                         <a href="#cheats" onclick="showStore();" class="hover:text-red-500">Store</a>
                         <a href="https://status.blackoutmarket.com" target="_blank" class="hover:text-red-500">Status</a>
                         <a href="#loader" onclick="showLoader();" class="hover:text-red-500">Download Loader</a>
-                        <a href="#download" onclick="showDownload();" class="hover:text-red-500">Download GenHub</a>
                         <a href="https://discord.gg/jGHQj4Ygqf" target="_blank" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg">Join Discord</a>
                     </nav>
                     <button id="mobile-menu-btn" class="md:hidden text-gray-300" type="button"><i class="fa-solid fa-bars text-xl"></i></button>
@@ -142,7 +141,6 @@
                 <a href="#home" onclick="showHome();" class="block py-2">Home</a>
                 <a href="#cheats" onclick="showStore();" class="block py-2">Store</a>
                 <a href="#loader" onclick="showLoader();" class="block py-2">Download Loader</a>
-                <a href="#download" onclick="showDownload();" class="block py-2">Download GenHub</a>
                 <a href="https://discord.gg/jGHQj4Ygqf" target="_blank" class="block py-2 text-red-400 font-bold">Join Discord</a>
             </div>
         </header>
@@ -223,20 +221,6 @@
             <div class="bg-black/80 border border-red-950 rounded-2xl p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
                 <p class="text-gray-300 max-w-2xl">Opens the official Macho download portal so you can enter your key.</p>
                 <a href="https://machocheats.com/download" target="_blank" class="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded-xl">OPEN DOWNLOAD PORTAL</a>
-            </div>
-        </section>
-
-        <section id="download" class="hidden px-4 max-w-7xl mx-auto py-16">
-            <h2 class="text-4xl font-bold text-white mb-6">Download GenHub</h2>
-            <div class="bg-black/80 border border-red-950 rounded-2xl p-8 max-w-lg">
-                <p class="text-gray-300 mb-6">Paste your GenHub key below to verify your purchase and unlock the download.</p>
-                <input id="dl-key-input" type="text" placeholder="XXXX-XXXX-XXXX-XXXX" autocomplete="off" spellcheck="false"
-                    class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-white font-mono text-sm tracking-widest uppercase focus:outline-none focus:border-red-600 mb-4"
-                    oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9-]/g,'')" />
-                <button type="button" onclick="verifyDlKey()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl mb-3">Verify Key</button>
-                <p id="dl-error" class="text-red-400 text-sm hidden"></p>
-                <a id="dl-btn" href="/GenHub.exe" download class="hidden block text-center bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl mt-3">&#11015; Download GenHub.exe</a>
-                <p id="dl-info" class="text-green-400 text-sm hidden mt-2"></p>
             </div>
         </section>
 
@@ -387,7 +371,7 @@
             twitchFollowers: { summary: 'Real-looking Twitch followers delivered straight to your profile. Sold in packs of 100. The smallest order is 200 followers.', included: ['Followers delivered to a public Twitch profile', 'Delivery within 12 hours', 'Checkout through Discord'] },
             account2: { summary: 'A lifetime YouTube Premium account with full access. The login is yours after delivery, and you can change it whenever you want. Premium removes ads and keeps playback going in the background.', included: ['Lifetime YouTube Premium access', 'Full login you can change', 'Private account, ready to use', 'Checkout on SellAuth', '24-hour warranty if there is an issue with the account'] },
             account8: { summary: 'Full access Fortnite accounts, sold by the listing you pick. Activation is usually a few minutes, and the login works on PC, PlayStation, Xbox, Switch, and mobile.', included: ['Ranked ready on the ranked listings. The account level meets the requirements to play Ranked', 'Full access. Email and password for Epic Games and the email login', 'You can change the email and password', 'Works worldwide on any server region', 'Instant delivery after checkout', 'Replacement if there is a login issue at the start'] },
-            genhub: { summary: 'GenHub puts account generation in your hands. One key unlocks the desktop app and lets you generate accounts instantly for supported services. Choose your tier — Day, Week, Month, or Lifetime — and start generating the same day.', included: ['The key tier you select (Day, Week, Month, Lifetime Basic, or Lifetime Premium)', 'Key delivered instantly through SellAuth after checkout', 'Access to the GenHub desktop app', 'Account generation on demand for supported services'] }
+            genhub: { summary: 'GenHub puts account generation in your hands. One key unlocks the web app and lets you generate accounts instantly for supported services. Choose your tier — Day, Week, Month, or Lifetime — and start generating the same day.', included: ['The key tier you select (Day, Week, Month, Lifetime Basic, or Lifetime Premium)', 'Key delivered instantly through SellAuth after checkout', 'Access to the GenHub web app at blackout-market.vercel.app/gen.html', 'Account generation on demand for supported services'] }
         };
         const WEBMAIL = ['https://notletters.com/email/login', 'https://firstmail.ltd/en-US/webmail/login', 'https://id.rambler.ru/login-20/login'];
         const faDiscord = {
@@ -560,10 +544,9 @@
             document.getElementById('category-picker').classList.add('hidden');
             document.body.style.overflow = '';
         }
-        function showHome() { closeCategoryPicker(); document.getElementById('home').classList.remove('hidden'); document.getElementById('cheats').classList.add('hidden'); document.getElementById('loader').classList.add('hidden'); document.getElementById('download').classList.add('hidden'); document.getElementById('options-page').classList.add('hidden'); document.getElementById('product-page').classList.add('hidden'); window.scrollTo({ top: 0 }); }
-        function showStore(reset) { closeCategoryPicker(); document.getElementById('home').classList.add('hidden'); document.getElementById('loader').classList.add('hidden'); document.getElementById('download').classList.add('hidden'); document.getElementById('options-page').classList.add('hidden'); document.getElementById('product-page').classList.add('hidden'); document.getElementById('cheats').classList.remove('hidden'); if (reset !== false) { activeCategory = null; activeAccountGroup = 'all'; filterCategory(null); openCategoryPicker(); } window.scrollTo({ top: 0 }); }
-        function showLoader() { closeCategoryPicker(); document.getElementById('home').classList.add('hidden'); document.getElementById('cheats').classList.add('hidden'); document.getElementById('download').classList.add('hidden'); document.getElementById('options-page').classList.add('hidden'); document.getElementById('product-page').classList.add('hidden'); document.getElementById('loader').classList.remove('hidden'); window.scrollTo({ top: 0 }); }
-        function showDownload() { closeCategoryPicker(); document.getElementById('home').classList.add('hidden'); document.getElementById('cheats').classList.add('hidden'); document.getElementById('loader').classList.add('hidden'); document.getElementById('options-page').classList.add('hidden'); document.getElementById('product-page').classList.add('hidden'); document.getElementById('download').classList.remove('hidden'); document.getElementById('dl-key-input').value = ''; document.getElementById('dl-error').classList.add('hidden'); document.getElementById('dl-btn').classList.add('hidden'); document.getElementById('dl-info').classList.add('hidden'); window.scrollTo({ top: 0 }); }
+        function showHome() { closeCategoryPicker(); document.getElementById('home').classList.remove('hidden'); document.getElementById('cheats').classList.add('hidden'); document.getElementById('loader').classList.add('hidden'); document.getElementById('options-page').classList.add('hidden'); document.getElementById('product-page').classList.add('hidden'); window.scrollTo({ top: 0 }); }
+        function showStore(reset) { closeCategoryPicker(); document.getElementById('home').classList.add('hidden'); document.getElementById('loader').classList.add('hidden'); document.getElementById('options-page').classList.add('hidden'); document.getElementById('product-page').classList.add('hidden'); document.getElementById('cheats').classList.remove('hidden'); if (reset !== false) { activeCategory = null; activeAccountGroup = 'all'; filterCategory(null); openCategoryPicker(); } window.scrollTo({ top: 0 }); }
+        function showLoader() { closeCategoryPicker(); document.getElementById('home').classList.add('hidden'); document.getElementById('cheats').classList.add('hidden'); document.getElementById('options-page').classList.add('hidden'); document.getElementById('product-page').classList.add('hidden'); document.getElementById('loader').classList.remove('hidden'); window.scrollTo({ top: 0 }); }
         function openStoreCategory(category) { showStore(false); chooseCategory(category); }
         function chooseCategory(category) {
             activeAccountGroup = 'all';
@@ -620,7 +603,6 @@
             document.getElementById('home').classList.add('hidden');
             document.getElementById('cheats').classList.add('hidden');
             document.getElementById('loader').classList.add('hidden');
-            document.getElementById('download').classList.add('hidden');
             document.getElementById('product-page').classList.add('hidden');
             document.getElementById('options-title').textContent = item.title;
             document.getElementById('options-grid').innerHTML = item.options.map((option, index) => optionCard(item, option, index)).join('');
@@ -678,45 +660,11 @@
             document.getElementById('home').classList.add('hidden');
             document.getElementById('cheats').classList.add('hidden');
             document.getElementById('loader').classList.add('hidden');
-            document.getElementById('download').classList.add('hidden');
             document.getElementById('options-page').classList.add('hidden');
             document.getElementById('product-page-body').innerHTML = detailMarkup(item, option);
             document.getElementById('product-page').classList.remove('hidden');
             window.scrollTo({ top: 0 });
         }
-        (function () {
-            const KV = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-            const SECRET = 'GH_BLACKOUT_7x9K';
-            const TIERS = { DAYZ: '1 Day', WEEK: '1 Week', MNTH: '1 Month', LIFE: 'Lifetime', PREM: 'Lifetime Premium' };
-            function sign(payload) {
-                let h = 2166136261;
-                const src = SECRET + payload;
-                for (let i = 0; i < src.length; i++) { h ^= src.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
-                return KV[h & 31] + KV[(h >>> 5) & 31] + KV[(h >>> 10) & 31] + KV[(h >>> 15) & 31];
-            }
-            window.verifyDlKey = function () {
-                const code = document.getElementById('dl-key-input').value.trim().toUpperCase();
-                const err = document.getElementById('dl-error');
-                const btn = document.getElementById('dl-btn');
-                const info = document.getElementById('dl-info');
-                err.classList.add('hidden'); btn.classList.add('hidden'); info.classList.add('hidden');
-                const parts = code.split('-');
-                if (parts.length !== 4 || parts.some(p => p.length !== 4)) {
-                    err.textContent = 'Invalid key format. Keys look like XXXX-XXXX-XXXX-XXXX.'; err.classList.remove('hidden'); return;
-                }
-                const [s1, s2, s3, sig] = parts;
-                if (!TIERS[s1]) { err.textContent = 'Invalid key.'; err.classList.remove('hidden'); return; }
-                if (sign(s1 + s2 + s3) !== sig) { err.textContent = 'Key is not valid. Make sure you copied it correctly.'; err.classList.remove('hidden'); return; }
-                if (s2[1] !== 'V') { err.textContent = 'This is an old key format. Redeem your key in GenHub to get a new one, or contact support.'; err.classList.remove('hidden'); return; }
-                info.textContent = '✓ ' + TIERS[s1] + ' key verified — your download is ready.';
-                info.classList.remove('hidden');
-                btn.classList.remove('hidden');
-            };
-            document.addEventListener('keydown', function (e) {
-                const input = document.getElementById('dl-key-input');
-                if (input && document.activeElement === input && e.key === 'Enter') window.verifyDlKey();
-            });
-        })();
         (function () {
             const canvas = document.getElementById('zero-g-canvas');
             const ctx = canvas.getContext('2d');
