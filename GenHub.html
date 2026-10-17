@@ -1294,7 +1294,7 @@ async function generateAccount(product) {
     product: product.id,
     rawStr: accountStr,
     fields,
-    time: new Date().toLocaleString(),
+    time: new Date().toISOString(),
   });
   // Keep only last 100
   if (db.history[currentUser.email].length > 100) {
